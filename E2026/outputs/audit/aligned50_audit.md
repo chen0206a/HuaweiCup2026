@@ -323,4 +323,4 @@ ID：{'present': True, 'count': 727, 'unique_count': 727, 'duplicate_count': 0, 
 
 ## 异常
 
-共记录 152 条异常/待核验项。详细记录见 `anomalies.csv`（若该文件存在）。
+共记录 162 条异常/待核验项。详细记录见 `anomalies.csv`（若该文件存在）。

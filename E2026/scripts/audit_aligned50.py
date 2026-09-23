@@ -233,9 +233,9 @@ def main():
                     "nonzero_modality_timestep_inside_masked_suffix": int(nonzero_pad.sum()),
                     "valid_region_zero_counts_by_early_middle_late": {"early": early, "middle": middle, "late": late},
                     "samples_all_zero_across_valid_region": int(np.all(zmask | ~valid_mask, axis=1).sum()),
-                }
+            }
             if np.any(zmask):
-                for i in np.flatnonzero(np.all(arr == 0, axis=(1, 2)))[:100]:
+                for i in np.flatnonzero(np.all(arr == 0, axis=(1, 2))):
                     anomalies.append({"type": "all_zero_modality_sample", "split": split_name, "field": mod, "sample_id": ids[int(i)] if int(i) < len(ids) else "", "index": int(i), "detail": "entire modality sequence is zero"})
 
         # Exact duplicate multimodal samples, based on raw feature bytes.
