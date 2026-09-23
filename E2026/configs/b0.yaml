@@ -1,0 +1,30 @@
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  train_split: train
+  valid_split: valid
+  test_split: test
+  num_workers: 0
+  batch_size: 128
+
+preprocessing:
+  normalization: none # none | train_featurewise; scaler fits train valid timesteps only
+
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+
+training:
+  seed: 42
+  device: auto
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  selection_metric: valid_total_loss
+  test_role: final_holdout_only
+
+outputs:
+  metrics_dir: /root/workspace/E2026/outputs/metrics
+  checkpoints_dir: /root/workspace/E2026/outputs/checkpoints
