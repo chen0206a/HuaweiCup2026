@@ -1,7 +1,7 @@
 # Q1 Handoff
 
 ## Status
-Baseline V0 已实现、测试、并用官方 evaluator 跑出真实基线。V1 尚未开始。
+Baseline V0 已实现、测试并跑出真实基线。V1-lite 已在 `q1-v1` 分支实现，代表用例消融见 `V1_LITE_RESULTS.md`；全部 100 例尚未运行。
 
 ## Problem Interpretation
 场景A：每子图一个Task，所有跨子图通信经DDR。
@@ -13,6 +13,9 @@ Baseline V0 已实现、测试、并用官方 evaluator 跑出真实基线。V1 
 → 按 PIPE_M/PIPE_V cycles 做连续工作量分块（候选粒度 K/2K/4K/8K）→ 子图代价 max(M,V,内部CP)
 → 关键路径列表调度（按最小EFT选核）→ 独立 validate_plan → 官方 problem_1 evaluator。
 入口：`src/q1/solver.py`（单例）、`src/q1/batch_run.py`（批量）。测试：`tests/test_q1_v0.py`。
+
+## V1-lite 试验方法
+`src/q1/partition_v1.py` 提供确定性、关键路径优先与分支连续拓扑序，并按工作量、Tensor 字节、扇出和关键路径选择安全连续切点；`src/q1/schedule_v1.py` 提供全局预测分核；`src/q1/experiments_v1.py` 以 `v0`、`v1_partition`、`v1_schedule`、`v1` 四版本做等候选预算消融。V0 原入口和行为保留。官方实测见 `V1_LITE_RESULTS.md`，目前主要收益来自分块，分核模块未显示稳定独立收益。
 
 ## Inputs and Outputs
 输入：原始计算图、固定config、核数。输出：`{node_to_subgraph, core_schedules}`（只含这两个键）
@@ -36,11 +39,7 @@ Baseline V0 已实现、测试、并用官方 evaluator 跑出真实基线。V1 
 `notes/a_review_checks/evaluator_hashes.json`，可用 `python src/q1/check_official.py` 复核。
 
 ## Next Recommended Actions
-V1 优先修两件事，其余不动：
-1. 核选择：不要只用即时最小 EFT；先做"整核不空闲"的分配，或按关键路径/负载全局比较，
-   消除跨核1000 与同核100 造成的单核塌缩。
-2. 分块：连续等工作量分块会切进分支内部制造伪屏障；改为按分支/共享输入结构切，
-   或引入 DESIGN_v1 的安全相邻合并——但必须先证明真实收益。
+V1-lite 已比较两种改动。结构感知分块在四个异常用例的代表核数上有效；单独改核选择的效果很小或略差。下一步补足代表核数并固定参数，在相同候选预算下跑全 100 例，记录官方 Makespan、COPY 与墙钟时间。当前不应把组合版宣称为优于仅分块版。
 
 ## Last Updated
 2026-09-23（Baseline V0 实现、单元测试与官方 evaluator 基线结果）
