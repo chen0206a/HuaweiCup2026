@@ -83,6 +83,53 @@ class B3LatentReconstruction(B0Baseline):
             outputs["effective_latents"] = effective
         return outputs
 
+    def forward_alpha_grid(self, batch: dict, alphas: tuple[float, ...] | list[float]) -> dict[str, dict]:
+        """Share latent and reconstructor forwards across a fixed alpha grid.
+
+        The raw B0 path is retained verbatim for alpha=0, preserving exact
+        checkpoint predictions. For alpha>0, H_base and H_hat are each formed
+        once for this batch/scenario, then reused to predict every blend.
+        """
+        values = tuple(float(alpha) for alpha in alphas)
+        if not values or any(not 0.0 <= alpha <= 1.0 for alpha in values):
+            raise ValueError("alphas must be a non-empty sequence in [0,1]")
+        if len(set(values)) != len(values):
+            raise ValueError("alpha grid values must be unique")
+        pad = batch["padding_mask"].bool()
+        if not pad.any(dim=1).all():
+            raise ValueError("every sample needs a valid timestep")
+        latents = self.timestep_latents(batch)
+        zero_trigger = {m: pad & torch.all(batch[m] == 0, dim=-1) for m in MODALITIES}
+        reconstructed: dict[str, torch.Tensor] = {}
+        if any(alpha > 0.0 for alpha in values):
+            sources = {m: latents[m].masked_fill(zero_trigger[m].unsqueeze(-1), 0.0)
+                       for m in MODALITIES}
+            for target in MODALITIES:
+                others = [m for m in MODALITIES if m != target]
+                reconstructed[target] = self.reconstructors[target](
+                    torch.cat([sources[m] for m in others], dim=-1)
+                ).masked_fill(~pad.unsqueeze(-1), 0.0)
+
+        outputs = {}
+        for alpha in values:
+            if alpha == 0.0:
+                pooled = [self.modality_projection[m](masked_mean_pool(batch[m], pad))
+                          for m in MODALITIES]
+            else:
+                pooled = []
+                for modality in MODALITIES:
+                    blended = (1.0 - alpha) * latents[modality] + alpha * reconstructed[modality]
+                    effective = torch.where(zero_trigger[modality].unsqueeze(-1),
+                                            blended, latents[modality])
+                    pooled.append(self.modality_projection[modality][1:](
+                        masked_mean_pool(effective, pad)))
+            fused = self.fusion(torch.cat(pooled, dim=-1))
+            outputs[str(alpha)] = {
+                "classification_logits": self.classification_head(fused),
+                "regression": self.regression_head(fused).squeeze(-1),
+            }
+        return outputs
+
 
 class B31FrozenBackbone(B3LatentReconstruction):
     """B3.1: only reconstructors are trainable; B0 acts as a fixed function."""

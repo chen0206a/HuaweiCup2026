@@ -1,0 +1,28 @@
+model: B31FrozenBackbone (B0 projections/LN/fusion/heads frozen; three reconstructors
+  trainable)
+training_seeds:
+- 42
+- 43
+- 44
+newly_trained_seeds:
+- 43
+- 44
+epochs: 80
+optimizer: AdamW, lr=0.001, weight_decay=0.0001
+lambda_reg: 1.0
+lambda_rec: 1.0
+lambda_id: 0.0
+class_weighting: balanced train split
+normalization: none
+block_mask: unchanged B2 generator
+benchmark_seed: 20260923
+benchmark_sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+global_alpha_grid:
+- 0
+- 0.25
+- 0.5
+- 0.75
+- 1.0
+validation_optimization: one latent/reconstructor forward per scenario batch; cached
+  blend predictions across alpha grid
+test_or_attachment3_used: false

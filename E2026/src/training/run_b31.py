@@ -46,14 +46,15 @@ def loaders(cfg: dict):
     return build_datasets_and_loaders(
         cfg["data"]["pkl_path"], normalization="none",
         batch_size=int(cfg["data"]["batch_size"]), num_workers=0,
-        seed=42, include_test=False,
+        seed=int(cfg["training"]["seed"]), include_test=False,
     )
 
 
 def load_b0(path: str, model_cfg: dict, device: torch.device):
     ckpt = torch.load(path, map_location="cpu", weights_only=False)
-    if int(ckpt["config"]["training"]["seed"]) != 42:
-        raise RuntimeError("expected seed-42 B0-WCE checkpoint")
+    expected_seed = int(model_cfg.get("_expected_seed", 42))
+    if int(ckpt["config"]["training"]["seed"]) != expected_seed:
+        raise RuntimeError(f"expected seed-{expected_seed} B0-WCE checkpoint")
     for key in ("hidden_dim", "fusion_dim", "dropout"):
         if model_cfg[key] != ckpt["config"]["model"][key]:
             raise RuntimeError(f"B0 model config mismatch: {key}")
@@ -145,13 +146,14 @@ def train(config_path: Path) -> dict:
     if not diagnostic_path.exists():
         raise RuntimeError("run the required zero-training B3 checkpoint diagnostic first")
     seed = int(cfg["training"]["seed"])
-    if seed != 42:
-        raise ValueError("B3.1 uses training seed 42 only")
+    if seed not in (42, 43, 44):
+        raise ValueError("B3.1 stability runs are restricted to training seeds 42, 43, and 44")
     seed_everything(seed)
     rng = random.Random(seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     datasets, data_loaders, _ = loaders(cfg)
-    b0, b0_state = load_b0(cfg["training"]["init_checkpoint"], cfg["model"], device)
+    model_cfg = {**cfg["model"], "_expected_seed": seed}
+    b0, b0_state = load_b0(cfg["training"]["init_checkpoint"], model_cfg, device)
     model = B31FrozenBackbone(**cfg["model"]).to(device)
     incompatible = model.load_state_dict(b0_state["model_state_dict"], strict=False)
     if incompatible.unexpected_keys or not incompatible.missing_keys or not all(
@@ -223,7 +225,7 @@ def train(config_path: Path) -> dict:
                 "benchmark_sha256": BENCHMARK_SHA256,
                 "frozen_backbone_check": frozen_check,
                 "train_class_counts": counts.tolist(), "class_weights": weights.cpu()}, path)
-    write_json(METRICS / cfg["outputs"]["history"], history)
+    write_json(METRICS / cfg["outputs"].get("history", "b31_training_history.json"), history)
     result = {"model": cfg["run_name"], "training_seed": seed,
               "epochs": epochs, "training_seconds": seconds,
               "parameter_count_total": sum(p.numel() for p in model.parameters()),
@@ -233,7 +235,7 @@ def train(config_path: Path) -> dict:
                        "lambda_reg": tcfg["lambda_reg"]},
               "batch_size": cfg["data"]["batch_size"], "checkpoint": str(path),
               "test_role": "never constructed/evaluated"}
-    write_json(METRICS / cfg["outputs"]["training_metrics"], result)
+    write_json(METRICS / cfg["outputs"].get("training_metrics", "b31_training_metrics.json"), result)
     return result
 
 
@@ -271,17 +273,95 @@ def _vision_subset_summary(rows: list[dict]) -> dict:
             "mean_missing": missing}
 
 
+@torch.no_grad()
+def evaluate_alpha_grid(model: B31FrozenBackbone, valid_loader, device: torch.device,
+                        alphas: tuple[float, ...] = ALPHAS) -> dict[str, list[dict]]:
+    """Evaluate all alpha values while forwarding H_base/H_hat once per scenario."""
+    model.eval()
+    benchmark = scenarios()
+    keys = ("clean",) + tuple(scene.scenario_id for scene in benchmark)
+    collected = {str(alpha): {key: {"cls_true": [], "cls_pred": [], "reg_true": [],
+                                  "reg_pred": [], "vision_zero": []} for key in keys}
+                 for alpha in alphas}
+
+    def collect(alpha_key: str, scene_key: str, outputs: dict, batch: dict) -> None:
+        target = collected[alpha_key][scene_key]
+        target["cls_true"].extend(batch["cls_label"].cpu().tolist())
+        target["cls_pred"].extend(outputs["classification_logits"].argmax(-1).cpu().tolist())
+        target["reg_true"].extend(batch["reg_label"].cpu().tolist())
+        target["reg_pred"].extend(outputs["regression"].cpu().tolist())
+        target["vision_zero"].extend(batch["vision_all_zero"].cpu().tolist())
+
+    for batch in valid_loader:
+        moved = {k: (v.to(device) if isinstance(v, torch.Tensor) else v)
+                 for k, v in batch.items()}
+        for alpha_key, outputs in model.forward_alpha_grid(predictor_inputs(moved), alphas).items():
+            collect(alpha_key, "clean", outputs, moved)
+        batch_size = moved["cls_label"].shape[0]
+        for left in range(0, len(benchmark), 6):
+            chunk = benchmark[left:left + 6]
+            masked = [run_benchmark_mask(moved, scene) for scene in chunk]
+            predictor = {key: torch.cat([part[key] for part in masked], dim=0)
+                         for key in (*MODALITIES, "padding_mask")}
+            # One set of affine latent and three reconstructor forwards serves
+            # every fixed alpha for all scenarios in this chunk.
+            grid_outputs = model.forward_alpha_grid(predictor, alphas)
+            for alpha_key, outputs in grid_outputs.items():
+                for j, scene in enumerate(chunk):
+                    sliced = {key: value[j * batch_size:(j + 1) * batch_size]
+                              for key, value in outputs.items()}
+                    collect(alpha_key, scene.scenario_id, sliced, moved)
+
+    result = {}
+    for alpha_key, scenes_data in collected.items():
+        rows = []
+        for scene in (None, *benchmark):
+            scene_key = "clean" if scene is None else scene.scenario_id
+            data = scenes_data[scene_key]
+            metrics = compute_metrics(data["cls_true"], data["cls_pred"],
+                                      data["reg_true"], data["reg_pred"])
+            indices = np.flatnonzero(data["vision_zero"])
+            subset = compute_metrics(
+                np.asarray(data["cls_true"])[indices], np.asarray(data["cls_pred"])[indices],
+                np.asarray(data["reg_true"])[indices], np.asarray(data["reg_pred"])[indices],
+            ) if indices.size else None
+            rows.append({"scenario_id": scene_key,
+                         "modalities": "none" if scene is None else "+".join(scene.modalities),
+                         "rho": 0.0 if scene is None else scene.rho,
+                         "location": "clean" if scene is None else scene.location,
+                         "sample_count": len(data["cls_true"]),
+                         "selection_score": validation_selection_score(metrics),
+                         "vision_all_zero_count": int(indices.size),
+                         "vision_all_zero_metrics": subset, **metrics})
+        clean = rows[0]
+        for row in rows:
+            for metric in ("accuracy", "macro_f1", "mae", "pearson", "selection_score"):
+                row[f"delta_{metric}"] = row[metric] - clean[metric]
+        result[alpha_key] = rows
+    return result
+
+
+def run_benchmark_mask(batch: dict, scene) -> dict:
+    """Keep masking construction identical to the frozen benchmark evaluator."""
+    from src.evaluation.missing_benchmark import mask_scenario
+    return mask_scenario(batch, scene)[0]
+
+
 def sweep(config_path: Path) -> dict:
     cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     verify_benchmark(cfg)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     _, data_loaders, _ = loaders(cfg)
-    source_b0, b0_state = load_b0(cfg["training"]["init_checkpoint"], cfg["model"], device)
+    seed = int(cfg["training"]["seed"])
+    if seed not in (42, 43, 44):
+        raise ValueError("B3.1 stability runs are restricted to training seeds 42, 43, and 44")
+    model_cfg = {**cfg["model"], "_expected_seed": seed}
+    source_b0, b0_state = load_b0(cfg["training"]["init_checkpoint"], model_cfg, device)
     model = B31FrozenBackbone(**cfg["model"]).to(device).eval()
     model.load_state_dict(b0_state["model_state_dict"], strict=False)
     state = torch.load(CHECKPOINTS / cfg["outputs"]["checkpoint"],
                        map_location="cpu", weights_only=False)
-    if state["benchmark_sha256"] != BENCHMARK_SHA256 or state["training_seed"] != 42:
+    if state["benchmark_sha256"] != BENCHMARK_SHA256 or state["training_seed"] != seed:
         raise RuntimeError("B3.1 checkpoint provenance mismatch")
     model.reconstructors.load_state_dict(state["reconstructor_state_dict"])
     model.freeze_backbone()
@@ -291,22 +371,40 @@ def sweep(config_path: Path) -> dict:
     alpha0_check = alpha_zero_equivalence(model, source_b0, data_loaders["valid"], device)
     if not alpha0_check["passed"]:
         raise RuntimeError(f"alpha=0 failed exact B0 reproduction: {alpha0_check}")
-    write_json(METRICS / "b31_alpha0_equivalence.json", alpha0_check)
-    previous_b0 = json.loads((METRICS / "b2_b0_inherent_detail.json").read_text(encoding="utf-8"))
-    alpha_details = {}
-    alpha_summaries = {}
-    for alpha in ALPHAS:
-        view = AlphaView(model, alpha)
-        rows = evaluate_benchmark(view, data_loaders["valid"], device)
-        alpha_details[str(alpha)] = rows
-        alpha_summaries[str(alpha)] = summary(rows)
-    # Verify every scenario metric at alpha zero matches the previous direct B0 eval.
+    write_json(METRICS / cfg["outputs"].get("alpha0_equivalence", "b31_alpha0_equivalence.json"), alpha0_check)
+    alpha_details = evaluate_alpha_grid(model, data_loaders["valid"], device, ALPHAS)
+    alpha_summaries = {key: summary(rows) for key, rows in alpha_details.items()}
+    # Seed 42 has a stored direct B0 benchmark; every seed gets exact prediction equality above.
     alpha0_rows = alpha_details["0.0"]
-    compare_fields = ("accuracy", "macro_f1", "mae", "pearson", "confusion_matrix", "per_class")
-    alpha0_metric_match = all(alpha0_rows[i][field] == previous_b0[i][field]
-                              for i in range(55) for field in compare_fields)
-    if not alpha0_metric_match:
-        raise RuntimeError("alpha=0 scenario metrics diverge from stored direct B0 benchmark")
+    alpha0_metric_match = None
+    if seed == 42:
+        previous_b0 = json.loads((METRICS / "b2_b0_inherent_detail.json").read_text(encoding="utf-8"))
+        compare_fields = ("accuracy", "macro_f1", "mae", "pearson", "confusion_matrix", "per_class")
+        alpha0_metric_match = all(alpha0_rows[i][field] == previous_b0[i][field]
+                                  for i in range(55) for field in compare_fields)
+        if not alpha0_metric_match:
+            raise RuntimeError("alpha=0 scenario metrics diverge from stored direct B0 benchmark")
+        # The pre-optimization B3.1 sweep is the exact equivalence oracle.
+        previous_sweep = json.loads((METRICS / "b31_alpha_sweep.json").read_text(encoding="utf-8"))
+        fields = ("scenario_id", "modalities", "rho", "location", "sample_count",
+                  "selection_score", "vision_all_zero_count", "vision_all_zero_metrics",
+                  "accuracy", "macro_f1", "per_class", "confusion_matrix", "mae", "pearson",
+                  "delta_accuracy", "delta_macro_f1", "delta_mae", "delta_pearson",
+                  "delta_selection_score")
+        mismatches = []
+        for alpha_key in (str(alpha) for alpha in ALPHAS):
+            for row_i, row in enumerate(alpha_details[alpha_key]):
+                old_row = previous_sweep["alpha_details"][alpha_key][row_i]
+                for field in fields:
+                    if row[field] != old_row[field]:
+                        mismatches.append({"alpha": alpha_key, "row": row_i, "field": field})
+        verification = {"passed": not mismatches, "compared_scenarios_per_alpha": 55,
+                        "alpha_count": len(ALPHAS), "compared_fields": list(fields),
+                        "mismatch_count": len(mismatches), "mismatches": mismatches,
+                        "optimized_method": "one shared latent/reconstructor forward per scenario batch, then alpha blend/prediction"}
+        write_json(METRICS / "b32_optimized_validation_verification_seed42.json", verification)
+        if mismatches:
+            raise RuntimeError(f"optimized validation differs from original seed42 metrics: {mismatches[:5]}")
     summaries = {}
     for alpha in ALPHAS:
         rows = alpha_details[str(alpha)]
@@ -320,7 +418,7 @@ def sweep(config_path: Path) -> dict:
             "vision_all_zero": _vision_subset_summary(rows),
         }
     best_alpha = max(ALPHAS, key=lambda a: summaries[str(a)]["robust_score"])
-    result = {"training_seed": 42, "benchmark_seed": 20260923,
+    result = {"training_seed": seed, "benchmark_seed": 20260923,
               "benchmark_sha256": BENCHMARK_SHA256,
               "checkpoint": cfg["outputs"]["checkpoint"],
               "alpha0_equivalence": alpha0_check,
@@ -330,12 +428,13 @@ def sweep(config_path: Path) -> dict:
                   summaries[str(alpha)]["robust_score"] > summaries["0.0"]["robust_score"]
                   for alpha in ALPHAS[1:]),
               "alpha_details": alpha_details}
-    write_json(METRICS / "b31_alpha_sweep.json", result)
+    write_json(METRICS / cfg["outputs"].get("alpha_sweep", "b31_alpha_sweep.json"), result)
     rows_csv = []
     for alpha in ALPHAS:
         rows_csv.extend(flat_rows(f"B3.1-alpha{alpha:g}", alpha_details[str(alpha)]))
-    write_csv(METRICS / "b31_alpha_scenarios.csv", rows_csv)
-    make_report(result)
+    write_csv(METRICS / cfg["outputs"].get("alpha_scenarios", "b31_alpha_scenarios.csv"), rows_csv)
+    if seed == 42:
+        make_report(result)
     return result
 
 

@@ -1,0 +1,46 @@
+run_name: B3.2-Frozen-B0-Conservative-Reconstruction-seed43
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+  recon_hidden_dim: 128
+training:
+  seed: 43
+  epochs: 80
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  lambda_rec: 1.0
+  lambda_id: 0.0
+  class_weighting: balanced_train
+  init_checkpoint: /root/workspace/E2026/outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt
+  augmentation:
+    missing_probability_per_sample: 0.5
+    one_modality_probability_given_missing: 0.75
+    ratios:
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    - 0.5
+    modality_sampling: uniform
+    start_sampling: uniform_valid_range
+  benchmark_checkpoint_policy: no_selection_final_epoch_reconstructor
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  diagnostic_checkpoint: b3_b0_best_robust_score.pt
+  checkpoint: b32_frozen_reconstructors_seed_43.pt
+  history: b32_training_history_seed_43.json
+  training_metrics: b32_training_metrics_seed_43.json
+  alpha0_equivalence: b32_alpha0_equivalence_seed_43.json
+  alpha_sweep: b32_alpha_sweep_seed_43.json
+  alpha_scenarios: b32_alpha_scenarios_seed_43.csv
