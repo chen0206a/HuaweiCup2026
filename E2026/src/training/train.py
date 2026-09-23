@@ -14,6 +14,7 @@ import yaml
 from src.data.preprocess import build_datasets_and_loaders
 from src.models.baseline import B0Baseline, multitask_loss
 from src.training.evaluate import evaluate_loader
+from src.utils.metrics import validation_selection_score
 
 
 def seed_everything(seed: int) -> None:
@@ -71,9 +72,14 @@ def train(config_path: str | Path) -> dict:
     metrics_dir.mkdir(parents=True, exist_ok=True)
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
     checkpoint_path = checkpoints_dir / cfg["outputs"].get("checkpoint_name", "b0_best.pt")
+    score_checkpoint_path = checkpoints_dir / cfg["outputs"].get(
+        "score_checkpoint_name", "b0_best_selection_score.pt"
+    )
 
     best_valid = float("inf")
+    best_score = -float("inf")
     best_epoch = 0
+    best_score_epoch = 0
     stale_epochs = 0
     history: list[dict] = []
     start_time = time.perf_counter()
@@ -99,9 +105,11 @@ def train(config_path: str | Path) -> dict:
         )
         train_loss = running_loss / max(seen, 1)
         valid_loss = float(valid["loss"]["total"])
+        score = validation_selection_score(valid)
         row = {"epoch": epoch, "train_loss": train_loss, "valid_loss": valid_loss,
                "valid_accuracy": valid["accuracy"], "valid_macro_f1": valid["macro_f1"],
-               "valid_mae": valid["mae"], "valid_pearson": valid["pearson"]}
+               "valid_mae": valid["mae"], "valid_pearson": valid["pearson"],
+               "valid_selection_score": score, "valid_per_class": valid["per_class"]}
         history.append(row)
         print(json.dumps(row, ensure_ascii=False), flush=True)
         if valid_loss < best_valid:
@@ -118,6 +126,19 @@ def train(config_path: str | Path) -> dict:
                 "class_weights": class_weights.detach().cpu() if class_weights is not None else None,
                 "train_class_counts": train_counts.tolist(),
             }, checkpoint_path)
+        if score > best_score:
+            best_score = score
+            best_score_epoch = epoch
+            torch.save({
+                "model_state_dict": model.state_dict(),
+                "config": cfg,
+                "best_epoch": best_score_epoch,
+                "selection_score": best_score,
+                "scaler": scaler.state_dict() if scaler is not None else None,
+                "normalization": cfg["preprocessing"]["normalization"],
+                "class_weights": class_weights.detach().cpu() if class_weights is not None else None,
+                "train_class_counts": train_counts.tolist(),
+            }, score_checkpoint_path)
         else:
             stale_epochs += 1
             if stale_epochs >= int(tcfg["patience"]):
@@ -127,15 +148,21 @@ def train(config_path: str | Path) -> dict:
     history_path = metrics_dir / cfg["outputs"].get("history_filename", "b0_training_history.json")
     with history_path.open("w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
-    best = torch.load(checkpoint_path, map_location=device, weights_only=False)
-    model.load_state_dict(best["model_state_dict"])
-    # These are final reporting evaluations. Test is never used for selection.
+    loss_ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    score_ckpt = torch.load(score_checkpoint_path, map_location=device, weights_only=False)
+    model.load_state_dict(score_ckpt["model_state_dict"])
+    # Horizontal comparisons use the project validation selection score.
     train_metrics = evaluate_loader(
         model, loaders["train"], device, lambda_reg=lambda_reg, class_weights=class_weights
     )
-    valid_metrics = evaluate_loader(
+    score_valid_metrics = evaluate_loader(
         model, loaders["valid"], device, lambda_reg=lambda_reg, class_weights=class_weights
     )
+    model.load_state_dict(loss_ckpt["model_state_dict"])
+    loss_valid_metrics = evaluate_loader(
+        model, loaders["valid"], device, lambda_reg=lambda_reg, class_weights=class_weights
+    )
+    model.load_state_dict(score_ckpt["model_state_dict"])
     test_metrics = (
         evaluate_loader(model, loaders["test"], device, lambda_reg=lambda_reg)
         if evaluate_test else None
@@ -146,23 +173,25 @@ def train(config_path: str | Path) -> dict:
         "device": str(device),
         "parameter_count": sum(p.numel() for p in model.parameters()),
         "training_seconds": elapsed,
-        "best_epoch": best_epoch,
-        "best_valid_selection_loss": best_valid,
+        "best_valid_loss": {"epoch": best_epoch, "value": best_valid, "validation_metrics": loss_valid_metrics},
+        "best_selection_score": {"epoch": best_score_epoch, "value": best_score, "validation_metrics": score_valid_metrics},
         "class_weighting": class_weighting,
         "train_class_counts": train_counts.tolist(),
         "class_weights": class_weights.detach().cpu().tolist() if class_weights is not None else None,
         "split_sizes": {name: len(ds) for name, ds in datasets.items()},
-        "metrics": {"train": train_metrics, "valid": valid_metrics, "test": test_metrics},
+        "metrics": {"train": train_metrics, "valid": score_valid_metrics, "test": test_metrics},
         "test_role": (
             "final_holdout_only; evaluated after model selection" if evaluate_test
             else "not loaded into Dataset, evaluated, or used for any decision"
         ),
-        "checkpoint": str(checkpoint_path),
+        "checkpoint": str(score_checkpoint_path),
+        "best_valid_loss_checkpoint": str(checkpoint_path),
     }
     metrics_path = metrics_dir / cfg["outputs"].get("metrics_filename", "b0_metrics.json")
     with metrics_path.open("w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    print(json.dumps({"training_seconds": elapsed, "best_epoch": best_epoch,
+    print(json.dumps({"training_seconds": elapsed, "best_loss_epoch": best_epoch,
+                      "best_score_epoch": best_score_epoch,
                       "parameter_count": result["parameter_count"],
                       "metrics_path": str(metrics_path)}, ensure_ascii=False), flush=True)
     return result

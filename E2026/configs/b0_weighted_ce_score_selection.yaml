@@ -1,0 +1,35 @@
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  train_split: train
+  valid_split: valid
+  test_split: test
+  num_workers: 0
+  batch_size: 128
+
+preprocessing:
+  normalization: none
+
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+
+training:
+  seed: 42
+  device: auto
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  selection_metric: project_validation_score
+  class_weighting: balanced_train
+  evaluate_test: false
+
+outputs:
+  metrics_dir: /root/workspace/E2026/outputs/metrics
+  checkpoints_dir: /root/workspace/E2026/outputs/checkpoints
+  metrics_filename: b0_weighted_ce_score_selection_metrics.json
+  history_filename: b0_weighted_ce_score_selection_history.json
+  checkpoint_name: b0_weighted_ce_best_valid_loss.pt
+  score_checkpoint_name: b0_weighted_ce_best_selection_score.pt

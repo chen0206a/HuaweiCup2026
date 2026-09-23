@@ -50,3 +50,13 @@ def compute_metrics(y_true_cls, y_pred_cls, y_true_reg, y_pred_reg) -> dict:
         **classification_metrics(y_true_cls, y_pred_cls),
         **regression_metrics(y_true_reg, y_pred_reg),
     }
+
+
+def validation_selection_score(metrics: dict) -> float:
+    """Project-only validation score; it is not an official competition score."""
+    return float(
+        0.25 * metrics["accuracy"]
+        + 0.25 * metrics["macro_f1"]
+        + 0.25 * (1.0 - metrics["mae"] / 6.0)
+        + 0.25 * (metrics["pearson"] + 1.0) / 2.0
+    )

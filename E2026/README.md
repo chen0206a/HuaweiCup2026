@@ -20,6 +20,12 @@ B0 independently projects each modality's masked mean, concatenates the projecti
 
 `configs/b0_weighted_ce.yaml` defines a diagnostic ablation with the same B0 configuration and balanced class weights calculated from train labels only. It disables test loading and evaluation. Run it with `python -m src.training.train --config configs/b0_weighted_ce.yaml`, then build a validation-only comparison with `python scripts/compare_b0_weighted_validation.py`. `python scripts/analyze_b0_validation_selection.py` compares B0's validation metric-optimal epochs with its valid-loss-selected epoch.
 
+## B1 temporal encoder
+
+B1 uses an independent input projection and 2-layer, 4-head Transformer encoder for each modality. Fixed sinusoidal positions encode temporal order. `padding_mask` is passed to each encoder as `src_key_padding_mask=~padding_mask`; masked mean pooling also excludes padded outputs. Encoded modalities are pooled independently and concatenated, without cross-modal attention. B1-CE and B1-WeightedCE share all settings except classification-loss weighting; balanced weights use train labels only. Both use train/valid only and save separate best-valid-loss and best-selection-score checkpoints.
+
+The project-only validation score is `0.25*Accuracy + 0.25*Macro-F1 + 0.25*(1-MAE/6) + 0.25*(Pearson+1)/2`; it is not the competition's official score. Horizontal B0/B1 comparison uses the checkpoint selected by this score. Run `python scripts/smoke_b1.py`, `python scripts/overfit32_b1.py`, then `python -m src.training.train_b1 --config configs/b1_ce.yaml` and the weighted config. `python scripts/compare_b0_b1_validation.py` writes the validation-only comparison.
+
 On the server, run tests and implementation checks from this directory:
 
 ```bash
