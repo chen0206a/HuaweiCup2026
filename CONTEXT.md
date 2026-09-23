@@ -1,12 +1,14 @@
 # Current Context
 
 ## Competition
-题目：待 2026 年赛题发布后填写
+题目：已收到用户提供的 A–F 六题材料；正式选题待定
 当前日期：2026-09-23
-比赛阶段：赛前工作区初始化
+比赛阶段：候选题初步评估
 
 ## Current Main Direction
-整体建模思路：待读题后确定；目前不预设模型或结论。
+整体建模思路：已完成六题初步评估，未确认正式选题或建模路线。
+队伍条件：4050 级显卡，代码主要借助 GPT 编写；专业背景待明确。
+选题建议及材料核查：见 `notes/topic_selection_20260923.md`；建议不等于全局决定。
 
 ## Question Status
 Q1：未开始
@@ -24,13 +26,13 @@ Q2：暂无正式实验结果
 Q3：暂无正式实验结果
 
 ## Current Biggest Risks
-- 赛题、数据结构和评价目标尚未提供。
+- 已有六题材料，但尚未选择正式题目或运行基线实验。
 - 数据泄漏和样本独立性需要在读题后检查。
 
 ## Current Immediate Tasks
-1. 比赛开始后更新 `problem/problem.md` 和本快照。
-2. 全员独立阅读完整赛题，由总控明确小问依赖。
-3. 确认并记录 validation protocol 与全局决策。
+1. 围绕 D / A 优先候选核实队伍适配性，必要时用短基线验证后选题。
+2. 选题后更新 `problem/problem.md`，明确小问依赖及交接记录。
+3. 根据实际数据确认 validation protocol，再开展正式实验。
 
 ## Important Files
 - `AGENTS.md`：账号协作和工作规则
@@ -39,4 +41,4 @@ Q3：暂无正式实验结果
 
 ## Last Updated
 时间：2026-09-23
-更新者：Codex（仓库初始化）
+更新者：Codex（六题初步选题评估）
