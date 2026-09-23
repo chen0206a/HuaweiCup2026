@@ -1,0 +1,1313 @@
+{
+  "inputs": {
+    "pkl": "/root/workspace/E2026/data/raw/attachment2/aligned_50.pkl",
+    "xlsx": "/root/workspace/E2026/data/raw/attachment2/label.xlsx"
+  },
+  "pkl_top_level_type": "dict",
+  "top_level_keys": [
+    "train",
+    "valid",
+    "test"
+  ],
+  "required_splits_present": {
+    "train": true,
+    "valid": true,
+    "test": true
+  },
+  "splits": {
+    "train": {
+      "sample_count": 3395,
+      "fields": {
+        "raw_text": {
+          "python_type": "ndarray",
+          "shape": [
+            3395
+          ],
+          "dtype": "<U1662",
+          "empty_count": 0
+        },
+        "audio": {
+          "python_type": "ndarray",
+          "shape": [
+            3395,
+            50,
+            74
+          ],
+          "dtype": "float64",
+          "min": -47.73226547241211,
+          "max": 500.0,
+          "mean": 1.0542140927720114,
+          "std_population": 14.948231889686882,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 12561500,
+          "zero_count": 7464946,
+          "zero_sample_count": 0,
+          "max_abs_exact": 500.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 7.896676063537598,
+            "0.999": 241.5,
+            "0.9999": 386.5
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 6,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 92933,
+            "all_zero_timestep_ratio": 0.5474698085419735,
+            "leading_zero_timestep_count": 3460,
+            "trailing_zero_timestep_count": 89473,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 6855,
+              "valid_position_count": 83672,
+              "all_zero_rate_within_valid_positions": 0.08192704847499761,
+              "all_zero_timestep_within_masked_suffix": 86078,
+              "masked_suffix_position_count": 86078,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 3438,
+                "middle": 22,
+                "late": 3395
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        },
+        "vision": {
+          "python_type": "ndarray",
+          "shape": [
+            3395,
+            50,
+            35
+          ],
+          "dtype": "float64",
+          "min": -37.746498107910156,
+          "max": 29.028600692749023,
+          "mean": -0.383946401756436,
+          "std_population": 1.7497746037506856,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 5941250,
+          "zero_count": 3399170,
+          "zero_sample_count": 110,
+          "max_abs_exact": 37.746498107910156,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 7.9837640810012855,
+            "0.999": 17.4419002532959,
+            "0.9999": 23.58540113773441
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 110,
+            "all_zero_timestep_count": 97117,
+            "all_zero_timestep_ratio": 0.5721178203240059,
+            "leading_zero_timestep_count": 4263,
+            "trailing_zero_timestep_count": 86611,
+            "interior_zero_timestep_count": 743,
+            "samples_with_interior_zero_timestep": 146,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 11039,
+              "valid_position_count": 83672,
+              "all_zero_rate_within_valid_positions": 0.131931829046754,
+              "all_zero_timestep_within_masked_suffix": 86078,
+              "masked_suffix_position_count": 86078,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 4734,
+                "middle": 1561,
+                "late": 4744
+              },
+              "samples_all_zero_across_valid_region": 110
+            }
+          }
+        },
+        "id": {
+          "python_type": "list",
+          "shape": [
+            3395
+          ],
+          "dtype": "<U16",
+          "empty_count": 0
+        },
+        "text_bert": {
+          "python_type": "ndarray",
+          "shape": [
+            3395,
+            3,
+            50
+          ],
+          "dtype": "int64",
+          "min": 0.0,
+          "max": 29824.0,
+          "mean": 536.660559646539,
+          "std_population": 2126.5886562234555,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 509250,
+          "zero_count": 341906,
+          "zero_sample_count": 0,
+          "max_abs_exact": 29824.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 10390.0,
+            "0.999": 26114.0,
+            "0.9999": 29128.351800000295
+          },
+          "abs_quantiles_sample_size": 509250,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 76882,
+          "component_axis1_profiles": [
+            {
+              "component_index": 0,
+              "min": 0.0,
+              "max": 29824.0,
+              "zero_ratio": 0.5070868924889543,
+              "unique_value_count_capped_at_10000": 7572
+            },
+            {
+              "component_index": 1,
+              "min": 0.0,
+              "max": 1.0,
+              "zero_ratio": 0.5070868924889543,
+              "unique_value_count_capped_at_10000": 2
+            },
+            {
+              "component_index": 2,
+              "min": 0.0,
+              "max": 0.0,
+              "zero_ratio": 1.0,
+              "unique_value_count_capped_at_10000": 1
+            }
+          ]
+        },
+        "classification_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            3395
+          ],
+          "dtype": "float64",
+          "min": 0.0,
+          "max": 2.0,
+          "mean": 1.2070692194403534,
+          "std_population": 0.8566521022966087,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 3395,
+          "zero_count": 967,
+          "zero_sample_count": null,
+          "max_abs_exact": 2.0,
+          "abs_quantiles_sampled": {
+            "0.5": 1.0,
+            "0.99": 2.0,
+            "0.999": 2.0,
+            "0.9999": 2.0
+          },
+          "abs_quantiles_sample_size": 3395,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "regression_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            3395
+          ],
+          "dtype": "float64",
+          "min": -3.0,
+          "max": 3.0,
+          "mean": 0.16583210777639465,
+          "std_population": 1.1149631461954514,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 3395,
+          "zero_count": 758,
+          "zero_sample_count": null,
+          "max_abs_exact": 3.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.6666666865348816,
+            "0.99": 2.6666667461395264,
+            "0.999": 3.0,
+            "0.9999": 3.0
+          },
+          "abs_quantiles_sample_size": 3395,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "text": {
+          "python_type": "ndarray",
+          "shape": [
+            3395,
+            50,
+            768
+          ],
+          "dtype": "float32",
+          "min": -9.978325843811035,
+          "max": 4.965427398681641,
+          "mean": -0.0101705901324749,
+          "std_population": 0.45943358540534973,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 130368000,
+          "zero_count": 1,
+          "zero_sample_count": 0,
+          "max_abs_exact": 9.978325843811035,
+          "abs_quantiles_sampled": {
+            "0.5": 0.24050524085760117,
+            "0.99": 1.2343701696395875,
+            "0.999": 4.412645346164604,
+            "0.9999": 6.893850886392646
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 0,
+            "all_zero_timestep_ratio": 0.0,
+            "leading_zero_timestep_count": 0,
+            "trailing_zero_timestep_count": 0,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 0,
+              "valid_position_count": 83672,
+              "all_zero_rate_within_valid_positions": 0.0,
+              "all_zero_timestep_within_masked_suffix": 0,
+              "masked_suffix_position_count": 86078,
+              "nonzero_modality_timestep_inside_masked_suffix": 86078,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 0,
+                "middle": 0,
+                "late": 0
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        }
+      },
+      "id": {
+        "present": true,
+        "count": 3395,
+        "unique_count": 3395,
+        "duplicate_count": 0,
+        "duplicate_examples": [],
+        "format_counts": {
+          "matches video$_$clip": 3395
+        },
+        "examples": [
+          "-3g5yACwYnA$_$4",
+          "-HwX2H8Z4hY$_$3",
+          "-HwX2H8Z4hY$_$9"
+        ],
+        "empty_raw_text_count": 0
+      },
+      "observed_validity_mask_candidate": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 3,
+        "median_valid_length": 22.0,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      },
+      "exact_duplicate_multimodal_feature_pairs": 0,
+      "exact_duplicate_multimodal_feature_examples": []
+    },
+    "valid": {
+      "sample_count": 728,
+      "fields": {
+        "raw_text": {
+          "python_type": "ndarray",
+          "shape": [
+            728
+          ],
+          "dtype": "<U1570",
+          "empty_count": 0
+        },
+        "audio": {
+          "python_type": "ndarray",
+          "shape": [
+            728,
+            50,
+            74
+          ],
+          "dtype": "float64",
+          "min": -44.918243408203125,
+          "max": 499.0,
+          "mean": 1.0798619597803265,
+          "std_population": 14.933064617639944,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 2693600,
+          "zero_count": 1553467,
+          "zero_sample_count": 0,
+          "max_abs_exact": 499.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 8.167459764480594,
+            "0.999": 239.0,
+            "0.9999": 375.0
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 19274,
+            "all_zero_timestep_ratio": 0.5295054945054946,
+            "leading_zero_timestep_count": 774,
+            "trailing_zero_timestep_count": 18500,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 1502,
+              "valid_position_count": 18628,
+              "all_zero_rate_within_valid_positions": 0.08063130770882543,
+              "all_zero_timestep_within_masked_suffix": 17772,
+              "masked_suffix_position_count": 17772,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 744,
+                "middle": 17,
+                "late": 741
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        },
+        "vision": {
+          "python_type": "ndarray",
+          "shape": [
+            728,
+            50,
+            35
+          ],
+          "dtype": "float64",
+          "min": -30.58169937133789,
+          "max": 26.221500396728516,
+          "mean": -0.38082381484071454,
+          "std_population": 1.7549254227062359,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 1274000,
+          "zero_count": 707400,
+          "zero_sample_count": 15,
+          "max_abs_exact": 30.58169937133789,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 7.9480132675170925,
+            "0.999": 17.832300186157227,
+            "0.9999": 22.8372803403848
+          },
+          "abs_quantiles_sample_size": 1274000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 15,
+            "all_zero_timestep_count": 20208,
+            "all_zero_timestep_ratio": 0.5551648351648352,
+            "leading_zero_timestep_count": 945,
+            "trailing_zero_timestep_count": 18325,
+            "interior_zero_timestep_count": 188,
+            "samples_with_interior_zero_timestep": 43,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 2436,
+              "valid_position_count": 18628,
+              "all_zero_rate_within_valid_positions": 0.1307708825424093,
+              "all_zero_timestep_within_masked_suffix": 17772,
+              "masked_suffix_position_count": 17772,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 1025,
+                "middle": 348,
+                "late": 1063
+              },
+              "samples_all_zero_across_valid_region": 15
+            }
+          }
+        },
+        "id": {
+          "python_type": "list",
+          "shape": [
+            728
+          ],
+          "dtype": "<U16",
+          "empty_count": 0
+        },
+        "text_bert": {
+          "python_type": "ndarray",
+          "shape": [
+            728,
+            3,
+            50
+          ],
+          "dtype": "int64",
+          "min": 0.0,
+          "max": 29589.0,
+          "mean": 558.924010989011,
+          "std_population": 2155.7387683647567,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 109200,
+          "zero_count": 71944,
+          "zero_sample_count": 0,
+          "max_abs_exact": 29589.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 10377.0,
+            "0.999": 26114.0,
+            "0.9999": 29208.242800000182
+          },
+          "abs_quantiles_sample_size": 109200,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 17172,
+          "component_axis1_profiles": [
+            {
+              "component_index": 0,
+              "min": 0.0,
+              "max": 29589.0,
+              "zero_ratio": 0.48824175824175825,
+              "unique_value_count_capped_at_10000": 3191
+            },
+            {
+              "component_index": 1,
+              "min": 0.0,
+              "max": 1.0,
+              "zero_ratio": 0.48824175824175825,
+              "unique_value_count_capped_at_10000": 2
+            },
+            {
+              "component_index": 2,
+              "min": 0.0,
+              "max": 0.0,
+              "zero_ratio": 1.0,
+              "unique_value_count_capped_at_10000": 1
+            }
+          ]
+        },
+        "classification_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            728
+          ],
+          "dtype": "float64",
+          "min": 0.0,
+          "max": 2.0,
+          "mean": 1.1813186813186813,
+          "std_population": 0.8452078342381841,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 728,
+          "zero_count": 206,
+          "zero_sample_count": null,
+          "max_abs_exact": 2.0,
+          "abs_quantiles_sampled": {
+            "0.5": 1.0,
+            "0.99": 2.0,
+            "0.999": 2.0,
+            "0.9999": 2.0
+          },
+          "abs_quantiles_sample_size": 728,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "regression_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            728
+          ],
+          "dtype": "float64",
+          "min": -3.0,
+          "max": 3.0,
+          "mean": 0.16094322484191304,
+          "std_population": 1.0428864926774235,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 728,
+          "zero_count": 184,
+          "zero_sample_count": null,
+          "max_abs_exact": 3.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.6666666865348816,
+            "0.99": 2.6666667461395264,
+            "0.999": 3.0,
+            "0.9999": 3.0
+          },
+          "abs_quantiles_sample_size": 728,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "text": {
+          "python_type": "ndarray",
+          "shape": [
+            728,
+            50,
+            768
+          ],
+          "dtype": "float32",
+          "min": -9.845565795898438,
+          "max": 4.626781940460205,
+          "mean": -0.010211119428277016,
+          "std_population": 0.46113914251327515,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 27955200,
+          "zero_count": 0,
+          "zero_sample_count": 0,
+          "max_abs_exact": 9.845565795898438,
+          "abs_quantiles_sampled": {
+            "0.5": 0.24196863174438477,
+            "0.99": 1.242142233848572,
+            "0.999": 4.235215066432929,
+            "0.9999": 6.888082059574147
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 0,
+            "all_zero_timestep_ratio": 0.0,
+            "leading_zero_timestep_count": 0,
+            "trailing_zero_timestep_count": 0,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 0,
+              "valid_position_count": 18628,
+              "all_zero_rate_within_valid_positions": 0.0,
+              "all_zero_timestep_within_masked_suffix": 0,
+              "masked_suffix_position_count": 17772,
+              "nonzero_modality_timestep_inside_masked_suffix": 17772,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 0,
+                "middle": 0,
+                "late": 0
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        }
+      },
+      "id": {
+        "present": true,
+        "count": 728,
+        "unique_count": 728,
+        "duplicate_count": 0,
+        "duplicate_examples": [],
+        "format_counts": {
+          "matches video$_$clip": 728
+        },
+        "examples": [
+          "-UacrmKiTn4$_$7",
+          "-qDkUB0GgYY$_$5",
+          "0utROiKxejc$_$1"
+        ],
+        "empty_raw_text_count": 0
+      },
+      "observed_validity_mask_candidate": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 3,
+        "median_valid_length": 23.5,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      },
+      "exact_duplicate_multimodal_feature_pairs": 0,
+      "exact_duplicate_multimodal_feature_examples": []
+    },
+    "test": {
+      "sample_count": 727,
+      "fields": {
+        "raw_text": {
+          "python_type": "ndarray",
+          "shape": [
+            727
+          ],
+          "dtype": "<U1479",
+          "empty_count": 0
+        },
+        "audio": {
+          "python_type": "ndarray",
+          "shape": [
+            727,
+            50,
+            74
+          ],
+          "dtype": "float64",
+          "min": -50.873077392578125,
+          "max": 500.0,
+          "mean": 1.0803867092167778,
+          "std_population": 15.170482412993083,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 2689900,
+          "zero_count": 1570682,
+          "zero_sample_count": 0,
+          "max_abs_exact": 500.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 8.091154356002809,
+            "0.999": 251.0,
+            "0.9999": 382.0
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 3,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 19495,
+            "all_zero_timestep_ratio": 0.5363136176066025,
+            "leading_zero_timestep_count": 727,
+            "trailing_zero_timestep_count": 18768,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 1454,
+              "valid_position_count": 18309,
+              "all_zero_rate_within_valid_positions": 0.07941449560325523,
+              "all_zero_timestep_within_masked_suffix": 18041,
+              "masked_suffix_position_count": 18041,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 727,
+                "middle": 0,
+                "late": 727
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        },
+        "vision": {
+          "python_type": "ndarray",
+          "shape": [
+            727,
+            50,
+            35
+          ],
+          "dtype": "float64",
+          "min": -29.1875,
+          "max": 27.900800704956055,
+          "mean": -0.3753004025233552,
+          "std_population": 1.7269197714373534,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 1272250,
+          "zero_count": 718175,
+          "zero_sample_count": 28,
+          "max_abs_exact": 29.1875,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 8.0896181678772,
+            "0.999": 16.65272584342949,
+            "0.9999": 22.635052904891815
+          },
+          "abs_quantiles_sample_size": 1272250,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 28,
+            "all_zero_timestep_count": 20519,
+            "all_zero_timestep_ratio": 0.564484181568088,
+            "leading_zero_timestep_count": 863,
+            "trailing_zero_timestep_count": 18055,
+            "interior_zero_timestep_count": 201,
+            "samples_with_interior_zero_timestep": 41,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 2478,
+              "valid_position_count": 18309,
+              "all_zero_rate_within_valid_positions": 0.1353432737997706,
+              "all_zero_timestep_within_masked_suffix": 18041,
+              "masked_suffix_position_count": 18041,
+              "nonzero_modality_timestep_inside_masked_suffix": 0,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 1031,
+                "middle": 344,
+                "late": 1103
+              },
+              "samples_all_zero_across_valid_region": 28
+            }
+          }
+        },
+        "id": {
+          "python_type": "list",
+          "shape": [
+            727
+          ],
+          "dtype": "<U16",
+          "empty_count": 0
+        },
+        "text_bert": {
+          "python_type": "ndarray",
+          "shape": [
+            727,
+            3,
+            50
+          ],
+          "dtype": "int64",
+          "min": 0.0,
+          "max": 29476.0,
+          "mean": 544.1078771205869,
+          "std_population": 2105.8678589344804,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 109050,
+          "zero_count": 72432,
+          "zero_sample_count": 0,
+          "max_abs_exact": 29476.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.0,
+            "0.99": 10197.509999999995,
+            "0.999": 26114.0,
+            "0.9999": 28841.279500000266
+          },
+          "abs_quantiles_sample_size": 109050,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 16855,
+          "component_axis1_profiles": [
+            {
+              "component_index": 0,
+              "min": 0.0,
+              "max": 29476.0,
+              "zero_ratio": 0.4963136176066025,
+              "unique_value_count_capped_at_10000": 3229
+            },
+            {
+              "component_index": 1,
+              "min": 0.0,
+              "max": 1.0,
+              "zero_ratio": 0.4963136176066025,
+              "unique_value_count_capped_at_10000": 2
+            },
+            {
+              "component_index": 2,
+              "min": 0.0,
+              "max": 0.0,
+              "zero_ratio": 1.0,
+              "unique_value_count_capped_at_10000": 1
+            }
+          ]
+        },
+        "classification_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            727
+          ],
+          "dtype": "float64",
+          "min": 0.0,
+          "max": 2.0,
+          "mean": 1.2132049518569463,
+          "std_population": 0.8586105922893306,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 727,
+          "zero_count": 207,
+          "zero_sample_count": null,
+          "max_abs_exact": 2.0,
+          "abs_quantiles_sampled": {
+            "0.5": 1.0,
+            "0.99": 2.0,
+            "0.999": 2.0,
+            "0.9999": 2.0
+          },
+          "abs_quantiles_sample_size": 727,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "regression_labels": {
+          "python_type": "ndarray",
+          "shape": [
+            727
+          ],
+          "dtype": "float64",
+          "min": -3.0,
+          "max": 3.0,
+          "mean": 0.14121962741447774,
+          "std_population": 1.1573125385208927,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 727,
+          "zero_count": 158,
+          "zero_sample_count": null,
+          "max_abs_exact": 3.0,
+          "abs_quantiles_sampled": {
+            "0.5": 0.6666666865348816,
+            "0.99": 2.6666667461395264,
+            "0.999": 3.0,
+            "0.9999": 3.0
+          },
+          "abs_quantiles_sample_size": 727,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0
+        },
+        "text": {
+          "python_type": "ndarray",
+          "shape": [
+            727,
+            50,
+            768
+          ],
+          "dtype": "float32",
+          "min": -9.85290241241455,
+          "max": 5.553917407989502,
+          "mean": -0.010209925472736359,
+          "std_population": 0.46076700091362,
+          "nan_count": 0,
+          "inf_count": 0,
+          "finite_count": 27916800,
+          "zero_count": 0,
+          "zero_sample_count": 0,
+          "max_abs_exact": 9.85290241241455,
+          "abs_quantiles_sampled": {
+            "0.5": 0.2417355179786682,
+            "0.99": 1.2384208858013153,
+            "0.999": 4.310375506400779,
+            "0.9999": 6.890493392944336
+          },
+          "abs_quantiles_sample_size": 2000000,
+          "abs_quantiles_sampling": "exact if <= 2,000,000 values; otherwise deterministic uniform sampling with replacement (seed 20260923), capped at 2,000,000 values",
+          "count_abs_gt_1e6": 0,
+          "count_abs_ge_499_9": 0,
+          "temporal": {
+            "timesteps_per_sample": 50,
+            "all_zero_sample_count": 0,
+            "all_zero_timestep_count": 0,
+            "all_zero_timestep_ratio": 0.0,
+            "leading_zero_timestep_count": 0,
+            "trailing_zero_timestep_count": 0,
+            "interior_zero_timestep_count": 0,
+            "samples_with_interior_zero_timestep": 0,
+            "constant_feature_dimensions_global": [],
+            "constant_feature_dimension_count": 0,
+            "against_observed_text_bert_mask": {
+              "all_zero_timestep_within_valid_positions": 0,
+              "valid_position_count": 18309,
+              "all_zero_rate_within_valid_positions": 0.0,
+              "all_zero_timestep_within_masked_suffix": 0,
+              "masked_suffix_position_count": 18041,
+              "nonzero_modality_timestep_inside_masked_suffix": 18041,
+              "valid_region_zero_counts_by_early_middle_late": {
+                "early": 0,
+                "middle": 0,
+                "late": 0
+              },
+              "samples_all_zero_across_valid_region": 0
+            }
+          }
+        }
+      },
+      "id": {
+        "present": true,
+        "count": 727,
+        "unique_count": 727,
+        "duplicate_count": 0,
+        "duplicate_examples": [],
+        "format_counts": {
+          "matches video$_$clip": 727
+        },
+        "examples": [
+          "-AUZQgSxyPQ$_$2",
+          "-HeZS2-Prhc$_$2",
+          "-MeTTeMJBNc$_$0"
+        ],
+        "empty_raw_text_count": 0
+      },
+      "observed_validity_mask_candidate": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 4,
+        "median_valid_length": 23.0,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      },
+      "exact_duplicate_multimodal_feature_pairs": 0,
+      "exact_duplicate_multimodal_feature_examples": []
+    }
+  },
+  "split_overlap": {
+    "train__valid": {
+      "overlap_count": 0,
+      "examples": []
+    },
+    "train__test": {
+      "overlap_count": 0,
+      "examples": []
+    },
+    "valid__test": {
+      "overlap_count": 0,
+      "examples": []
+    }
+  },
+  "labels": {
+    "train": {
+      "classification_labels_present": true,
+      "classification_raw_value_counts": {
+        "2.0": 1670,
+        "0.0": 967,
+        "1.0": 758
+      },
+      "annotations_present": false,
+      "annotation_raw_value_counts": {},
+      "regression": {
+        "count": 3395,
+        "nan_count": 0,
+        "inf_count": 0,
+        "min": -3.0,
+        "max": 3.0,
+        "mean": 0.16583210777639465,
+        "std_population": 1.1149631461954514,
+        "quantiles": {
+          "0": -3.0,
+          "0.01": -2.6666667461395264,
+          "0.05": -2.0,
+          "0.25": -0.3333333432674408,
+          "0.5": 0.0,
+          "0.75": 0.6666666865348816,
+          "0.95": 2.0,
+          "0.99": 2.6666667461395264,
+          "1": 3.0
+        },
+        "sign_rule_class_counts": {
+          "Positive": 1670,
+          "Negative": 967,
+          "Neutral": 758
+        }
+      },
+      "classification_vs_regression_mismatch_count": 0,
+      "classification_vs_regression_mismatch_examples": []
+    },
+    "valid": {
+      "classification_labels_present": true,
+      "classification_raw_value_counts": {
+        "2.0": 338,
+        "1.0": 184,
+        "0.0": 206
+      },
+      "annotations_present": false,
+      "annotation_raw_value_counts": {},
+      "regression": {
+        "count": 728,
+        "nan_count": 0,
+        "inf_count": 0,
+        "min": -3.0,
+        "max": 3.0,
+        "mean": 0.16094322484191304,
+        "std_population": 1.0428864926774235,
+        "quantiles": {
+          "0": -3.0,
+          "0.01": -2.6666667461395264,
+          "0.05": -1.6666666269302368,
+          "0.25": -0.3333333432674408,
+          "0.5": 0.0,
+          "0.75": 0.6666666865348816,
+          "0.95": 2.0,
+          "0.99": 2.3333332538604736,
+          "1": 3.0
+        },
+        "sign_rule_class_counts": {
+          "Positive": 338,
+          "Neutral": 184,
+          "Negative": 206
+        }
+      },
+      "classification_vs_regression_mismatch_count": 0,
+      "classification_vs_regression_mismatch_examples": []
+    },
+    "test": {
+      "classification_labels_present": true,
+      "classification_raw_value_counts": {
+        "2.0": 362,
+        "0.0": 207,
+        "1.0": 158
+      },
+      "annotations_present": false,
+      "annotation_raw_value_counts": {},
+      "regression": {
+        "count": 727,
+        "nan_count": 0,
+        "inf_count": 0,
+        "min": -3.0,
+        "max": 3.0,
+        "mean": 0.14121962741447774,
+        "std_population": 1.1573125385208927,
+        "quantiles": {
+          "0": -3.0,
+          "0.01": -2.6666667461395264,
+          "0.05": -2.0,
+          "0.25": -0.3333333432674408,
+          "0.5": 0.0,
+          "0.75": 1.0,
+          "0.95": 2.0,
+          "0.99": 2.3333332538604736,
+          "1": 3.0
+        },
+        "sign_rule_class_counts": {
+          "Positive": 362,
+          "Negative": 207,
+          "Neutral": 158
+        }
+      },
+      "classification_vs_regression_mismatch_count": 0,
+      "classification_vs_regression_mismatch_examples": []
+    },
+    "classification_encoding_crosschecked_to_xlsx_annotation": {
+      "contingency_raw_classification_value_by_annotation": {
+        "2.0": {
+          "positive": 2370
+        },
+        "0.0": {
+          "negative": 1380
+        },
+        "1.0": {
+          "neutral": 1100
+        }
+      },
+      "inferred_encoding": {
+        "2.0": "positive",
+        "0.0": "negative",
+        "1.0": "neutral"
+      },
+      "mapping_unambiguous": true,
+      "classification_annotation_mismatch_count": 0,
+      "classification_annotation_mismatch_examples": [],
+      "regression_sign_vs_xlsx_annotation_mismatch_count": 0,
+      "regression_sign_vs_xlsx_annotation_mismatch_examples": []
+    },
+    "overall_regression": {
+      "count": 4850,
+      "min": -3.0,
+      "max": 3.0,
+      "mean": 0.1614089366424944,
+      "std_population": 1.1109889858383002,
+      "quantiles": {
+        "0": -3.0,
+        "0.01": -2.6666667461395264,
+        "0.05": -2.0,
+        "0.25": -0.3333333432674408,
+        "0.5": 0.0,
+        "0.75": 1.0,
+        "0.95": 2.0,
+        "0.99": 2.6666667461395264,
+        "1": 3.0
+      },
+      "sign_rule_class_counts": {
+        "Positive": 2370,
+        "Negative": 1380,
+        "Neutral": 1100
+      }
+    }
+  },
+  "xlsx_crosscheck": {
+    "sheet_names": [
+      "label"
+    ],
+    "row_count": 4850,
+    "columns": [
+      "video_id",
+      "clip_id",
+      "text",
+      "label",
+      "annotation",
+      "mode",
+      "_sheet"
+    ],
+    "constructed_id_rule": "video_id + '$_$' + clip_id",
+    "id_duplicate_count": 0,
+    "pkl_ids_missing_from_xlsx_count": 0,
+    "pkl_ids_missing_from_xlsx_examples": [],
+    "xlsx_ids_missing_from_pkl_count": 0,
+    "xlsx_ids_missing_from_pkl_examples": [],
+    "one_to_one_id_set_match": true,
+    "mode_counts": {
+      "train": 3395,
+      "valid": 728,
+      "test": 727
+    },
+    "per_split": {
+      "train": {
+        "pkl_count": 3395,
+        "xlsx_count": 3395,
+        "id_set_match": true,
+        "pkl_only_count": 0,
+        "xlsx_only_count": 0
+      },
+      "valid": {
+        "pkl_count": 728,
+        "xlsx_count": 728,
+        "id_set_match": true,
+        "pkl_only_count": 0,
+        "xlsx_only_count": 0
+      },
+      "test": {
+        "pkl_count": 727,
+        "xlsx_count": 727,
+        "id_set_match": true,
+        "pkl_only_count": 0,
+        "xlsx_only_count": 0
+      }
+    },
+    "label_comparison": {
+      "label_column": true,
+      "annotation_column": true,
+      "label_numeric_mismatch_count": 0,
+      "annotation_pkl_field_present": false,
+      "annotation_pkl_mismatch_count": null,
+      "label_numeric_mismatch_examples": [],
+      "annotation_pkl_mismatch_examples": []
+    }
+  },
+  "padding": {
+    "cross_modality_zero_mask_comparison": {
+      "train": {
+        "text__audio": {
+          "exact_mask_agreement_ratio": 0.45253019145802653,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 92933
+        },
+        "text__vision": {
+          "exact_mask_agreement_ratio": 0.4278821796759941,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 97117
+        },
+        "audio__vision": {
+          "exact_mask_agreement_ratio": 0.9753519882179676,
+          "both_zero_positions": 92933,
+          "only_first_zero": 0,
+          "only_second_zero": 4184
+        }
+      },
+      "valid": {
+        "text__audio": {
+          "exact_mask_agreement_ratio": 0.4704945054945055,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 19274
+        },
+        "text__vision": {
+          "exact_mask_agreement_ratio": 0.44483516483516483,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 20208
+        },
+        "audio__vision": {
+          "exact_mask_agreement_ratio": 0.9743406593406594,
+          "both_zero_positions": 19274,
+          "only_first_zero": 0,
+          "only_second_zero": 934
+        }
+      },
+      "test": {
+        "text__audio": {
+          "exact_mask_agreement_ratio": 0.46368638239339754,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 19495
+        },
+        "text__vision": {
+          "exact_mask_agreement_ratio": 0.43551581843191195,
+          "both_zero_positions": 0,
+          "only_first_zero": 0,
+          "only_second_zero": 20519
+        },
+        "audio__vision": {
+          "exact_mask_agreement_ratio": 0.9718294360385145,
+          "both_zero_positions": 19495,
+          "only_first_zero": 0,
+          "only_second_zero": 1024
+        }
+      }
+    },
+    "explicit_length_fields": [],
+    "nested_mask_candidates": {
+      "train": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 3,
+        "median_valid_length": 22.0,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      },
+      "valid": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 3,
+        "median_valid_length": 23.5,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      },
+      "test": {
+        "candidate_field": "text_bert",
+        "candidate_component_index": 1,
+        "validated_binary_prefix_suffix_pattern": true,
+        "timesteps": 50,
+        "min_valid_length": 4,
+        "median_valid_length": 23.0,
+        "max_valid_length": 50,
+        "zero_suffix_for_all_samples": true
+      }
+    },
+    "interpretation_note": "All-zero timestep is an observed data property; the candidate binary prefix/suffix mask inside text_bert is checked against each modality. It is not assumed that all zero feature vectors mean padding or missing."
+  },
+  "duplicate_samples": {
+    "exact_multimodal_feature_duplicate_pair_count_across_all_splits": 0,
+    "exact_multimodal_feature_duplicate_examples": []
+  }
+}
