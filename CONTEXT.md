@@ -12,14 +12,19 @@
 六题比较作为历史保留：`notes/topic_selection_20260923.md`。
 
 ## Question Status
-Q1：完成候选算法设计，待评价入口和基线。
+Q1：Baseline V0 已实现，官方 evaluator 与单核分母均跑通（见 `results/q1_v0/`）。V1 未开始。
 Q2：确认按核心边界计通信，子图顺序仍影响核内调度，待实现。
 Q3：确认按COPY_IN发射/完成事件分析FIFO，待实现。
 Q4：A题无此问，保留初始化目录。
 
 ## Confirmed Results and Validation
-没有正式优化实验或多核加速比。已完成一个人工分叉图的评估语义检查、三例单核计时探测，见 `notes/a_review_checks/`；这些不是论文性能结果。
-最终性能须使用未修改的题目评估器与固定config。拟议评价设计在方案文档内，全局validation_protocol尚未修改或确认。
+Q1 Baseline V0 结果（全部来自未修改的官方 problem_1 evaluator，固定 config）：
+`results/q1_v0/baseline_v0.csv` 6 例 × K=2..5 共 24 组，全部 success；单核分母见 `results/q1_v0/singlecore_baseline.csv`。
+代表例加速比：case_036 最高 4.98×，case_093 2.96×，case_025 2.00×，case_074 1.03×，case_026 0.97×，case_014 0.97×（后两例低于单核）。
+代理 makespan 相对官方实测比值 1.00–1.26，说明时序模型正确，但代理只作筛选、不作结论。
+官方源码哈希已复核未改动（`src/q1/check_official.py`）。这些是真实基线，不是论文最终成绩。
+更早的一个人工分叉图语义检查与三例单核计时探测见 `notes/a_review_checks/`。
+全局 validation_protocol 尚未修改或确认。
 
 ## Current Biggest Risks
 - 逐边累计通信会误计共享张量；A与B对跨边界扇出写回的计数不同。
