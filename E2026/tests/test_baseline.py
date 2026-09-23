@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 
 from src.models.baseline import B0Baseline, masked_mean_pool, multitask_loss
 
@@ -21,3 +22,17 @@ def test_forward_backward_shapes():
     assert output["regression"].shape == (2,)
     multitask_loss(output, batch)["total"].backward()
     assert all(param.grad is not None for param in model.parameters())
+
+
+def test_weighted_ce_changes_only_classification_loss():
+    outputs = {
+        "classification_logits": torch.tensor([[2.0, 0.0, -1.0], [0.0, 2.0, -1.0]]),
+        "regression": torch.tensor([0.25, -0.25]),
+    }
+    batch = {"cls_label": torch.tensor([0, 1]), "reg_label": torch.tensor([0.0, 0.0])}
+    weights = torch.tensor([0.5, 1.5, 1.0])
+    plain = multitask_loss(outputs, batch, lambda_reg=1.0)
+    weighted = multitask_loss(outputs, batch, lambda_reg=1.0, class_weights=weights)
+    expected = F.cross_entropy(outputs["classification_logits"], batch["cls_label"], weight=weights)
+    assert torch.allclose(weighted["cross_entropy"], expected)
+    assert torch.equal(weighted["smooth_l1"], plain["smooth_l1"])

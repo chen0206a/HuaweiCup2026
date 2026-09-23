@@ -18,6 +18,8 @@ The default is `normalization: none`, which uses the supplied processed features
 
 B0 independently projects each modality's masked mean, concatenates the projections, and predicts the 3-class label and regression score with a small MLP. Its loss is cross entropy plus configurable `lambda_reg * SmoothL1`; no class weighting is used. Train optimizes parameters, valid selects the checkpoint, and test is evaluated only after selection as a holdout.
 
+`configs/b0_weighted_ce.yaml` defines a diagnostic ablation with the same B0 configuration and balanced class weights calculated from train labels only. It disables test loading and evaluation. Run it with `python -m src.training.train --config configs/b0_weighted_ce.yaml`, then build a validation-only comparison with `python scripts/compare_b0_weighted_validation.py`. `python scripts/analyze_b0_validation_selection.py` compares B0's validation metric-optimal epochs with its valid-loss-selected epoch.
+
 On the server, run tests and implementation checks from this directory:
 
 ```bash

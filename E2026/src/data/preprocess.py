@@ -80,13 +80,14 @@ def build_datasets_and_loaders(
     batch_size: int = 64,
     num_workers: int = 0,
     seed: int = 42,
+    include_test: bool = True,
 ) -> tuple[dict[str, Aligned50Dataset], dict[str, DataLoader], TrainFeaturewiseScaler | None]:
     if normalization not in {"none", "train_featurewise"}:
         raise ValueError("normalization must be 'none' or 'train_featurewise'")
     if num_workers < 0 or num_workers > 2:
         raise ValueError("num_workers must be 0, 1, or 2 for this approximately 1 GB pickle")
     data = load_pickle_readonly(pkl_path)
-    required_splits = ("train", "valid", "test")
+    required_splits = ("train", "valid", "test") if include_test else ("train", "valid")
     if any(split not in data for split in required_splits):
         raise ValueError(f"expected audited splits {required_splits}, got {list(data)}")
     datasets = {split: Aligned50Dataset(data[split], split) for split in required_splits}
@@ -100,6 +101,7 @@ def build_datasets_and_loaders(
     loaders = {
         "train": DataLoader(datasets["train"], batch_size=batch_size, shuffle=True, num_workers=num_workers, generator=generator),
         "valid": DataLoader(datasets["valid"], batch_size=batch_size, shuffle=False, num_workers=num_workers),
-        "test": DataLoader(datasets["test"], batch_size=batch_size, shuffle=False, num_workers=num_workers),
     }
+    if include_test:
+        loaders["test"] = DataLoader(datasets["test"], batch_size=batch_size, shuffle=False, num_workers=num_workers)
     return datasets, loaders, scaler

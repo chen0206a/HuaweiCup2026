@@ -54,8 +54,11 @@ def multitask_loss(
     outputs: dict[str, torch.Tensor],
     batch: dict[str, torch.Tensor],
     lambda_reg: float = 1.0,
+    class_weights: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor]:
-    ce = nn.functional.cross_entropy(outputs["classification_logits"], batch["cls_label"])
+    ce = nn.functional.cross_entropy(
+        outputs["classification_logits"], batch["cls_label"], weight=class_weights
+    )
     smooth_l1 = nn.functional.smooth_l1_loss(outputs["regression"], batch["reg_label"])
     total = ce + float(lambda_reg) * smooth_l1
     return {"total": total, "cross_entropy": ce, "smooth_l1": smooth_l1}

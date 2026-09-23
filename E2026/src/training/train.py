@@ -10,7 +10,6 @@ from pathlib import Path
 import numpy as np
 import torch
 import yaml
-from torch import nn
 
 from src.data.preprocess import build_datasets_and_loaders
 from src.models.baseline import B0Baseline, multitask_loss
@@ -40,13 +39,28 @@ def train(config_path: str | Path) -> dict:
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable")
 
+    evaluate_test = bool(tcfg.get("evaluate_test", True))
     datasets, loaders, scaler = build_datasets_and_loaders(
         cfg["data"]["pkl_path"],
         normalization=cfg["preprocessing"]["normalization"],
         batch_size=int(cfg["data"]["batch_size"]),
         num_workers=int(cfg["data"]["num_workers"]),
         seed=int(tcfg["seed"]),
+        include_test=evaluate_test,
     )
+    class_weighting = tcfg.get("class_weighting", "none")
+    if class_weighting == "balanced_train":
+        train_counts = np.bincount(datasets["train"].cls_labels, minlength=3)
+        if np.any(train_counts == 0):
+            raise ValueError(f"cannot compute balanced weights from empty train class: {train_counts.tolist()}")
+        class_weights = torch.tensor(
+            len(datasets["train"]) / (3.0 * train_counts), dtype=torch.float32, device=device
+        )
+    elif class_weighting == "none":
+        train_counts = np.bincount(datasets["train"].cls_labels, minlength=3)
+        class_weights = None
+    else:
+        raise ValueError("training.class_weighting must be 'none' or 'balanced_train'")
     model = B0Baseline(**cfg["model"]).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=float(tcfg["learning_rate"]), weight_decay=float(tcfg["weight_decay"])
@@ -56,7 +70,7 @@ def train(config_path: str | Path) -> dict:
     checkpoints_dir = Path(cfg["outputs"]["checkpoints_dir"])
     metrics_dir.mkdir(parents=True, exist_ok=True)
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint_path = checkpoints_dir / "b0_best.pt"
+    checkpoint_path = checkpoints_dir / cfg["outputs"].get("checkpoint_name", "b0_best.pt")
 
     best_valid = float("inf")
     best_epoch = 0
@@ -71,14 +85,18 @@ def train(config_path: str | Path) -> dict:
             batch = _to_device(batch, device)
             optimizer.zero_grad(set_to_none=True)
             output = model(batch)
-            loss_parts = multitask_loss(output, batch, lambda_reg=lambda_reg)
+            loss_parts = multitask_loss(
+                output, batch, lambda_reg=lambda_reg, class_weights=class_weights
+            )
             loss_parts["total"].backward()
             optimizer.step()
             n = len(batch["cls_label"])
             running_loss += loss_parts["total"].item() * n
             seen += n
 
-        valid = evaluate_loader(model, loaders["valid"], device, lambda_reg=lambda_reg)
+        valid = evaluate_loader(
+            model, loaders["valid"], device, lambda_reg=lambda_reg, class_weights=class_weights
+        )
         train_loss = running_loss / max(seen, 1)
         valid_loss = float(valid["loss"]["total"])
         row = {"epoch": epoch, "train_loss": train_loss, "valid_loss": valid_loss,
@@ -97,6 +115,8 @@ def train(config_path: str | Path) -> dict:
                 "valid_loss": best_valid,
                 "scaler": scaler.state_dict() if scaler is not None else None,
                 "normalization": cfg["preprocessing"]["normalization"],
+                "class_weights": class_weights.detach().cpu() if class_weights is not None else None,
+                "train_class_counts": train_counts.tolist(),
             }, checkpoint_path)
         else:
             stale_epochs += 1
@@ -104,14 +124,22 @@ def train(config_path: str | Path) -> dict:
                 break
 
     elapsed = time.perf_counter() - start_time
-    with (metrics_dir / "b0_training_history.json").open("w", encoding="utf-8") as f:
+    history_path = metrics_dir / cfg["outputs"].get("history_filename", "b0_training_history.json")
+    with history_path.open("w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
     best = torch.load(checkpoint_path, map_location=device, weights_only=False)
     model.load_state_dict(best["model_state_dict"])
     # These are final reporting evaluations. Test is never used for selection.
-    train_metrics = evaluate_loader(model, loaders["train"], device, lambda_reg=lambda_reg)
-    valid_metrics = evaluate_loader(model, loaders["valid"], device, lambda_reg=lambda_reg)
-    test_metrics = evaluate_loader(model, loaders["test"], device, lambda_reg=lambda_reg)
+    train_metrics = evaluate_loader(
+        model, loaders["train"], device, lambda_reg=lambda_reg, class_weights=class_weights
+    )
+    valid_metrics = evaluate_loader(
+        model, loaders["valid"], device, lambda_reg=lambda_reg, class_weights=class_weights
+    )
+    test_metrics = (
+        evaluate_loader(model, loaders["test"], device, lambda_reg=lambda_reg)
+        if evaluate_test else None
+    )
     result = {
         "model": "B0Baseline",
         "normalization": cfg["preprocessing"]["normalization"],
@@ -120,16 +148,23 @@ def train(config_path: str | Path) -> dict:
         "training_seconds": elapsed,
         "best_epoch": best_epoch,
         "best_valid_selection_loss": best_valid,
+        "class_weighting": class_weighting,
+        "train_class_counts": train_counts.tolist(),
+        "class_weights": class_weights.detach().cpu().tolist() if class_weights is not None else None,
         "split_sizes": {name: len(ds) for name, ds in datasets.items()},
         "metrics": {"train": train_metrics, "valid": valid_metrics, "test": test_metrics},
-        "test_role": "final_holdout_only; evaluated after model selection",
+        "test_role": (
+            "final_holdout_only; evaluated after model selection" if evaluate_test
+            else "not loaded into Dataset, evaluated, or used for any decision"
+        ),
         "checkpoint": str(checkpoint_path),
     }
-    with (metrics_dir / "b0_metrics.json").open("w", encoding="utf-8") as f:
+    metrics_path = metrics_dir / cfg["outputs"].get("metrics_filename", "b0_metrics.json")
+    with metrics_path.open("w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(json.dumps({"training_seconds": elapsed, "best_epoch": best_epoch,
                       "parameter_count": result["parameter_count"],
-                      "metrics_path": str(metrics_dir / 'b0_metrics.json')}, ensure_ascii=False), flush=True)
+                      "metrics_path": str(metrics_path)}, ensure_ascii=False), flush=True)
     return result
 
 

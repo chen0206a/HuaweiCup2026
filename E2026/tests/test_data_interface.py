@@ -1,9 +1,10 @@
 import numpy as np
+import pickle
 import pytest
 import torch
 
 from src.data.dataset import Aligned50Dataset
-from src.data.preprocess import TrainFeaturewiseScaler
+from src.data.preprocess import TrainFeaturewiseScaler, build_datasets_and_loaders
 
 
 def split(n=3):
@@ -16,8 +17,8 @@ def split(n=3):
         "audio": rng.normal(size=(n, 50, 74)).astype(np.float64),
         "vision": rng.normal(size=(n, 50, 35)).astype(np.float64),
         "text_bert": np.stack([np.zeros_like(mask), mask, np.zeros_like(mask)], axis=1),
-        "classification_labels": np.array([0, 1, 2]),
-        "regression_labels": np.array([-1.0, 0.0, 1.0]),
+        "classification_labels": np.resize(np.array([0, 1, 2]), n),
+        "regression_labels": np.resize(np.array([-1.0, 0.0, 1.0]), n),
     }
     for m in ("audio", "vision"):
         data[m][:, 4:, :] = 0
@@ -58,3 +59,15 @@ def test_train_scaler_excludes_padding_and_keeps_native_zero_in_statistics():
     scaler = TrainFeaturewiseScaler.fit(ds)
     assert np.allclose(scaler.mean["audio"], (11 * 2.0) / 12)
     assert np.all(scaler.mean["audio"] < 3.0)
+
+
+def test_include_test_false_does_not_construct_test_dataset_or_loader(tmp_path):
+    source = {name: split(2) for name in ("train", "valid", "test")}
+    path = tmp_path / "synthetic.pkl"
+    with path.open("wb") as f:
+        pickle.dump(source, f)
+    datasets, loaders, _ = build_datasets_and_loaders(
+        path, normalization="none", batch_size=2, include_test=False
+    )
+    assert set(datasets) == {"train", "valid"}
+    assert set(loaders) == {"train", "valid"}

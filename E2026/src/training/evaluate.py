@@ -7,7 +7,10 @@ from src.utils.metrics import compute_metrics
 
 
 @torch.no_grad()
-def evaluate_loader(model, loader, device: torch.device, *, lambda_reg: float = 1.0) -> dict:
+def evaluate_loader(
+    model, loader, device: torch.device, *, lambda_reg: float = 1.0,
+    class_weights: torch.Tensor | None = None,
+) -> dict:
     model.eval()
     cls_true, cls_pred, reg_true, reg_pred, vision_zero = [], [], [], [], []
     total_loss = 0.0
@@ -18,7 +21,9 @@ def evaluate_loader(model, loader, device: torch.device, *, lambda_reg: float = 
         moved = {k: (v.to(device) if isinstance(v, torch.Tensor) else v) for k, v in batch.items()}
         outputs = model(moved)
         from src.models.baseline import multitask_loss
-        losses = multitask_loss(outputs, moved, lambda_reg=lambda_reg)
+        losses = multitask_loss(
+            outputs, moved, lambda_reg=lambda_reg, class_weights=class_weights
+        )
         n = moved["cls_label"].shape[0]
         total_n += n
         total_loss += losses["total"].item() * n
