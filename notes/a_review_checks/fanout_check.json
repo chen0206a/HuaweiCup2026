@@ -1,0 +1,169 @@
+{
+  "graph": {
+    "tensors": [
+      {
+        "id": 1,
+        "pos": "DDR",
+        "size": 120
+      },
+      {
+        "id": 2,
+        "pos": "UB",
+        "size": 120
+      },
+      {
+        "id": 3,
+        "pos": "UB",
+        "size": 120
+      },
+      {
+        "id": 4,
+        "pos": "UB",
+        "size": 120
+      },
+      {
+        "id": 5,
+        "pos": "UB",
+        "size": 120
+      },
+      {
+        "id": 6,
+        "pos": "DDR",
+        "size": 120
+      },
+      {
+        "id": 7,
+        "pos": "DDR",
+        "size": 120
+      }
+    ],
+    "ops": [
+      {
+        "id": 10,
+        "op": "COPY_IN",
+        "pipe": "PIPE_MTE2",
+        "cycles": 40
+      },
+      {
+        "id": 20,
+        "op": "ADD",
+        "pipe": "PIPE_V",
+        "cycles": 40
+      },
+      {
+        "id": 30,
+        "op": "ADD",
+        "pipe": "PIPE_V",
+        "cycles": 40
+      },
+      {
+        "id": 40,
+        "op": "ADD",
+        "pipe": "PIPE_V",
+        "cycles": 40
+      },
+      {
+        "id": 50,
+        "op": "COPY_OUT",
+        "pipe": "PIPE_MTE3",
+        "cycles": 40
+      },
+      {
+        "id": 60,
+        "op": "COPY_OUT",
+        "pipe": "PIPE_MTE3",
+        "cycles": 40
+      }
+    ],
+    "edges": [
+      {
+        "source": 1,
+        "target": 10
+      },
+      {
+        "source": 10,
+        "target": 2
+      },
+      {
+        "source": 2,
+        "target": 20
+      },
+      {
+        "source": 20,
+        "target": 3
+      },
+      {
+        "source": 3,
+        "target": 30
+      },
+      {
+        "source": 3,
+        "target": 40
+      },
+      {
+        "source": 30,
+        "target": 4
+      },
+      {
+        "source": 40,
+        "target": 5
+      },
+      {
+        "source": 4,
+        "target": 50
+      },
+      {
+        "source": 50,
+        "target": 6
+      },
+      {
+        "source": 5,
+        "target": 60
+      },
+      {
+        "source": 60,
+        "target": 7
+      }
+    ]
+  },
+  "plan": {
+    "node_to_subgraph": {
+      "20": 0,
+      "30": 1,
+      "40": 2
+    },
+    "core_schedules": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ]
+    ]
+  },
+  "results": {
+    "A": {
+      "makespan": 1092,
+      "traffic": {
+        "original_graph_copy_bytes": 360,
+        "scheduled_copy_bytes": 720,
+        "added_copy_bytes": 360,
+        "partition_added_copy_bytes": 360,
+        "spill_added_copy_bytes": 0
+      }
+    },
+    "B": {
+      "makespan": 590,
+      "traffic": {
+        "original_graph_copy_bytes": 360,
+        "scheduled_copy_bytes": 840,
+        "added_copy_bytes": 480,
+        "partition_added_copy_bytes": 480,
+        "spill_added_copy_bytes": 0
+      }
+    }
+  }
+}
