@@ -34,3 +34,11 @@ python scripts/smoke_b0.py
 python scripts/overfit32.py
 python -m src.training.train --config configs/b0.yaml
 ```
+
+## B2 continuous block missing benchmark
+
+`src/data/block_mask.py` draws blocks only within the true valid prefix. The block length is `max(1, round(rho * valid_length))`, with Python's half-to-even tie rule. Artificially missing feature vectors become zero, but their `padding_mask` entries remain true, so B0 pooling and B1 attention receive the zero vectors. The generator marks those coordinates false in `availability_mask` for bookkeeping only. Predictors receive exactly `text`, `audio`, `vision`, and `padding_mask`; neither `availability_mask` nor `native_zero_mask` is passed as a predictor feature. Original native-zero vectors remain untouched. The source pickle is read only.
+
+Training keeps about half of samples complete. The other half get one modality block with probability 0.75, or two independently sampled modality blocks with probability 0.25. Modalities and ratios in `{0.1,0.2,0.3,0.4,0.5}` are sampled uniformly; starts are uniform among valid positions. The fixed validation benchmark has 45 single modality and 9 double modality scenes, plus clean. Definitions and seed are saved in `outputs/metrics/b2_benchmark_definition.json` and must be reused for B3/B4. The benchmark uses train/valid only, never attachment2 test or attachment3.
+
+Run `python -m pytest tests/test_block_mask.py -q`, then `python -m src.training.run_b2 inherent` before any B2 training. Train with `python -m src.training.run_b2 train --config configs/b2_b0_blockmask.yaml` and the B1 config. Finally run `python -m src.training.run_b2 compare`. The project-only robust checkpoint score is half the clean selection score plus half the mean score across 54 missing scenes; B2 horizontal comparisons use best robust checkpoints. Both best clean and best robust checkpoints are saved.

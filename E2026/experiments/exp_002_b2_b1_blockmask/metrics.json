@@ -1,0 +1,152 @@
+{
+  "training": {
+    "model": "B2-B1-BlockMask",
+    "architecture": "b1",
+    "normalization": "none",
+    "benchmark_seed": 20260923,
+    "best_clean_epoch": 6,
+    "best_robust_epoch": 5,
+    "best_clean_score": 0.7385129555327166,
+    "best_robust_score": 0.7361158961186348,
+    "parameter_count": 957572,
+    "training_seconds": 108.19962976127863,
+    "train_class_counts": [
+      967,
+      758,
+      1670
+    ],
+    "class_weights": [
+      1.1702860593795776,
+      1.4929639101028442,
+      0.6776447296142578
+    ],
+    "train_count": 3395,
+    "valid_count": 728,
+    "test_role": "never constructed/evaluated"
+  },
+  "validation": {
+    "clean": {
+      "accuracy": 0.6195054945054945,
+      "macro_f1": 0.6054922443811332,
+      "mae": 0.6011303024734933,
+      "pearson": 0.6536379574744896,
+      "selection_score": 0.7379070834695726
+    },
+    "mean_missing": {
+      "accuracy": 0.6159951159951161,
+      "macro_f1": 0.6002328409915573,
+      "mae": 0.6093423649244917,
+      "pearson": 0.6452558778097249,
+      "selection_score": 0.7343247087676971
+    },
+    "robust_score": 0.7361158961186348,
+    "by_ratio": {
+      "0.1": {
+        "accuracy": 0.6187423687423688,
+        "macro_f1": 0.6045958798235112,
+        "mae": 0.6028698366885875,
+        "pearson": 0.6527030670288235,
+        "selection_score": 0.7373028689913819
+      },
+      "0.2": {
+        "accuracy": 0.6173687423687424,
+        "macro_f1": 0.6026038816399927,
+        "mae": 0.6051125410405216,
+        "pearson": 0.6504669203362368,
+        "selection_score": 0.7360884985008582
+      },
+      "0.3": {
+        "accuracy": 0.6175213675213675,
+        "macro_f1": 0.6021981030485631,
+        "mae": 0.6074548123656831,
+        "pearson": 0.6477877284733327,
+        "selection_score": 0.7355927165197458
+      },
+      "0.4": {
+        "accuracy": 0.6146214896214897,
+        "macro_f1": 0.598417554200316,
+        "mae": 0.6100617343894181,
+        "pearson": 0.6439033835687255,
+        "selection_score": 0.7333284449686497
+      },
+      "0.5": {
+        "accuracy": 0.6120268620268621,
+        "macro_f1": 0.5946544430010365,
+        "mae": 0.6167302247380181,
+        "pearson": 0.634848292214156,
+        "selection_score": 0.7303292700863266
+      }
+    },
+    "by_location": {
+      "early": {
+        "accuracy": 0.6171398046398047,
+        "macro_f1": 0.601747587479828,
+        "mae": 0.6088030962762452,
+        "pearson": 0.6433525940285683,
+        "selection_score": 0.7347741266053024
+      },
+      "middle": {
+        "accuracy": 0.6127136752136753,
+        "macro_f1": 0.5965447262106505,
+        "mae": 0.6108126589426854,
+        "pearson": 0.6442021174872944,
+        "selection_score": 0.732389337586048
+      },
+      "late": {
+        "accuracy": 0.6181318681318682,
+        "macro_f1": 0.6024062092841936,
+        "mae": 0.6084113395545444,
+        "pearson": 0.6482129219133126,
+        "selection_score": 0.7358106621117401
+      }
+    },
+    "by_modality": {
+      "text": {
+        "accuracy": 0.6069597069597069,
+        "macro_f1": 0.5893615240163579,
+        "mae": 0.6195084994890806,
+        "pearson": 0.6312000437313522,
+        "selection_score": 0.727167459065057
+      },
+      "audio": {
+        "accuracy": 0.6193223443223445,
+        "macro_f1": 0.6054193131803144,
+        "mae": 0.6018729840456457,
+        "pearson": 0.6532489972050224,
+        "selection_score": 0.7377634980243906
+      },
+      "vision": {
+        "accuracy": 0.621886446886447,
+        "macro_f1": 0.6067010798313794,
+        "mae": 0.6039560059986109,
+        "pearson": 0.6533765940363897,
+        "selection_score": 0.73865412235073
+      }
+    },
+    "double_stress": {
+      "text+audio": {
+        "accuracy": 0.6103479853479854,
+        "macro_f1": 0.5932828843101002,
+        "mae": 0.6178397150000646,
+        "pearson": 0.6361661701451055,
+        "selection_score": 0.7296851672243235
+      },
+      "text+vision": {
+        "accuracy": 0.6153846153846154,
+        "macro_f1": 0.5965893380923136,
+        "mae": 0.620105028582307,
+        "pearson": 0.635991757285355,
+        "selection_score": 0.7316547485056389
+      },
+      "audio+vision": {
+        "accuracy": 0.6213369963369964,
+        "macro_f1": 0.6069093303053604,
+        "mae": 0.603530377391794,
+        "pearson": 0.653319698280769,
+        "selection_score": 0.7385794448876939
+      }
+    }
+  },
+  "checkpoint": "b2_b1_best_robust_score.pt",
+  "benchmark_definition": "outputs/metrics/b2_benchmark_definition.json"
+}
