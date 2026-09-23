@@ -37,16 +37,22 @@ class B3LatentReconstruction(B0Baseline):
         return {m: latent.detach() for m, latent in self.timestep_latents(complete_batch).items()}
 
     def forward(self, batch: dict, *, reconstruction_enabled: bool = True,
-                return_aux: bool = False) -> dict[str, torch.Tensor | dict]:
+                alpha: float = 1.0, return_aux: bool = False) -> dict[str, torch.Tensor | dict]:
         pad = batch["padding_mask"].bool()
         if not pad.any(dim=1).all():
             raise ValueError("every sample needs a valid timestep")
+        if not 0.0 <= float(alpha) <= 1.0:
+            raise ValueError("alpha must be in [0,1]")
         latents = self.timestep_latents(batch)
         zero_trigger = {m: pad & torch.all(batch[m] == 0, dim=-1) for m in MODALITIES}
         reconstructed: dict[str, torch.Tensor] = {}
         sources: dict[str, torch.Tensor] = {}
         effective = latents
-        if reconstruction_enabled:
+        if not reconstruction_enabled or float(alpha) == 0.0:
+            # Use the exact original operation order for an exact B0 identity.
+            pooled = [self.modality_projection[m](masked_mean_pool(batch[m], pad))
+                      for m in MODALITIES]
+        else:
             # A zero source must not contribute its affine projection bias.
             sources = {m: latents[m].masked_fill(zero_trigger[m].unsqueeze(-1), 0.0)
                        for m in MODALITIES}
@@ -57,12 +63,13 @@ class B3LatentReconstruction(B0Baseline):
                     torch.cat([sources[m] for m in others], dim=-1)
                 ).masked_fill(~pad.unsqueeze(-1), 0.0)
                 reconstructed[target] = estimate
+                blended = (1.0 - float(alpha)) * latents[target] + float(alpha) * estimate
                 effective[target] = torch.where(zero_trigger[target].unsqueeze(-1),
-                                                estimate, latents[target])
-        pooled = [
-            self.modality_projection[m][1:](masked_mean_pool(effective[m], pad))
-            for m in MODALITIES
-        ]
+                                                blended, latents[target])
+            pooled = [
+                self.modality_projection[m][1:](masked_mean_pool(effective[m], pad))
+                for m in MODALITIES
+            ]
         fused = self.fusion(torch.cat(pooled, dim=-1))
         outputs: dict[str, torch.Tensor | dict] = {
             "classification_logits": self.classification_head(fused),
@@ -75,6 +82,30 @@ class B3LatentReconstruction(B0Baseline):
             outputs["source_latents"] = sources
             outputs["effective_latents"] = effective
         return outputs
+
+
+class B31FrozenBackbone(B3LatentReconstruction):
+    """B3.1: only reconstructors are trainable; B0 acts as a fixed function."""
+
+    def __init__(self, hidden_dim: int = 128, fusion_dim: int = 128,
+                 dropout: float = 0.1, recon_hidden_dim: int = 128) -> None:
+        super().__init__(hidden_dim, fusion_dim, dropout, recon_hidden_dim)
+        self.freeze_backbone()
+
+    def freeze_backbone(self) -> None:
+        for module in (self.modality_projection, self.fusion,
+                       self.classification_head, self.regression_head):
+            module.requires_grad_(False)
+            module.eval()
+
+    def train(self, mode: bool = True):
+        super().train(mode)
+        # Keep frozen B0 dropout disabled; only reconstructors enter train mode.
+        for module in (self.modality_projection, self.fusion,
+                       self.classification_head, self.regression_head):
+            module.eval()
+        self.reconstructors.train(mode)
+        return self
 
 
 def reconstruction_losses(model: B3LatentReconstruction, outputs: dict,
