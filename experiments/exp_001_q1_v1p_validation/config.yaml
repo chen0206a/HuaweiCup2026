@@ -1,0 +1,41 @@
+question: Q1
+purpose: frozen V1-P holdout validation against V0
+source_commit: c34e78c549541fb80fceea3af5a10a8b2a134f03
+graph_data: official A problem attachment, 100 case_*.json
+evaluator: unmodified official problem_1 evaluator
+config: unmodified official data/config.txt
+sample_unit: case x core_count
+selection:
+  target_cases: 12
+  excluded_development_cases: [case_014, case_025, case_026, case_093]
+  max_official_screen_seconds: 60
+  strata: three equal-count op-size tiers, four cases per tier
+  features:
+    - non-COPY op count
+    - connected-component count
+    - maximum component work share
+    - DAG critical path / total work
+    - tensor fanout p95
+    - official V0 K=4 added COPY bytes
+    - official V0 K=4 speedup
+  method: deterministic rank-space farthest-point selection
+algorithms: [v0, v1_partition]
+core_counts: [2, 3, 4, 5]
+candidate_budget_per_algorithm_case_core: 4
+candidate_granularities: [K, 2K, 4K, 8K]
+v1_topo_modes: [deterministic, critical, branch]
+v1_cut_weights: frozen in src/q1/partition_v1.py
+random_seed: none; deterministic selection and algorithms
+primary_metric: (V0_makespan - V1P_makespan) / V0_makespan
+decision_thresholds:
+  median_improvement_strictly_greater_than: 0.05
+  mean_improvement_strictly_greater_than: 0.10
+  nondegraded_fraction_at_least: 0.70
+  severe_degradation: improvement below -0.05, inspect individually
+outputs:
+  - results/q1_v1_validation/screening.csv
+  - results/q1_v1_validation/selection.csv
+  - results/q1_v1_validation/runs.csv
+  - results/q1_v1_validation/candidates.csv
+  - results/q1_v1_validation/summary.csv
+  - q1/V1_VALIDATION_REPORT.md

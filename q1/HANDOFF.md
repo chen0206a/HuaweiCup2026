@@ -1,7 +1,7 @@
 # Q1 Handoff
 
 ## Status
-Baseline V0 已实现、测试并跑出真实基线。V1-lite 已在 `q1-v1` 分支实现，代表用例消融见 `V1_LITE_RESULTS.md`；全部 100 例尚未运行。
+Baseline V0 与 V1-lite 已实现并通过测试。V1-P 已完成 12 例快速配对验证，按用户要求冻结 Q1，停止优化；详细结果见 `Q1_FREEZE_REPORT.md`。V1-P 尚未运行全 100 例。
 
 ## Problem Interpretation
 场景A：每子图一个Task，所有跨子图通信经DDR。
@@ -25,6 +25,7 @@ Baseline V0 已实现、测试并跑出真实基线。V1-lite 已在 `q1-v1` 分
 `results/q1_v0/baseline_v0.csv`：6 例（2小2中1大 + 最大例）× K=2..5，24 组全部成功。
 加速比（官方单核分母 `singlecore_baseline.csv`）：4.98× / 2.96× / 2.00× / 1.03× / 0.97× / 0.97×。
 代理 makespan / 官方实测 = 1.00–1.26。
+V1-P 独立验证：12 例 × K=2..5，共 48 组 V0/V1-P 配对。官方 Makespan 平均改善 20.90%、中位改善 7.50%；改善 62.50%、退化 12.50%、不退化 87.50%。超过 5% 的退化为 3/48，集中于 2/12 个 case，最差 case_002 K=2 为 -30.58%。验证阶段官方 evaluator 真实调用 260 次，累计 380.9 秒。抽样与逐组结果见 `results/q1_v1_validation/`。
 
 ## Known Risks
 1. 列表调度按最小EFT选核时，跨核前驱的1000 远贵于同核切换的100，
@@ -39,7 +40,7 @@ Baseline V0 已实现、测试并跑出真实基线。V1-lite 已在 `q1-v1` 分
 `notes/a_review_checks/evaluator_hashes.json`，可用 `python src/q1/check_official.py` 复核。
 
 ## Next Recommended Actions
-V1-lite 已比较两种改动。结构感知分块在四个异常用例的代表核数上有效；单独改核选择的效果很小或略差。下一步补足代表核数并固定参数，在相同候选预算下跑全 100 例，记录官方 Makespan、COPY 与墙钟时间。当前不应把组合版宣称为优于仅分块版。
+Q1 当前 V1-P 实现冻结，不再继续调参或新增算法。用户指定下一阶段为 Q2 跑通并优化，须另行启动；最终批量实验与论文阶段再处理 Q1 全量曲线。V1-S 与组合版没有纳入本轮主实验。
 
 ## Last Updated
-2026-09-23（Baseline V0 实现、单元测试与官方 evaluator 基线结果）
+2026-09-23（V1-P 12 例快速验证并冻结 Q1）
