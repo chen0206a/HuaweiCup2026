@@ -1,0 +1,40 @@
+run_name: B2-B1-BlockMask
+backbone: b1
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  nhead: 4
+  num_layers: 2
+  dropout: 0.1
+  fusion_dim: 128
+  feedforward_dim: 256
+training:
+  seed: 43
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  augmentation:
+    missing_probability_per_sample: 0.5
+    one_modality_probability_given_missing: 0.75
+    ratios:
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    - 0.5
+    modality_sampling: uniform
+    start_sampling: uniform_valid_range
+  selection_metric: 0.5_clean_score_plus_0.5_mean_missing_54
+outputs:
+  best_clean_checkpoint: b21_b2_b1_seed_43_best_clean_score.pt
+  best_robust_checkpoint: b21_b2_b1_seed_43_best_robust_score.pt
+  history_filename: b21_b2_b1_seed_43_history.json
+  metrics_filename: b21_b2_b1_seed_43_training_metrics.json

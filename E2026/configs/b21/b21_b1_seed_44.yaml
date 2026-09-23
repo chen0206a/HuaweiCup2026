@@ -1,0 +1,32 @@
+run_name: B1-WeightedCE
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  num_workers: 0
+  batch_size: 128
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  nhead: 4
+  num_layers: 2
+  dropout: 0.1
+  fusion_dim: 128
+  feedforward_dim: 256
+training:
+  seed: 44
+  device: auto
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  early_stopping_metric: valid_loss
+  selection_metric: project_validation_score
+outputs:
+  metrics_dir: /root/workspace/E2026/outputs/metrics
+  checkpoints_dir: /root/workspace/E2026/outputs/checkpoints
+  metrics_filename: b21_b1_seed_44_training_metrics.json
+  history_filename: b21_b1_seed_44_history.json
+  best_loss_checkpoint: b21_b1_seed_44_best_valid_loss.pt
+  best_score_checkpoint: b21_b1_seed_44_best_selection_score.pt

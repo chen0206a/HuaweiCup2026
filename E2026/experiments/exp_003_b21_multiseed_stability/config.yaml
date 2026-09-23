@@ -1,0 +1,32 @@
+data:
+  source: attachment2 aligned_50.pkl
+  optimization_split: train
+  selection_and_benchmark_split: valid
+  test_split_use: prohibited
+  normalization: none
+  batch_size: 128
+  num_workers: 0
+training:
+  seeds: [42, 43, 44]
+  optimizer: AdamW
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  epochs: 80
+  patience: 12
+  lambda_reg: 1.0
+  class_weighting: balanced_train_only
+models:
+  B0-WCE: configs/b0_weighted_ce_score_selection.yaml
+  B1-WCE: configs/b1_weighted_ce.yaml
+  B2-B0-BlockMask: configs/b2_b0_blockmask.yaml
+  B2-B1-BlockMask: configs/b2_b1_blockmask.yaml
+checkpoint_selection:
+  B0_and_B1: best_selection_score
+  B2: best_robust_score
+benchmark:
+  definition: outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+  missing_scenarios: 54
+  clean_scenarios: 1
+output: outputs/metrics/b21_multiseed_summary.json
