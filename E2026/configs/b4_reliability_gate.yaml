@@ -1,0 +1,39 @@
+run_name: B4-prime-ReliabilityGate-seed42
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+  router_dim: 64
+  router_dropout: 0.1
+training:
+  seed: 42
+  max_epochs: 50
+  patience: 10
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  init_checkpoint: /root/workspace/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+  augmentation:
+    missing_probability_per_sample: 0.5
+    one_modality_probability_given_missing: 0.75
+    ratios: [0.1, 0.2, 0.3, 0.4, 0.5]
+    modality_sampling: uniform
+    start_sampling: uniform_valid_range
+  selection_metric: 0.5_clean_score_plus_0.5_mean_missing_54
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  best_clean_checkpoint: b4_reliability_best_clean_score.pt
+  best_robust_checkpoint: b4_reliability_best_robust_score.pt
+  history: b4_reliability_training_history.json
+  metrics: b4_reliability_metrics.json
+  report: b4_reliability_report.md
