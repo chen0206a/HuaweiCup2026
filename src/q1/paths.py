@@ -27,6 +27,9 @@ def attachment_dir() -> Path:
             raise OfficialPathsError(
                 f"HUAWEI_CUP_ATTACH={override} 下找不到 code/{_EVALUATOR_NAME}")
         return path
+    local = REPO_ROOT / "data" / "raw" / "A题附件"
+    if (local / "code" / _EVALUATOR_NAME).is_file():
+        return local
     for cand in sorted(REPO_ROOT.glob("*/*/A题/*附件")):
         if (cand / "code" / _EVALUATOR_NAME).is_file():
             return cand
