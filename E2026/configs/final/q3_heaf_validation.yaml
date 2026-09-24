@@ -1,0 +1,71 @@
+run_name: Q3-1-HEAF-validation
+stage: RHO_LOCKED_VALIDATION_PASSED
+data:
+  source: Attachment2
+  feature_version: aligned_50
+  path: data/raw/aligned_50.pkl
+  split_used: valid
+  monolithic_pickle_note: full container deserialization; only valid is indexed and
+    evaluated
+  normalization: none
+  batch_size: 128
+predictor:
+  architecture: B5PoolingResidual
+  mode: mean_attention
+  seed: 42
+  checkpoint: outputs/checkpoints/b5_pooling_p2_best_robust_score.pt
+  sha256: cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff
+  checkpoint_selection: locked_Q2_best_robust_score
+  evaluation_mode: true
+  gradient_enabled: false
+  dtype: float32
+seed_sensitivity:
+  seeds:
+  - 43
+  - 44
+  checkpoint_manifest: outputs/final/q2/q2_checkpoint_manifest.json
+validation_grouping:
+  key: video_id_before_$_$
+  assignment: sha256("20260924|video_id")_low_bit
+  assignment_seed: 20260924
+  design_bit: 0
+  audit_bit: 1
+coalition:
+  modalities:
+  - text
+  - audio
+  - vision
+  excluded_modality: zero_valid_features_only
+  padding_mask: unchanged
+  classification_target: fixed_full_prediction_class_log_odds
+  regression_target: raw_regression
+  shapley_efficiency_absolute_tolerance: 1.0e-05
+temporal:
+  candidate_rho:
+  - 0.1
+  - 0.2
+  - 0.3
+  chosen_rho: 0.3
+  stride: 1
+  length: max(1, round(rho * valid_length))
+  selection_metric: mean_top_interval_class_margin_drop_minus_random_same_length_drop
+  tie_break: shorter_window
+  random_draws: 32
+  random_seed: 20260924
+faithfulness:
+  deletion_curve_fractions:
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  grouped_bootstrap_unit: video_id
+  grouped_bootstrap_reps: 1000
+  audit_only: true
+  stop_if_mean_top_minus_random_class_margin_nonpositive: true
+  stop_if_mean_top_minus_random_confidence_nonpositive: true
+restrictions:
+  train_new_model: false
+  attachment2_test: prohibited
+  attachment3: sealed
+  attachment4: sealed
+  media_review: prohibited

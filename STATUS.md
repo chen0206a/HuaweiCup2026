@@ -2,6 +2,8 @@
 
 2026-09-24：当前 E 题工作目录为 `E2026/`。
 
+- E Q3-1：HEAF validation 已完成，状态 `HEAF_VALIDATION_PASSED`；冻结 P2 seed42 clean 复算通过，728 条 valid 的 exact Shapley 效率误差约 `1e-15`，按 video_id 的 design/audit 为 332/396 条，ρ=0.30 在 design 组选定并锁定。Audit 同长度 top−random margin/置信度均值为 +0.400735/+0.077718；10%–40% 删除曲线、分组 bootstrap、seed43/44 稳定性与失败例见 `E2026/outputs/q3/`。区间选择比较存在内生选择优势，不应当作外部因果证明。未训练、未访问 attachment2 test 样本、未解析附件3/4，未做媒体回看。
+
 - E Q1/Q2：完成官方要求、方法与结果审查，见`notes/E_Q1_Q2_REVIEW_20260924.md`。Q1方法/辅助实验可收口，当前摘录交付包缺全量特征和timeline；本地测试10通过、1因缺100条timeline失败。Q2相关测试28通过、2因无CUDA跳过；六checkpoint及benchmark哈希、冻结B0张量、已有主要指标复算通过。不建议继续模型探索，优先补全量交付、正文图表和最终附件3推理入口；本轮未训练、未解封附件3。两问使用不同官方附件是正确安排，无需跨问特征对接。
 
 - E Q2：用户正式锁定 B0-WCE 为 baseline，B5-P2 attention residual pooling 为最终主模型，停止后续 Q2 模型探索。六个 seed42/43/44 的 B0/P2 主 checkpoint 已在本地验证；attachment2 aligned-50 本地副本的 split、形状、标签与冻结审计一致。已生成最终 configs、data/benchmark/checkpoint manifests 与实验索引：`E2026/outputs/final/q2/`。冻结 benchmark 哈希匹配；attachment3 保持 SEALED，attachment2 test 未用于本阶段选模。原始本地文件在 `E2026/data/raw/`，与历史服务器 `data/raw/attachment2/` 路径不同，未移动大文件。

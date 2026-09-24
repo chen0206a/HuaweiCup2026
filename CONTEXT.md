@@ -2,6 +2,10 @@
 
 日期：2026-09-24。当前选题为 E（D005），E 代码与结果位于 `E2026/`。根目录 `q1/`、`q2/`、`q3/` 属于历史 A 题，不可与 E 的问题编号混用。
 
+## E Q3
+
+Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Shapley、连续窗口和忠实性验证；结果为 `E2026/outputs/q3/heaf_validation_metrics.json`、报告与 `E2026/experiments/q3/exp_001_heaf_validation/`。主模型仍为 B5-P2 seed42，checkpoint 哈希 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；valid clean 与 Q2 锁定指标最大差 `4.01e-9`。按 video_id 分成 design 332/audit 396，锁定 ρ=0.30、stride=1。Audit 同长度 top−random class-margin 均值 +0.400735，95% video-group bootstrap 区间 `[0.363538,0.437243]`；此比较因 top 由同窗口最大值选出而有选择优势，10% 删除曲线仍有失败样本。seed43/44 仅作稳定性审计。Attachment4 仍 SEALED，原始证据时间映射未验证，未生成最终解释卡。
+
 ## E Q2
 
 用户已正式锁定 **B0-WCE 为 baseline，B5-P2 attention residual pooling 为最终主模型**。不再进行 Q2 模型探索、调参或组合。冻结验证协议为 attachment2 validation clean + 54 个连续缺失场景，benchmark seed 20260923，SHA256 `3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff`。

@@ -44,9 +44,9 @@
 
 `φ_m = (v({m})-v(∅))/3 + [v({m,a})-v({a})+v({m,b})-v({b})]/6 + [v(TAV)-v({a,b})]/3`。
 
-计算结果必须满足效率恒等式 `Σ_m φ_m = v(TAV)-v(∅)`（浮点容差内）。报告 `phi_text/audio/vision` 有符号数值；绝对值只用于尺度展示，不叫贡献概率。分类主模态：若有正的 `φ_cls`，取最大正值；若全非正，取 `|φ_cls|` 最大者并标记 `selection_basis=absolute_negative_fallback`、`supports_predicted_class=false`；完全并列按 text→audio→vision。回归另给 `φ_reg`，不默默混入主模态选择。
+计算结果必须满足效率恒等式 `Σ_m φ_m = v(TAV)-v(∅)`（浮点容差内）。报告 `phi_text/audio/vision` 有符号数值；绝对值只用于尺度展示，不叫贡献概率。分类主模态：若有正的 `φ_cls`，取最大正值；若全非正，取 `|φ_cls|` 最大者并标记 `selection_basis=absolute_negative_fallback`、`supports_predicted_class=false`；完全并列按 text→audio→vision。Q3-1 另设**回归主模态**为 `|φ_reg|` 最大者，报告其使回归输出增大还是减小，并输出两个主模态是否一致；不混合分类和回归单位。时间遮挡仍沿分类主模态。
 
-对配对 (i,j)、余下模态 k，先定义上下文差分 `Δ_ij(S)=v(S∪{i,j})-v(S∪{i})-v(S∪{j})+v(S)`，其中 `S∈{∅,{k}}`。三模态 pair Shapley interaction 定为 `I_ij=[Δ_ij(∅)+Δ_ij({k})]/2`，分别对分类 margin 与回归值计算。`I>0` 表示对所选标量目标的正协同，`I<0` 表示负交互（可描述为冗余/抑制，**单靠符号不能区分两者机制**）；接近 0 只表示平均二阶作用小。保存两个 `Δ`，避免上下文抵消被均值掩盖。P2 的 `gamma` 和 attention weight 都不是跨模态交互指标。
+对配对 (i,j)、余下模态 k，先定义上下文差分 `Δ_ij(S)=v(S∪{i,j})-v(S∪{i})-v(S∪{j})+v(S)`，其中 `S∈{∅,{k}}`。三模态 pair Shapley interaction 定为 `I_ij=[Δ_ij(∅)+Δ_ij({k})]/2`，分别对分类 margin 与回归值计算。`I>0` 表示对所选标量目标的正协同，`I<0` **只称 negative interaction**；单靠符号不能区分冗余与抑制。接近 0 只表示平均二阶作用小。保存两个 `Δ`，避免上下文抵消被均值掩盖。P2 的 `gamma` 和 attention weight 都不是跨模态交互指标。
 
 ## 4. 时间级解释与忠实性（D）
 
