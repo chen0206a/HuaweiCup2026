@@ -1,0 +1,28 @@
+experiment: q3-2.7_approximate_audio_visual_media_grounding_audit
+purpose: Decide whether Attachment4 A/V feature rows can be mapped approximately to paired-media times.
+scope:
+  attachment: 4
+  feature_version: aligned_50
+  use_prediction_outputs: false
+  run_heaf: false
+  modify_p2_or_heaf: false
+  forced_alignment: not_run
+  extract_audio_or_decode_video: not_run
+gate:
+  requirement: public preprocessing or official interface must support a shared text/audio/vision semantic position for each slot in these exact Attachment4 files
+  result: failed
+  stop_before_time_mapping: true
+evidence:
+  verified_text_feature_to_token_slot: true
+  exact_feature_id_to_paired_mp4_match_count: 20
+  exact_feature_id_to_paired_mp4_total: 20
+  attachment_alignment_fields_present: false
+  attachment_source_ids_present: false
+  attachment_slot_timestamps_present: false
+  attachment_frame_indices_or_pts_present: false
+  producer_manifest_or_feature_hash_link_present: false
+conclusion:
+  text: VERIFIED
+  audio: UNVERIFIED
+  vision: UNVERIFIED
+  overall: PARTIAL_GROUNDING_READY

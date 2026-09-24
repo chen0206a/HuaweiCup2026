@@ -4,6 +4,8 @@
 
 - E Q3-2.6：BERT 最后层重建与公开预处理代码支持 Attachment4 text 行对应 `text_bert` 同索引 token；604/604 cosine 行最大值在对角，均值 cosine 0.999999994，RMSE 8.40e-7，最大绝对差 3.01e-5。Text grounding 已接入 tokenizer offsets 并对真实样本做 API smoke test。Text=`VERIFIED`，audio/vision=`UNVERIFIED`，当前=`PARTIAL_GROUNDING_READY`。无 HEAF 推理、无训练。详见 `E2026/outputs/q3/q3_text_row_identity_report.md` 与 `E2026/experiments/q3/exp_0026_text_row_identity/`。
 
+- E Q3-2.7：公开接口与预处理资料不能把 Attachment4 的 A/V 第 i 行绑定到已验证 text/token 第 i 槽。按 gate 要求，在提取 MP4 音频、forced alignment、解码视频/PTS 之前停止。TEXT=`VERIFIED`，AUDIO/VISION=`UNVERIFIED`，overall=`PARTIAL_GROUNDING_READY`。未运行 HEAF。见 `E2026/outputs/q3/q3_av_grounding_audit.{md,json}`。
+
 - E Q3-2（阶段结果）：HEAF 方法已在访问 Attachment4 内容前锁定。对齐版 20 特征/20 视频精确 ID 匹配，全部 feature shape、finite、padding 与 inventory hash 检查通过。当时缺逐槽原始证据映射，阶段结论为 `BLOCKED_BY_GROUNDING`；Q3-2.6 后当前状态已升级为 `PARTIAL_GROUNDING_READY`。见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`。
 
 - E Q3-2.5（阶段结果）：固定版本 `bert-base-uncased` fast tokenizer 对 Attachment4 的 `text_bert` IDs/mask/type IDs 20/20 完全复现，token slot 到 raw_text character span 已 VERIFIED；当时 P2 `text[50,768]` 行同索引语义仍 UNVERIFIED，故该阶段维持 `BLOCKED_BY_GROUNDING`。Q3-2.6 已解决文本行身份；A/V 时间行仍未能 join 到 SDK 源 ID。见 `E2026/outputs/q3/q3_alignment_provenance_report.md`、`provenance_sources.md`。

@@ -8,6 +8,8 @@ Q3-2.6 已通过 20 个 Attachment4 aligned 样本审计：公开 MMSA/Self-MM/M
 
 Q3-2 已先锁定 HEAF 方法（`E2026/configs/final/q3_heaf.yaml`、`E2026/outputs/q3/q3_method_lock.{md,json}`），然后只审计 Attachment4 对齐版。20 pkl 与 20 MP4 的 ID 精确对应，接口合法，但音频/视频没有逐槽时间映射，仍 UNVERIFIED；不允许据视频时长均分 50 槽或照搬 Q1 窗口。早期整体 `BLOCKED_BY_GROUNDING` 记录见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`，经 Q3-2.6 后当前为 `PARTIAL_GROUNDING_READY`。
 
+Q3-2.7 审核公开 MMSA、MMSA-FET 与 CMU SDK 对齐接口后，确认这些资料只说明候选格式/方法，没有 Attachment4 文件级 provenance、A/V row→token row 关系或 word-to-WordPiece 展开规则。入口 gate 未通过，已按要求在媒体音频提取/forced alignment/PTS 抽取前停止。TEXT=VERIFIED，AUDIO/VISION=UNVERIFIED，overall=`PARTIAL_GROUNDING_READY`。见 `E2026/outputs/q3/q3_av_grounding_audit.{md,json}` 与 `E2026/experiments/q3/exp_0027_av_grounding/`。
+
 Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Shapley、连续窗口和忠实性验证；结果为 `E2026/outputs/q3/heaf_validation_metrics.json`、报告与 `E2026/experiments/q3/exp_001_heaf_validation/`。主模型仍为 B5-P2 seed42，checkpoint 哈希 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；valid clean 与 Q2 锁定指标最大差 `4.01e-9`。按 video_id 分成 design 332/audit 396，锁定 ρ=0.30、stride=1。Audit 同长度 top−random class-margin 均值 +0.400735，95% video-group bootstrap 区间 `[0.363538,0.437243]`；此比较因 top 由同窗口最大值选出而有选择优势，10% 删除曲线仍有失败样本。seed43/44 仅作稳定性审计。至今未生成最终解释卡。
 
 ## E Q2

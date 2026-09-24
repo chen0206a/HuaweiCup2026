@@ -1,0 +1,71 @@
+{
+  "audit": "Q3-2.7 Approximate Audio/Visual Media Grounding Audit",
+  "decision": "STOP_BEFORE_MEDIA_TIME_MAPPING",
+  "semantic_position_gate": {
+    "question": "Does public preprocessing/official interface evidence tie Attachment4 text slot i, audio row i, and vision row i to the same aligned semantic position?",
+    "passed": false,
+    "reason": "Available sources describe compatible aligned feature formats and possible word-to-WordPiece alignment methods, but no source or producer metadata ties these exact Attachment4 files to one such pipeline or establishes their A/V row-to-token row correspondence."
+  },
+  "attachment4_evidence": {
+    "feature_samples": 20,
+    "paired_mp4_files": 20,
+    "exact_feature_id_to_mp4_stem_matches": 20,
+    "feature_shapes": {
+      "text": [50, 768],
+      "audio": [50, 74],
+      "vision": [50, 35],
+      "text_bert": [3, 50]
+    },
+    "valid_length_range": [13, 50],
+    "text_feature_row_to_text_bert_slot": "VERIFIED in Q3-2.6",
+    "attachment_has_align_or_slot_time_metadata": false,
+    "attachment_has_original_source_ids": false,
+    "attachment_has_audio_timestamps": false,
+    "attachment_has_video_frame_index_or_pts_mapping": false,
+    "attachment_has_producer_manifest_or_file_lineage_link": false,
+    "zero_suffix_interpreted_as_timing": false
+  },
+  "public_preprocessing_evidence": [
+    {
+      "source": "MMSA README, pinned revision a94e65d07fa1ae0d44e552390074b29b0898edfd",
+      "url": "https://github.com/thuiar/MMSA/blob/a94e65d07fa1ae0d44e552390074b29b0898edfd/README.md",
+      "supports": "The public aligned_50 release schema includes raw_text, text, text_bert, audio, vision, and length fields; text features are described as pre-extracted BERT.",
+      "does_not_support": "No producer or checksum link identifies these Attachment4 per-sample files as that release or specifies A/V row-to-token semantics for them."
+    },
+    {
+      "source": "MMSA data loader, pinned revision a94e65d07fa1ae0d44e552390074b29b0898edfd",
+      "url": "https://github.com/thuiar/MMSA/blob/a94e65d07fa1ae0d44e552390074b29b0898edfd/src/MMSA/data_loader.py",
+      "supports": "The loader consumes prebuilt feature arrays and obtains aligned sequence lengths from masks.",
+      "does_not_support": "A model input interface is not a per-row media alignment record and does not bind the Attachment4 hashes to its producer."
+    },
+    {
+      "source": "MMSA-FET dataset alignment implementation, pinned revision f8fbd2d88d4f77580ea1ded0b3469073488c5c19",
+      "url": "https://github.com/thuiar/MMSA-FET/blob/f8fbd2d88d4f77580ea1ded0b3469073488c5c19/src/MSA_FET/dataset.py",
+      "supports": "One explicit pipeline aligns audio/video to word intervals, maps word IDs to BERT WordPieces, duplicates pooled word features per token, and stores align_result.",
+      "does_not_support": "Attachment4 has no align_result and no config/source hash establishing that this alternate pipeline generated its rows."
+    },
+    {
+      "source": "CMU-MultimodalSDK alignment implementation, pinned revision 4f2eadcd7e7b9e20e83b868cdad385b41830285c",
+      "url": "https://github.com/CMU-MultiComp-Lab/CMU-MultimodalSDK/blob/4f2eadcd7e7b9e20e83b868cdad385b41830285c/mmsdk/mmdatasdk/dataset/dataset.py",
+      "supports": "Alignment is explicitly performed against a named reference sequence with timestamp intervals and optional collapse functions.",
+      "does_not_support": "Attachment4 contains neither source CSD IDs nor intervals/version metadata needed to establish that reference sequence."
+    }
+  ],
+  "not_performed": [
+    "No MP4 audio extraction",
+    "No forced alignment",
+    "No video frame decoding or PTS extraction",
+    "No slot-to-seconds or slot-to-frame assignment",
+    "No HEAF inference, prediction-based sample selection, or explanation review"
+  ],
+  "grounding": {
+    "text": "VERIFIED",
+    "audio": "UNVERIFIED",
+    "vision": "UNVERIFIED",
+    "overall": "PARTIAL_GROUNDING_READY"
+  },
+  "required_to_reopen_gate": [
+    "A producer manifest or source-level preprocessing record tied to the Attachment4 feature files by IDs/hashes.",
+    "An explicit per-slot mapping tying the verified text token/word position to the audio and vision feature rows, including the word-to-WordPiece expansion rule."
+  ]
+}

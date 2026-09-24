@@ -55,3 +55,9 @@
 决定：Attachment4 aligned-50 的 text feature row 与 `text_bert` token slot 同索引语义判为 **VERIFIED**。`evidence_grounding.py` 可沿该映射和固定 tokenizer offsets 返回原文片段；只含 special token 的区间不返回片段。Audio/Vision 继续 `UNVERIFIED`，Q3 总状态为 `PARTIAL_GROUNDING_READY`。
 依据：`E2026/outputs/q3/q3_text_row_identity.json` 中 20 样本、604 有效行的 source-supported final-layer 重建和 full cosine matrix：604/604 对角 argmax，mean diagonal cosine 0.999999994、RMSE 8.3977e-7、最大绝对差 3.0041e-5；真实样本 grounding smoke test 通过。公开代码未锁定 Attachment4 历史使用的确切权重 revision，因此不宣称该历史权重来源已固定。
 影响范围：只更新 E Q3 文本证据定位状态和 API；不修改 HEAF/P2、Q2 历史结果或音频/视觉映射。未运行全量 Attachment4 解释。日期：2026-09-24。
+
+## D010 - E Q3-2.7 A/V semantic-position gate
+
+决定：公开 aligned-feature 接口与预处理源码不足以证明 Attachment4 的 audio/vision 第 i 行与已验证 text/token 第 i 槽具有相同语义位置。保持 AUDIO/VISION=`UNVERIFIED`；在任何 MP4 音频提取、forced alignment、视频解码或 PTS 推断之前停止。总状态继续 `PARTIAL_GROUNDING_READY`。
+依据：Attachment4 没有 align 记录、slot timestamps、frame/PTS/source IDs 或 producer/hash provenance；公开 MMSA 只记录兼容格式，MMSA-FET 的 token expansion 属于另一明确 pipeline，CMU SDK 的 alignment 需要具名 reference sequence 和 timestamp intervals。审计：`E2026/outputs/q3/q3_av_grounding_audit.{md,json}`。
+影响范围：只锁定本轮 grounding 审计结论；不修改 P2、HEAF、Shapley、rho、faithfulness 或最终预测协议。日期：2026-09-24。
