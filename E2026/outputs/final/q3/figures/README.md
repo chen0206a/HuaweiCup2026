@@ -1,6 +1,6 @@
 # E2026 Q3 Figures 8–9
 
-These figures use the frozen Q3 results. Figure 8 summarizes **Attachment2 validation audit** interventions; Figure 9 shows four fixed, automatically nominated **Attachment4** explanation cards. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure.
+These figures use the frozen Q3 results. Figure 8 summarizes **Attachment2 validation audit** interventions. Figure 9 v2 shows two fixed **Attachment4** cases (14 and 02) with original-video scene images. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. Figure 9 v1 and its four original cases remain intact in the root figure files, case-card JSON files, and `archive/`.
 
 ## Reproduce
 
@@ -9,9 +9,11 @@ From `D:/华为杯/E2026` with Python 3 and `matplotlib`, `numpy`:
 ```powershell
 python outputs/final/q3/figures/scripts/figure8_q3_faithfulness.py
 python outputs/final/q3/figures/scripts/figure9_q3_case_studies.py
+python outputs/final/q3/figures/scripts/extract_figure9_context_frames.py
+python outputs/final/q3/figures/scripts/figure9_q3_case_studies_v2.py
 ```
 
-The scripts regenerate the intermediate CSV/JSON files, the PNG/PDF/SVG outputs, and copies of the PNG files under `preview/`. Both scripts set the same Arial-first typography, semantic modality colors, line weights, spine rules, and panel-label style.
+The original two scripts regenerate the v1 outputs and Figure 8. The last two commands regenerate the fixed-position scene frames and Figure 9 v2. Run the frame extractor before the v2 plotter. Figure 9 v2 uses the same semantic colors, line widths, spine rules, and panel-label scale as Figure 8, with Microsoft YaHei for Chinese glyphs.
 
 ## Figure 8 — Q3 faithfulness and modality evidence
 
@@ -31,7 +33,30 @@ Intermediate data are `data/figure8_deletion_curve.csv`, `data/figure8_primary_m
 
 The top interval is selected as the maximum over candidate windows, so A's top-vs-random advantage has a selection advantage by construction. The figure caption/report should describe this as a perturbation-consistency check, not independent proof of explanation quality or a causal effect. This is Attachment2 validation evidence; no Attachment4 output contributes to Figure 8.
 
-## Figure 9 — Attachment4 explanation case studies
+## Figure 9 v2 — Attachment4 typical explanation cases
+
+The paper figure has two rows: **A, Sample 14** (text-primary, high faithfulness, verified text grounding) and **B, Sample 02** (vision-primary, raw visual grounding unverified). Each row shows the frozen prediction, classification Shapley values, and the stored feature-slot temporal importance curve. A shows the exact verified text fragment from `raw_text`. B shows only the feature-space interval; no video time, feature-aligned frame, or raw visual location is claimed. The original-language text fragment is preserved verbatim even though the explanatory labels are Chinese.
+
+**Suggested Chinese caption:**
+
+> 图9 Attachment4典型样本的多层级解释结果。(a) 样本14为文本主导案例，给出三模态Shapley贡献、时间遮挡曲线及经验证的原始文本证据。(b) 样本02为视觉主导案例，HEAF能够定位视觉特征空间中的关键区间，但由于附件未提供可核验的视觉特征槽位—视频时间映射，原始视觉位置保持未验证。图中视频帧仅用于展示对应样本的原始场景，不表示HEAF定位的关键视觉帧。
+
+Video frames come from the paired MP4s via `extract_figure9_context_frames.py`. Sample 14 requests 50% of reported duration; Sample 02 requests 25%, 50%, and 75%. Selection reads only MP4 metadata and decoded frames, never HEAF scores or temporal peaks. `data/figure9_video_frame_manifest.json` records source MP4 path/hash, requested relative position, actual decoded zero-based frame index, nominal time derived from index/FPS when OpenCV PTS is unreliable, and the required `context_only` / `not_keyframe_mapping` status. The decoder stops before the MP4-reported tail in both files (Sample 14: 308/415 frames, Sample 02: 101/108 frames); all four requested positions were nevertheless directly decoded. Timing is scene-selection metadata, not a slot-to-time mapping.
+
+| Scene frame | Requested | Decoded index (zero-based) | Index/FPS time |
+|---|---:|---:|---:|
+| Sample 14 | 50% | 208 | 6.933 s |
+| Sample 02 | 25% | 27 | 0.900 s |
+| Sample 02 | 50% | 54 | 1.800 s |
+| Sample 02 | 75% | 81 | 2.700 s |
+
+The v2 plotter validates that both case records come from `attachment4_explanations.jsonl`, their fixed primary modalities and raw grounding statuses match, and Sample 14's displayed fragment equals the `[0,38)` raw-text span in the original `14.pkl`. Shapley values, predictions, and temporal curve values are read verbatim from the final JSONL. The shaded intervals are **feature-slot** intervals `[1,12)` and `[1,7)`, not media times. No model inference or result recalculation occurs.
+
+The Figure 9 v1 PNG/PDF/SVG remain at their original filenames and have identical copies in `archive/`. Sample 16, Sample 19, pair interactions, regression Shapley detail, and other full explanation fields remain in the v1 figure, four case-card JSON files, and original final results; they are omitted only from the v2 paper figure.
+
+**v2 QA:** Both plotted case records were loaded from the final JSONL; no prediction, Shapley or curve values were regenerated. The Sample 14 fragment was checked against the original `14.pkl` raw-text span. Sample 02 retains null raw visual timing and an explicit unverified label. All screenshots were selected from fixed MP4 duration fractions independent of HEAF. The old Figure 9 files and archive copies have matching SHA256 values; Figure 8 and the final prediction/explanation files were not modified. The SVG parses as XML, the PDF has one 183 × 148 mm page, and the PNG is 2161 × 1748 pixels with 300 dpi metadata. The labels are legible at the intended 183 mm width. This v2 is ready for a Huawei Cup Chinese manuscript draft with the caption above.
+
+## Figure 9 v1 — archived four-case version
 
 **Source files:**
 
@@ -58,7 +83,11 @@ The style inspiration is the public [academic-figure-skill repository](https://g
 
 - `figure8_q3_faithfulness.png`, `.pdf`, `.svg`
 - `figure9_q3_case_studies.png`, `.pdf`, `.svg`
+- `figure9_q3_case_studies_v2.png`, `.pdf`, `.svg` (300 dpi PNG; editable vector PDF/SVG)
+- `archive/figure9_q3_case_studies.png`, `.pdf`, `.svg` (unchanged v1 copies)
+- `data/sample14_context_frame.png`, `data/sample02_context_25.png`, `data/sample02_context_50.png`, `data/sample02_context_75.png`
+- `data/figure9_video_frame_manifest.json`
 - 300 dpi raster previews duplicated in `preview/`
 - reproducible plotting scripts in `scripts/`
 
-PNG previews were rendered and visually reviewed after the final layout adjustments. PDF and SVG exports retain vector drawing/text. At final manuscript sizing, Figure 8 is a double-column-width quantitative multipanel figure; Figure 9 is a double-column-width, taller asymmetric case-study figure. The high-density bottom case panels in Figure 9 use compact labels; verify them after any manuscript software rescales the figures.
+PNG previews were rendered and visually reviewed after the final layout adjustments. PDF and SVG exports retain vector drawing/text, with video stills as embedded raster images. Figure 8 is a double-column-width quantitative multipanel figure; Figure 9 v2 is a double-column-width, two-case explanation figure at 183 mm width. Check the final manuscript export if the document editor rescales it below this width.
