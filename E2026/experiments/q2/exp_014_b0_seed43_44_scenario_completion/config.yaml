@@ -1,0 +1,18 @@
+name: "q2_fig45_b0_seed43_44_scenario_completion"
+date: "2026-09-24"
+task: "inference_only"
+models: ["B0-WCE"]
+seeds: [43, 44]
+checkpoint_manifest: "outputs/final/q2/q2_checkpoint_manifest.json"
+input: "data/raw/aligned_50.pkl"
+split: "valid"
+valid_count: 728
+benchmark_definition: "outputs/metrics/b2_benchmark_definition.json"
+benchmark_sha256: "3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff"
+benchmark_seed: 20260923
+conditions: ["clean", "54 frozen missing scenarios"]
+evaluation_implementation: "src/evaluation/missing_benchmark.py"
+training: false
+test_used: false
+attachment3_used: false
+mean_sd: "across three seeds; sample SD (ddof=1)"
