@@ -1,0 +1,31 @@
+run_name: B5-P-seed42
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+training:
+  seed: 42
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  augmentation: none
+  init_checkpoint: /root/workspace/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+  freeze_b0_parameters: true
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  checkpoint_prefix: b5_pooling
+  metrics: b5_pooling_metrics.json
+  history: b5_pooling_history.json
+  report: b5_pooling_report.md
