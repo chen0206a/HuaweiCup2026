@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "q3_explanation_schema_v0.1.json",
+  "title": "HEAF explanation card (design contract, no Attachment4 results)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sample_id", "predictor", "prediction", "modality_contribution", "primary_modality", "pairwise_interaction", "key_interval", "faithfulness", "raw_evidence"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "sample_id": {"type": "string", "minLength": 1},
+    "predictor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["model", "seed", "checkpoint_sha256", "feature_version", "baseline_kind"],
+      "properties": {
+        "model": {"const": "B5-P2"}, "seed": {"const": 42},
+        "checkpoint_sha256": {"const": "cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff"},
+        "feature_version": {"const": "aligned_50"},
+        "baseline_kind": {"const": "all_valid_features_zero_padding_unchanged"}
+      }
+    },
+    "prediction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["predicted_class", "predicted_class_name", "predicted_intensity", "confidence", "class_logit", "class_log_odds", "class_probabilities"],
+      "properties": {
+        "predicted_class": {"type": "integer", "enum": [0, 1, 2]},
+        "predicted_class_name": {"type": "string", "enum": ["Negative", "Neutral", "Positive"]},
+        "predicted_intensity": {"type": "number"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "class_logit": {"type": "number"}, "class_log_odds": {"type": "number"},
+        "class_probabilities": {"type": "array", "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}], "minItems": 3, "maxItems": 3}
+      }
+    },
+    "modality_contribution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["classification_log_odds", "regression", "classification_empty_baseline", "regression_empty_baseline"],
+      "properties": {
+        "classification_log_odds": {"$ref": "#/$defs/triplet"},
+        "regression": {"$ref": "#/$defs/triplet"},
+        "classification_empty_baseline": {"type": "number"},
+        "regression_empty_baseline": {"type": "number"}
+      }
+    },
+    "primary_modality": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "selection_basis", "supports_predicted_class"],
+      "properties": {
+        "name": {"$ref": "#/$defs/modality"},
+        "selection_basis": {"type": "string", "enum": ["largest_positive_class_shapley", "absolute_negative_fallback"]},
+        "supports_predicted_class": {"type": "boolean"}
+      }
+    },
+    "pairwise_interaction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["classification_log_odds", "regression"],
+      "properties": {
+        "classification_log_odds": {"$ref": "#/$defs/pairs"},
+        "regression": {"$ref": "#/$defs/pairs"}
+      }
+    },
+    "key_interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["modality", "start_index", "end_index", "valid_length", "window_length", "importance", "class_logit_drop", "confidence_drop", "regression_shift", "supports_predicted_class", "temporal_curve", "regression_temporal_curve", "temporal_windows"],
+      "properties": {
+        "modality": {"$ref": "#/$defs/modality"},
+        "start_index": {"type": "integer", "minimum": 0},
+        "end_index": {"type": "integer", "minimum": 1, "description": "Exclusive end; runtime must enforce start < end <= valid_length."},
+        "valid_length": {"type": "integer", "minimum": 1, "maximum": 50},
+        "window_length": {"type": "integer", "minimum": 1, "maximum": 50},
+        "importance": {"type": "number", "description": "Full minus occluded class log-odds margin."},
+        "class_logit_drop": {"type": "number"},
+        "confidence_drop": {"type": "number"},
+        "regression_shift": {"type": "number"},
+        "supports_predicted_class": {"type": "boolean"},
+        "temporal_curve": {"type": "array", "minItems": 50, "maxItems": 50, "items": {"type": ["number", "null"]}, "description": "Per-position maximum covering-window class-margin drop; null at padding."},
+        "regression_temporal_curve": {"type": "array", "minItems": 50, "maxItems": 50, "items": {"type": ["number", "null"]}, "description": "Per-position maximum absolute regression shift over covering windows; null at padding."},
+        "temporal_windows": {"type": "array", "minItems": 1, "maxItems": 50, "items": {"type": "object", "additionalProperties": false, "required": ["start_index", "end_index", "class_logit_drop", "class_log_odds_drop", "confidence_drop", "regression_shift"], "properties": {"start_index": {"type": "integer", "minimum": 0}, "end_index": {"type": "integer", "minimum": 1}, "class_logit_drop": {"type": "number"}, "class_log_odds_drop": {"type": "number"}, "confidence_drop": {"type": "number"}, "regression_shift": {"type": "number"}}}}
+      }
+    },
+    "faithfulness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["random_seed", "random_draws", "top_deletion_drop", "random_deletion_drop", "deletion_curve"],
+      "properties": {
+        "random_seed": {"const": 20260924}, "random_draws": {"const": 32},
+        "top_deletion_drop": {"$ref": "#/$defs/drop"},
+        "random_deletion_drop": {"$ref": "#/$defs/drop"},
+        "deletion_curve": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["fraction", "deleted_positions", "top", "random_mean"], "properties": {"fraction": {"type": "number", "enum": [0.1, 0.2, 0.3, 0.4]}, "deleted_positions": {"type": "integer", "minimum": 1}, "top": {"$ref": "#/$defs/drop"}, "random_mean": {"$ref": "#/$defs/drop"}}}}
+      }
+    },
+    "raw_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["grounding_status", "mapping_method", "media_file", "text_fragment", "audio_time_range", "video_frame_time", "mapping_note"],
+      "properties": {
+        "grounding_status": {"type": "string", "enum": ["verified", "approximate", "unverified"]},
+        "mapping_method": {"type": ["string", "null"]},
+        "media_file": {"type": ["string", "null"]},
+        "text_fragment": {"type": ["string", "null"]},
+        "audio_time_range": {"anyOf": [{"$ref": "#/$defs/timeRange"}, {"type": "null"}]},
+        "video_frame_time": {"type": ["number", "null"], "minimum": 0},
+        "mapping_note": {"type": ["string", "null"]}
+      }
+    }
+  },
+  "$defs": {
+    "modality": {"type": "string", "enum": ["text", "audio", "vision"]},
+    "triplet": {"type": "object", "additionalProperties": false, "required": ["text", "audio", "vision"], "properties": {"text": {"type": "number"}, "audio": {"type": "number"}, "vision": {"type": "number"}}},
+    "interaction": {"type": "object", "additionalProperties": false, "required": ["value", "delta_without_third", "delta_with_third"], "properties": {"value": {"type": "number"}, "delta_without_third": {"type": "number"}, "delta_with_third": {"type": "number"}}},
+    "pairs": {"type": "object", "additionalProperties": false, "required": ["text_audio", "text_vision", "audio_vision"], "properties": {"text_audio": {"$ref": "#/$defs/interaction"}, "text_vision": {"$ref": "#/$defs/interaction"}, "audio_vision": {"$ref": "#/$defs/interaction"}}},
+    "drop": {"type": "object", "additionalProperties": false, "required": ["class_logit", "class_log_odds", "confidence", "regression_signed", "regression_absolute"], "properties": {"class_logit": {"type": "number"}, "class_log_odds": {"type": "number"}, "confidence": {"type": "number"}, "regression_signed": {"type": "number"}, "regression_absolute": {"type": "number", "minimum": 0}}},
+    "timeRange": {"type": "object", "additionalProperties": false, "required": ["start_seconds", "end_seconds"], "properties": {"start_seconds": {"type": "number", "minimum": 0}, "end_seconds": {"type": "number", "minimum": 0}}}
+  }
+}
