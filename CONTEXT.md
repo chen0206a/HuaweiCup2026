@@ -4,16 +4,15 @@
 
 ## Current progress
 
-Q2 已完成数据审计、B0/B1、连续缺失基准、三种子稳定性、重建路线验证、B4′单种子门控筛选、B5-P pooling、B5-F1 fusion、B5-L1 loss balance seed42 screening。
-B0-WCE 主干仍为当前可靠参照。B5-P seed42 P1/P2 robust 分别为 0.744320/0.745847，高于 B0 的 0.740248，但需要多种子确认；B5-F1 robust 0.738850，fusion 线按预设规则停止。
-B5-L1 lambda 1.0 从头重训精确复现历史 seed42 clean score 0.741331 / robust 0.740248。lambda .25/.5/1/2 的 robust 分数为 0.729305/0.737328/0.740248/0.741056，故 lambda2 相对 reference 仅 +0.000808，低于 +0.002 screening 门槛；其它候选未提升。保留 lambda_reg=1.0，不继续细扫，也不补多 seed。
-结果：`E2026/outputs/metrics/b5_l1_lambda_report.md`、`b5_l1_lambda_metrics.json`；正式记录 `experiments/exp_010_b5_l1_lambda/`。
-Q1/Q3 的 E 题完成情况本轮尚未核实，不能将 A 题旧成果混入。
+Q2 已完成数据审计、B0/B1、连续缺失基准、多种子稳定性、重建路线验证、B4′单种子诊断、B5-P pooling、B5-F1 fusion、B5-L1 loss balance screening，以及 B5-H0 只读 head consistency diagnostic。
+B0-WCE 仍是当前参考。B5-P seed42 P1/P2 robust 分别 0.744320/0.745847，需多种子确认；B5-F1 robust 0.738850，停止。B5-L1 保留 lambda_reg=1.0，lambda2 仅+0.000808，不细扫。
+B5-H0 基于历史 B0-WCE seed42，在 clean + 固定54场景、仅validation上分析两头。tau=0 agreement clean/missing 为82.69%/81.62%；both-wrong约30.3%，reg-only-correct约5.1%/5.5%，oracle union上限约69.6%/69.7%。类别判断为部分互补但共享错误明显；Neutral真值回归轴分布较宽，符号映射无法恢复Neutral。详细结果和逐样本输出见 `E2026/outputs/metrics/b5_h0_head_diagnostic.md`、对应JSON与预测CSV/JSONL；正式记录 `experiments/exp_011_b5_h0_head_diagnostic/`。
+Q1/Q3 的 E 题完成情况未核实；不要将A题历史成果混入。
 
 ## Immediate next steps
 
-暂无用户授权的下一实验；不要进入 Focal、Label Smoothing、B4′后续或其它 B5 分支。附件2 test 与附件3在 B5-L1 未加载。早期 `b0_metrics.json` 有一次 test 评估，因此不要声称全项目 test 从未读取。冻结54场景基准未改。
+B5-H0 已停止；不自动开始H1。attachment2 test未索引/评估，attachment3未访问。早期 `b0_metrics.json` 有一次test评估，因此不要声称全项目test从未读取。冻结54场景协议未变。
 
 ## Historical A work
 
-原A快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STATUS_before_E_20260923.md`。根目录 `q1/`、`q2/`、`q3/` 是 A 的历史交接，代码与结果保留；不要当成 E 的进度。
+A题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STATUS_before_E_20260923.md`。根目录 `q1/`、`q2/`、`q3/` 属于A的历史交接，不可混为E。

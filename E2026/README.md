@@ -91,3 +91,8 @@ Run `python -m pytest tests/test_b5_fusion.py -q`, then `python -m src.training.
 `configs/b5_l1_lambda.yaml` runs the original B0-WCE architecture from scratch with seed 42 and lambda values 0.25, 0.5, 1.0, and 2.0. It uses the same fresh initialization, train order, train-derived balanced CE weights, optimizer, and frozen validation benchmark across candidates. The benchmark file is hash-checked. Test and attachment 3 are not loaded. Both clean-selected and robust-selected checkpoints are saved separately. See `outputs/metrics/b5_l1_lambda_report.md` and `experiments/exp_010_b5_l1_lambda/` for results and configuration.
 
 Seed-42 screening found robust deltas vs the same-protocol lambda=1 reference of −0.010943, −0.002920, 0, and +0.000808 for lambda .25/.5/1/2. The slight lambda=2 gain is below the prespecified +.002 threshold; its increased Neutral recall/F1 comes with reduced Accuracy. Keep lambda_reg=1.0 and stop the grid without further tuning.
+
+
+## B5-H0 head consistency diagnostic
+
+`python -m scripts.run_b5_h0_head_diagnostic` performs read-only inference with the historical seed-42 B0-WCE checkpoint on valid clean + the frozen 54-scenario benchmark. It exports per-sample JSONL/CSV and computes sign-map head agreement, descriptive tau sweep, class/regression distributions, confidence bins, scenario and paired clean→missing diagnostics, and oracle union upper bounds. Test and attachment3 are not evaluated. See `outputs/metrics/b5_h0_head_diagnostic.md` and `experiments/exp_011_b5_h0_head_diagnostic/`. The result indicates partial complementarity with substantial shared errors; no follow-up training is included.

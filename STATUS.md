@@ -2,8 +2,8 @@
 
 2026-09-24：当前 E 题工作目录为 `E2026/`。
 
-- E Q2：B5-L1 完成 seed42 screening。原 B0-WCE 的 `lambda_reg=1.0`，四组初始权重、训练顺序、训练类权重一致；lambda1.0 精确复现历史参考。lambda2 robust +0.000808，未达到 +0.002 阈值；保留 lambda1.0 并停止该网格。
-- 既有筛选：B5-P P1/P2 为正但尚未多种子确认；B5-F1 为负并停止；B4′后续暂停；重建路线停止。
-- 本轮 outputs：`E2026/outputs/metrics/b5_l1_lambda_report.md` 与对应 JSON；正式实验 `experiments/exp_010_b5_l1_lambda/`。
-- 未加载 attachment2 test 或 attachment3；不进入 Focal、label smoothing 或其他实验分支。
-- Q1/Q3 当前完成度未核实；A题历史数据和文档仍保留。
+- E Q2：完成 B5-H0 只读诊断。历史 B0-WCE seed42 checkpoint 未修改；valid clean + 54场景，benchmark SHA256不变。
+- Head一致性：clean/missing agreement 82.69%/81.62%；both-wrong约30.3%；reg-only-correct约5.1%/5.5%。Oracle union上限约69.6%/69.7%，仅诊断。结论：部分互补但共享错误明显，尤其Neutral不能由tau=0回归符号映射恢复。
+- 输出：`E2026/outputs/metrics/b5_h0_head_diagnostic.{json,md}`、`b5_h0_predictions.{csv,jsonl}`；正式记录 `experiments/exp_011_b5_h0_head_diagnostic/`。
+- 未训练模型、未修改checkpoint、未索引/评估attachment2 test、未访问attachment3；不自动进入H1。
+- Q1/Q3完成情况本轮未核实；A题历史资料保留。

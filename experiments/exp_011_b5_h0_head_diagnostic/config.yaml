@@ -1,0 +1,26 @@
+name: B5-H0 head consistency diagnostic
+model:
+  checkpoint: outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+  family: B0-WCE
+  training_seed: 42
+  lambda_reg: 1.0
+  selection: historical best-selection-score
+  architecture: masked mean pooling + original B0 projections/fusion/heads
+data:
+  source: data/raw/attachment2/aligned_50.pkl
+  split_used: valid only
+  validation_samples: 728
+  normalization: none
+benchmark:
+  definition: outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+  conditions: clean + 54 frozen missing scenarios
+regression_class_diagnostic:
+  sign_mapping_tau: 0.0
+  descriptive_tau_sweep: [0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0]
+  selected_for_model: false
+training: none
+forbidden_data:
+  attachment2_test: not accessed or evaluated
+  attachment3: not accessed
