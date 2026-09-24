@@ -1,0 +1,69 @@
+run_name: Q3-HEAF-final-method-lock
+status: METHOD_LOCKED_BEFORE_ATTACHMENT4_CONTENT_AUDIT
+source_commit: 7e79783
+source_validation:
+  metrics: outputs/q3/heaf_validation_metrics.json
+  metrics_sha256: 78aa1c76be1aa2be472dce57eca0c443dd19ae61e2b7bffdd36cd7129e19c2ac
+  validation_config: configs/final/q3_heaf_validation.yaml
+  validation_config_sha256: e23e4af9e50521dc95130ec8eac2d919a19067d3f90e1c9ff2ec4e7ae7bf7a64
+predictor:
+  architecture: B5PoolingResidual
+  mode: mean_attention
+  seed: 42
+  checkpoint: outputs/checkpoints/b5_pooling_p2_best_robust_score.pt
+  checkpoint_sha256: cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff
+  eval: true
+  no_grad: true
+  dtype: float32
+  normalization: none
+input:
+  source: Attachment4
+  feature_version: aligned_50
+  sequence_positions: 50
+  dimensions: {text: 768, audio: 74, vision: 35}
+  padding_source: text_bert[:,1,:] == 1
+  excluded_modality: zero_valid_feature_rows_only
+  padding_and_native_zero_records: unchanged
+coalition:
+  order: [empty, T, A, V, TA, TV, AV, TAV]
+  attribution: exact_three_player_shapley
+  classification_target: fixed_full_prediction_class_log_odds
+  regression_target: raw_regression_output
+  empty_baseline: model_output_with_all_valid_modalities_zero_and_padding_unchanged
+  pair_interaction: mean_of_second_order_difference_without_and_with_third_modality
+  negative_interaction_label: negative_interaction
+primary_modality:
+  classification: largest_positive_class_shapley_else_largest_absolute
+  regression: largest_absolute_regression_shapley
+  tie_order: [text, audio, vision]
+  temporal_main: classification
+temporal:
+  rho: 0.30
+  window_length: max(1, round(rho * valid_length))
+  stride: 1
+  valid_prefix_only: true
+  top_rule: maximum_positive_class_margin_drop_else_maximum_absolute_then_earliest_start
+  curve: maximum_covering_window_class_margin_drop_per_valid_slot
+faithfulness:
+  random_draws: 32
+  random_seed: 20260924
+  random_interval: uniform_start_with_replacement_same_length
+  deletion_fractions: [0.10, 0.20, 0.30, 0.40]
+  deletion_length: max(1, round(fraction * valid_length))
+  deletion_ranking: descending_temporal_curve_stable_earliest_slot_tie
+  random_positions: uniform_without_replacement_same_count
+  classification_main: [fixed_class_margin_drop, fixed_class_confidence_drop]
+  classification_auxiliary: fixed_class_logit_drop
+  regression: [signed_shift, absolute_shift]
+schema:
+  path: outputs/q3/q3_explanation_schema.json
+  version: 0.2.0
+  sha256: 25abe930caad7f0b4a3cb867716bf00a4b58ea554af96cd66e89f5b21809e2d2
+grounding:
+  current_status: NOT_AUDITED
+  allowed_statuses: [VERIFIED, APPROXIMATE, UNVERIFIED]
+  no_unsubstantiated_text_or_seconds_or_frame: true
+restrictions:
+  no_new_training: true
+  no_heaf_reselection_from_attachment4: true
+  no_attachment4_full_inference_in_q3_2: true
