@@ -1,0 +1,395 @@
+{
+  "schema_version": "0.2.0",
+  "sample_id": "16",
+  "predictor": {
+    "model": "B5-P2",
+    "seed": 42,
+    "checkpoint_sha256": "cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff",
+    "feature_version": "aligned_50",
+    "baseline_kind": "all_valid_features_zero_padding_unchanged"
+  },
+  "prediction": {
+    "predicted_class": 0,
+    "predicted_class_name": "Negative",
+    "predicted_intensity": -2.03037691116333,
+    "confidence": 0.966996736906924,
+    "class_logit": 2.366128444671631,
+    "class_log_odds": 3.377588682811293,
+    "class_probabilities": [
+      0.966996736906924,
+      0.017834314802459783,
+      0.015168948290616357
+    ]
+  },
+  "modality_contribution": {
+    "classification_log_odds": {
+      "text": 3.8313734987487758,
+      "audio": 0.45573348914787554,
+      "vision": 0.39861504125152886
+    },
+    "regression": {
+      "text": -1.7488839228947959,
+      "audio": -0.036924218138058976,
+      "vision": -0.22924651702245077
+    },
+    "classification_empty_baseline": -1.3081333463368874,
+    "regression_empty_baseline": -0.015322253108024597
+  },
+  "primary_modality_classification": {
+    "name": "text",
+    "selection_basis": "largest_positive_class_shapley",
+    "supports_predicted_class": true
+  },
+  "primary_modality_regression": {
+    "name": "text",
+    "selection_basis": "largest_absolute_regression_shapley",
+    "direction": "decreases_output"
+  },
+  "primary_modality_agreement": true,
+  "pairwise_interaction": {
+    "classification_log_odds": {
+      "text_audio": {
+        "value": 0.5160767874941746,
+        "delta_without_third": 0.5620049140776044,
+        "delta_with_third": 0.4701486609107448
+      },
+      "text_vision": {
+        "value": -0.7237452453956196,
+        "delta_without_third": -0.6778171188121898,
+        "delta_with_third": -0.7696733719790494
+      },
+      "audio_vision": {
+        "value": 0.009714511887113697,
+        "delta_without_third": 0.055642638470543515,
+        "delta_with_third": -0.03621361469631612
+      }
+    },
+    "regression": {
+      "text_audio": {
+        "value": -0.20722971111536026,
+        "delta_without_third": -0.1700316220521927,
+        "delta_with_third": -0.24442780017852783
+      },
+      "text_vision": {
+        "value": 0.23409127444028854,
+        "delta_without_third": 0.2712893635034561,
+        "delta_with_third": 0.19689318537712097
+      },
+      "audio_vision": {
+        "value": 0.12033262103796005,
+        "delta_without_third": 0.15753071010112762,
+        "delta_with_third": 0.08313453197479248
+      }
+    }
+  },
+  "key_interval": {
+    "modality": "text",
+    "start_index": 8,
+    "end_index": 12,
+    "valid_length": 13,
+    "window_length": 4,
+    "importance": 0.0950283261165712,
+    "class_logit_drop": 0.05185341835021973,
+    "confidence_drop": 0.0031710784142038317,
+    "regression_shift": -0.024137496948242188,
+    "supports_predicted_class": true,
+    "temporal_curve": [
+      -0.059705856571478755,
+      -0.05915481965518721,
+      -0.012833912020286942,
+      0.011716665091387135,
+      0.033712153111044696,
+      0.033712153111044696,
+      0.033712153111044696,
+      0.05057248725555841,
+      0.0950283261165712,
+      0.0950283261165712,
+      0.0950283261165712,
+      0.0950283261165712,
+      0.08142294149372642,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "regression_temporal_curve": [
+      0.02716660499572754,
+      0.02716660499572754,
+      0.02716660499572754,
+      0.0315699577331543,
+      0.0315699577331543,
+      0.0315699577331543,
+      0.0315699577331543,
+      0.021213054656982422,
+      0.024137496948242188,
+      0.02935028076171875,
+      0.02935028076171875,
+      0.02935028076171875,
+      0.02935028076171875,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "temporal_windows": [
+      {
+        "start_index": 0,
+        "end_index": 4,
+        "class_logit_drop": -0.04386186599731445,
+        "class_log_odds_drop": -0.059705856571478755,
+        "confidence_drop": -0.00185323241450297,
+        "regression_shift": -0.02716660499572754
+      },
+      {
+        "start_index": 1,
+        "end_index": 5,
+        "class_logit_drop": -0.03607654571533203,
+        "class_log_odds_drop": -0.05915481965518721,
+        "confidence_drop": -0.001836597985082511,
+        "regression_shift": -0.016431331634521484
+      },
+      {
+        "start_index": 2,
+        "end_index": 6,
+        "class_logit_drop": 0.004965305328369141,
+        "class_log_odds_drop": -0.012833912020286942,
+        "confidence_drop": -0.0004071363633223468,
+        "regression_shift": 0.02254796028137207
+      },
+      {
+        "start_index": 3,
+        "end_index": 7,
+        "class_logit_drop": 0.022301673889160156,
+        "class_log_odds_drop": 0.011716665091387135,
+        "confidence_drop": 0.00037597913172449093,
+        "regression_shift": 0.0315699577331543
+      },
+      {
+        "start_index": 4,
+        "end_index": 8,
+        "class_logit_drop": 0.03429365158081055,
+        "class_log_odds_drop": 0.033712153111044696,
+        "confidence_drop": 0.0010929952819367372,
+        "regression_shift": 0.009088516235351562
+      },
+      {
+        "start_index": 5,
+        "end_index": 9,
+        "class_logit_drop": 0.03136110305786133,
+        "class_log_odds_drop": 0.02367114510687207,
+        "confidence_drop": 0.0007638502540723291,
+        "regression_shift": 0.016115188598632812
+      },
+      {
+        "start_index": 6,
+        "end_index": 10,
+        "class_logit_drop": 0.0034456253051757812,
+        "class_log_odds_drop": -0.019079653284283182,
+        "confidence_drop": -0.0006035132720105807,
+        "regression_shift": 0.021213054656982422
+      },
+      {
+        "start_index": 7,
+        "end_index": 11,
+        "class_logit_drop": 0.03930306434631348,
+        "class_log_odds_drop": 0.05057248725555841,
+        "confidence_drop": 0.0016526515341748205,
+        "regression_shift": 0.0015978813171386719
+      },
+      {
+        "start_index": 8,
+        "end_index": 12,
+        "class_logit_drop": 0.05185341835021973,
+        "class_log_odds_drop": 0.0950283261165712,
+        "confidence_drop": 0.0031710784142038317,
+        "regression_shift": -0.024137496948242188
+      },
+      {
+        "start_index": 9,
+        "end_index": 13,
+        "class_logit_drop": 0.024053096771240234,
+        "class_log_odds_drop": 0.08142294149372642,
+        "confidence_drop": 0.0026996982873648268,
+        "regression_shift": -0.02935028076171875
+      }
+    ]
+  },
+  "faithfulness": {
+    "random_seed": 20260924,
+    "random_draws": 32,
+    "top_deletion_drop": {
+      "class_logit": 0.05185341835021973,
+      "class_log_odds": 0.0950283261165712,
+      "confidence": 0.0031710784142038317,
+      "regression_signed": -0.024137496948242188,
+      "regression_absolute": 0.024137496948242188
+    },
+    "random_deletion_drop": {
+      "class_logit": 0.017778024077415466,
+      "class_log_odds": 0.029945138636941607,
+      "confidence": 0.0010198793596694795,
+      "regression_signed": -0.006540015339851379,
+      "regression_absolute": 0.006540015339851379
+    },
+    "deletion_curve": [
+      {
+        "fraction": 0.1,
+        "deleted_positions": 1,
+        "top": {
+          "class_logit": -0.0022192001342773438,
+          "class_log_odds": -0.011493720027044851,
+          "confidence": -0.000364848776205684,
+          "regression_signed": 0.00805354118347168,
+          "regression_absolute": 0.00805354118347168
+        },
+        "random_mean": {
+          "class_logit": -4.9404799938201904e-05,
+          "class_log_odds": 0.0022815711867040234,
+          "confidence": 7.87582653637535e-05,
+          "regression_signed": -0.002286165952682495,
+          "regression_absolute": 0.002286165952682495
+        }
+      },
+      {
+        "fraction": 0.2,
+        "deleted_positions": 3,
+        "top": {
+          "class_logit": 0.03396868705749512,
+          "class_log_odds": 0.04277818077389872,
+          "confidence": 0.0013928375983544017,
+          "regression_signed": 0.009985923767089844,
+          "regression_absolute": 0.009985923767089844
+        },
+        "random_mean": {
+          "class_logit": 0.006345294415950775,
+          "class_log_odds": 0.012625738174242826,
+          "confidence": 0.00044932769363158903,
+          "regression_signed": -0.007852450013160706,
+          "regression_absolute": 0.007852450013160706
+        }
+      },
+      {
+        "fraction": 0.3,
+        "deleted_positions": 4,
+        "top": {
+          "class_logit": 0.05185341835021973,
+          "class_log_odds": 0.0950282096734325,
+          "confidence": 0.0031710743543257314,
+          "regression_signed": -0.024137258529663086,
+          "regression_absolute": 0.024137258529663086
+        },
+        "random_mean": {
+          "class_logit": 0.01720045506954193,
+          "class_log_odds": 0.0331903047442243,
+          "confidence": 0.0011122776576232146,
+          "regression_signed": -0.011764176189899445,
+          "regression_absolute": 0.011764176189899445
+        }
+      },
+      {
+        "fraction": 0.4,
+        "deleted_positions": 5,
+        "top": {
+          "class_logit": 0.02660512924194336,
+          "class_log_odds": 0.071850238193643,
+          "confidence": 0.002371587589025781,
+          "regression_signed": -0.017669200897216797,
+          "regression_absolute": 0.017669200897216797
+        },
+        "random_mean": {
+          "class_logit": 0.0064125657081604,
+          "class_log_odds": 0.021279568351583816,
+          "confidence": 0.0007586910995026792,
+          "regression_signed": -0.008206512778997421,
+          "regression_absolute": 0.008206512778997421
+        }
+      }
+    ]
+  },
+  "raw_evidence": {
+    "grounding_status": "verified",
+    "mapping_method": "audited_bert_feature_row_to_text_bert_token_to_tokenizer_offsets",
+    "media_file": "../第二十三届中国研究生数学建模竞赛 - 中文题目/中文题目/E题/E题数据/E题数据/附件4-可解释专项视频样本与特征文件/附件4-可解释专项视频样本与特征文件/对齐版本/videos/16.mp4",
+    "text_fragment": "is a terrible movie",
+    "audio_time_range": null,
+    "video_frame_time": null,
+    "mapping_note": "Verified feature row→text_bert token→pinned tokenizer offsets; token_ids=[2003, 1037, 6659, 3185]; tokens=['is', 'a', 'terrible', 'movie']; raw_text_character_span={'start_char': 22, 'end_char': 41} (half-open). [CLS]/[SEP] omitted from text evidence."
+  },
+  "figure_case": {
+    "panel": "C",
+    "description": "Strongest absolute classification pair interaction",
+    "selection_provenance": {
+      "sample_id": "16",
+      "pair": "text_vision",
+      "criterion": "maximum absolute classification pair-interaction value; sample ID then fixed pair order tie-break",
+      "value": -0.7237452453956196
+    },
+    "selection_source": "outputs/q3/final/attachment4_summary.json representative_candidates"
+  }
+}

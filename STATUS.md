@@ -4,6 +4,8 @@
 
 - E Q3-3：Attachment4 aligned_50 20/20 frozen B5-P2 seed42 + 锁定 HEAF 全量推理完成，状态 `Q3_FINAL_INFERENCE_COMPLETE`。checkpoint hash 前后不变；输入、ID、finite/mask、Shapley efficiency、schema、raw_text span 和 A/V null 字段 QA 通过。Text/Vision/Audio 分类主模态 19/1/0，回归 18/2/0，主模态一致 17/20；grounding verified 19、unverified 1。没有标签性能指标。交付 `E2026/outputs/q3/final/`；见 `attachment4_delivery_check.md`。
 
+- E Q3 Figures 8/9：完成并目视检查 PNG 预览，PDF/SVG 为矢量输出。Figure 8 来自 Attachment2 valid（audit faithfulness + 全 valid 主模态计数）；Figure 9 使用自动固定的 Attachment4 样本 14、02、16、19，无标签性能解读且 A/V 不做时间 grounding。数据、绘图脚本、图像和 README 均在 `E2026/outputs/final/q3/figures/`。
+
 - E Q3-2.6：BERT 最后层重建与公开预处理代码支持 Attachment4 text 行对应 `text_bert` 同索引 token；604/604 cosine 行最大值在对角，均值 cosine 0.999999994，RMSE 8.40e-7，最大绝对差 3.01e-5。Text grounding 已接入 tokenizer offsets 并对真实样本做 API smoke test。Text=`VERIFIED`，audio/vision=`UNVERIFIED`，当前=`PARTIAL_GROUNDING_READY`。无 HEAF 推理、无训练。详见 `E2026/outputs/q3/q3_text_row_identity_report.md` 与 `E2026/experiments/q3/exp_0026_text_row_identity/`。
 
 - E Q3-2.7：公开接口与预处理资料不能把 Attachment4 的 A/V 第 i 行绑定到已验证 text/token 第 i 槽。按 gate 要求，在提取 MP4 音频、forced alignment、解码视频/PTS 之前停止。TEXT=`VERIFIED`，AUDIO/VISION=`UNVERIFIED`，overall=`PARTIAL_GROUNDING_READY`。未运行 HEAF。见 `E2026/outputs/q3/q3_av_grounding_audit.{md,json}`。
