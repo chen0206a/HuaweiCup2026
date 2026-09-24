@@ -56,10 +56,10 @@ EXPLANATIONS = ROOT / "outputs" / "q3" / "final" / "attachment4_explanations.jso
 MANIFEST = DATA / "figure9_video_frame_manifest.json"
 BASE = OUT / "figure9_q3_case_studies_v2"
 
-BLACK = "#222222"
+BLACK = "#333333"
 GREY = "#666666"
-LIGHT_GREY = "#D0D0D0"
-COLORS = {"text": "#2166AC", "audio": "#F1A340", "vision": "#1B7837"}
+LIGHT_GREY = "#D9D9D9"
+COLORS = {"text": "#4477AA", "audio": "#CC6677", "vision": "#EECC66"}
 MODALITY_LABELS = {"text": "文本", "audio": "音频", "vision": "视觉"}
 CLASS_LABELS = {"Negative": "负面", "Neutral": "中性", "Positive": "正面"}
 ORDER = ("text", "audio", "vision")
@@ -158,6 +158,14 @@ def archive_old_figure() -> None:
         else:
             shutil.copy2(original, archived)
 
+    # Preserve the already-reviewed two-case layout before the palette-only
+    # harmonization with Chinese Figure 8. Reruns never replace this snapshot.
+    for extension in ("png", "pdf", "svg"):
+        original_v2 = BASE.with_suffix(f".{extension}")
+        archived_v2 = ARCHIVE / f"figure9_q3_case_studies_v2_before_scheme_c.{extension}"
+        if not archived_v2.exists() and original_v2.is_file():
+            shutil.copy2(original_v2, archived_v2)
+
 
 def add_scene(fig, bounds, path: Path) -> None:
     ax = fig.add_axes(bounds)
@@ -213,10 +221,12 @@ def add_temporal(fig, card: dict, bounds) -> None:
     start, end = int(interval["start_index"]), int(interval["end_index"])
     if not (0 <= start < end <= valid):
         raise RuntimeError("Invalid feature-space key interval")
-    ax.axvspan(start - 0.5, end - 0.5, color="#EDE6D9", lw=0, zorder=0)
+    ax.axvspan(start - 0.5, end - 0.5, color=COLORS[interval["modality"]],
+               alpha=0.18, lw=0, zorder=0)
     ax.plot(np.arange(valid), values, color=COLORS[interval["modality"]],
-            linewidth=1.25, marker="o", markersize=1.55, zorder=2)
+            linewidth=2.4, marker="o", markersize=2.5, zorder=2)
     ax.axhline(0, color="#999999", lw=0.55, ls="--", zorder=1)
+    ax.grid(axis="y", color=LIGHT_GREY, lw=0.45, zorder=0)
     ax.set_xlim(-0.5, valid - 0.5)
     ax.set_xlabel("特征槽位", fontsize=7.0, labelpad=1.0)
     ax.set_ylabel("类别边际下降", fontsize=7.0, labelpad=0.5)

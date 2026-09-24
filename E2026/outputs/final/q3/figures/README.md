@@ -1,21 +1,20 @@
 # E2026 Q3 Figures 8–9
 
-These figures use the frozen Q3 results. Figure 8 summarizes **Attachment2 validation audit** interventions. Figure 9 v2 shows two fixed **Attachment4** cases (14 and 02) with original-video scene images. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. Figure 9 v1 and its four original cases remain intact in the root figure files, case-card JSON files, and `archive/`.
+These figures use the frozen Q3 results. The current Figure 8 is the Chinese, Scheme C paper version of the **Attachment2 validation audit** interventions. Figure 9 v2 shows two fixed **Attachment4** cases (14 and 02) with original-video scene images and the same Scheme C colors. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. The earlier versions remain in `archive/`.
 
 ## Reproduce
 
 From `D:/华为杯/E2026` with Python 3 and `matplotlib`, `numpy`:
 
 ```powershell
-python outputs/final/q3/figures/scripts/figure8_q3_faithfulness.py
-python outputs/final/q3/figures/scripts/figure9_q3_case_studies.py
+python outputs/final/q3/figures/scripts/figure8_q3_faithfulness_zh.py
 python outputs/final/q3/figures/scripts/extract_figure9_context_frames.py
 python outputs/final/q3/figures/scripts/figure9_q3_case_studies_v2.py
 ```
 
-The original two scripts regenerate the v1 outputs and Figure 8. The last two commands regenerate the fixed-position scene frames and Figure 9 v2. Run the frame extractor before the v2 plotter. Figure 9 v2 uses the same semantic colors, line widths, spine rules, and panel-label scale as Figure 8, with Microsoft YaHei for Chinese glyphs.
+The first script reads the frozen validation metrics and generates the current Figure 8. The last two commands regenerate the fixed-position scene frames and Figure 9 v2; run the frame extractor before its plotter. The original scripts are retained as legacy sources: running `figure8_q3_faithfulness.py` would overwrite the current Figure 8 files, while `figure9_q3_case_studies.py` writes the separate v1 filenames. Both final figures use Scheme C, Microsoft YaHei, a white background, light gray guides and restrained labels.
 
-## Figure 8 — Q3 faithfulness and modality evidence
+## Figure 8 — 中文版解释有效性与主导模态统计
 
 **Source files:**
 
@@ -25,13 +24,13 @@ The original two scripts regenerate the v1 outputs and Figure 8. The last two co
 
 | Panel | Content and data source | Asset/style reference |
 |---|---|---|
-| A | Top-interval vs same-length random deletion class-margin drop at 10/20/30/40%; means and video-group bootstrap 95% CIs. Audit group: 396 clips, 126 video IDs, 1,000 bootstrap replicates. | `assets/figures/LineTrend/plot_trend.py`; line/marker and sparse-axis parameters inherited. |
-| B | Classification vs regression primary-modality counts over all 728 Attachment2 valid samples: Text 656/620, Audio 7/4, Vision 65/104. | `assets/figures/GroupedBarChart/plot_GroupedBarChartv1.py`; grouped bar spacing and direct count labels adapted. |
+| A | Classification vs regression primary-modality counts over all 728 Attachment2 valid samples: Text 656/620, Vision 65/104, Audio 7/4. Scheme C colors identify modalities; hatching identifies regression. | `assets/figures/GroupedBarChart/plot_GroupedBarChartv1.py`; grouped bar spacing and direct count labels adapted. |
+| B | Top-interval vs same-length random deletion class-margin drop at 10/20/30/40%; means and video-group bootstrap 95% CIs. Audit group: 396 clips, 126 video IDs, 1,000 bootstrap replicates. | `assets/figures/LineTrend/plot_trend.py`; line/marker and sparse-axis parameters inherited. |
 | C | Top-minus-random class-margin mean difference with video-group bootstrap 95% CIs. | `assets/figures/BarComparison/plot_comparison_Trajectory.py`; direct comparison and zero-reference styling adapted. |
 
-Intermediate data are `data/figure8_deletion_curve.csv`, `data/figure8_primary_modality_counts.csv`, and `data/figure8_margin_gain_summary.csv`. Confidence bands in A use the separately reported top/random grouped-bootstrap intervals; C uses the directly reported grouped-bootstrap interval for the paired top-minus-random difference. There are no p-values or significance tests in this figure; the plotted quantities are descriptive intervention summaries with bootstrap uncertainty.
+Intermediate data remain `data/figure8_deletion_curve.csv`, `data/figure8_primary_modality_counts.csv`, and `data/figure8_margin_gain_summary.csv`. Confidence bands in B use the separately reported top/random grouped-bootstrap intervals; C uses the directly reported grouped-bootstrap interval for the paired top-minus-random difference. There are no p-values or significance tests in this figure; the plotted quantities are descriptive intervention summaries with bootstrap uncertainty. The Chinese plotter reads `heaf_validation_metrics.json` directly and does not rewrite these source tables.
 
-The top interval is selected as the maximum over candidate windows, so A's top-vs-random advantage has a selection advantage by construction. The figure caption/report should describe this as a perturbation-consistency check, not independent proof of explanation quality or a causal effect. This is Attachment2 validation evidence; no Attachment4 output contributes to Figure 8.
+The top interval is selected as the maximum over candidate windows, so B's top-vs-random advantage has a selection advantage by construction. The figure caption/report should describe this as a perturbation-consistency check, not independent proof of explanation quality or a causal effect. This is Attachment2 validation evidence; no Attachment4 output contributes to Figure 8. See `figure8_zh_README.md` for the proposed Chinese caption and QA summary.
 
 ## Figure 9 v2 — Attachment4 typical explanation cases
 
@@ -54,7 +53,9 @@ The v2 plotter validates that both case records come from `attachment4_explanati
 
 The Figure 9 v1 PNG/PDF/SVG remain at their original filenames and have identical copies in `archive/`. Sample 16, Sample 19, pair interactions, regression Shapley detail, and other full explanation fields remain in the v1 figure, four case-card JSON files, and original final results; they are omitted only from the v2 paper figure.
 
-**v2 QA:** Both plotted case records were loaded from the final JSONL; no prediction, Shapley or curve values were regenerated. The Sample 14 fragment was checked against the original `14.pkl` raw-text span. Sample 02 retains null raw visual timing and an explicit unverified label. All screenshots were selected from fixed MP4 duration fractions independent of HEAF. The old Figure 9 files and archive copies have matching SHA256 values; Figure 8 and the final prediction/explanation files were not modified. The SVG parses as XML, the PDF has one 183 × 148 mm page, and the PNG is 2161 × 1748 pixels with 300 dpi metadata. The labels are legible at the intended 183 mm width. This v2 is ready for a Huawei Cup Chinese manuscript draft with the caption above.
+**v2 QA:** Both plotted case records were loaded from the final JSONL; no prediction, Shapley or curve values were regenerated. The Sample 14 fragment was checked against the original `14.pkl` raw-text span. Sample 02 retains null raw visual timing and an explicit unverified label. All screenshots were selected from fixed MP4 duration fractions independent of HEAF. The old Figure 9 files and archive copies have matching SHA256 values; the final prediction/explanation files were not modified. The SVG parses as XML, the PDF has one 183 × 148 mm page, and the PNG is 2161 × 1748 pixels with 300 dpi metadata. The labels are legible at the intended 183 mm width. This v2 is ready for a Huawei Cup Chinese manuscript draft with the caption above.
+
+The Figure 9 v2 Scheme C update changed only the text/audio/vision hues, temporal line weight, white-background interval tint, and thin gray grid. Its earlier two-case raster/vector files are in `archive/figure9_q3_case_studies_v2_before_scheme_c.*`. The paired MP4 screenshots, explanations and grounding statuses were not modified.
 
 ## Figure 9 v1 — archived four-case version
 
@@ -82,9 +83,12 @@ The style inspiration is the public [academic-figure-skill repository](https://g
 ## Outputs
 
 - `figure8_q3_faithfulness.png`, `.pdf`, `.svg`
+- `archive/figure8_q3_faithfulness_v1.png`, `.pdf`, `.svg` (English original)
+- `figure8_zh_README.md` (Chinese caption, source and QA)
 - `figure9_q3_case_studies.png`, `.pdf`, `.svg`
 - `figure9_q3_case_studies_v2.png`, `.pdf`, `.svg` (300 dpi PNG; editable vector PDF/SVG)
 - `archive/figure9_q3_case_studies.png`, `.pdf`, `.svg` (unchanged v1 copies)
+- `archive/figure9_q3_case_studies_v2_before_scheme_c.png`, `.pdf`, `.svg`
 - `data/sample14_context_frame.png`, `data/sample02_context_25.png`, `data/sample02_context_50.png`, `data/sample02_context_75.png`
 - `data/figure9_video_frame_manifest.json`
 - 300 dpi raster previews duplicated in `preview/`
