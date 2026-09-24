@@ -1,0 +1,34 @@
+run_name: B5-N1-text-only-train-stat-zscore
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+  include_test: false
+preprocessing:
+  normalization: text_train_featurewise
+  epsilon: 1.0e-6
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+training:
+  seed: 42
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  augmentation: none
+baseline:
+  checkpoint: /root/workspace/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+  metrics: /root/workspace/E2026/outputs/metrics/b0_weighted_ce_score_selection_metrics.json
+  pooling_reference: /root/workspace/E2026/outputs/metrics/b5_pooling_metrics.json
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  best_clean_checkpoint: b5_n1_text_zscore_best_clean_score.pt
+  best_robust_checkpoint: b5_n1_text_zscore_best_robust_score.pt
+  history: b5_n1_text_zscore_history.json
