@@ -1,4 +1,4 @@
-"""Token-slot grounding tests; feature-row provenance stays a separate claim."""
+"""Audited BERT feature-row to raw-text grounding checks."""
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -42,7 +42,7 @@ def test_maps_tokens_to_raw_character_span_and_preserves_surface_text():
         "hello, world", _text_bert(), 1, 4, tokenizer=_FakeTokenizer()
     )
     assert result["mapping_status"] == "TOKEN_MAPPING_VERIFIED"
-    assert result["feature_row_mapping_status"] == "UNVERIFIED"
+    assert result["feature_row_mapping_status"] == "FEATURE_ROW_MAPPING_VERIFIED"
     assert result["tokens"] == ["hello", ",", "world"]
     assert result["raw_text_span"] == {"start_char": 0, "end_char": 12}
     assert result["text_fragment"] == "hello, world"
@@ -73,14 +73,27 @@ def test_padding_cannot_be_requested_as_text_evidence():
         )
 
 
-def test_evidence_api_keeps_p2_fragment_null_without_feature_row_provenance():
+def test_evidence_api_returns_verified_p2_text_fragment_after_row_audit():
     result = ground_interval(
         sample_id="01", modality="text", start_index=1, end_index=4,
         valid_length=5, media_file=None, raw_text="hello, world",
         text_bert=_text_bert(), tokenizer=_FakeTokenizer(),
     )
+    assert result["grounding_status"] == "verified"
+    assert result["mapping_method"] == "audited_bert_feature_row_to_text_bert_token_to_tokenizer_offsets"
+    assert result["text_fragment"] == "hello, world"
+    assert result["text_char_span"] == {"start_char": 0, "end_char": 12}
+    assert result["text_token_mapping"]["mapping_status"] == "TOKEN_MAPPING_VERIFIED"
+    assert result["text_token_mapping"]["feature_row_mapping_status"] == "FEATURE_ROW_MAPPING_VERIFIED"
+    assert "Q3-2.6" in result["text_token_mapping"]["provenance"]["feature_row_identity_audit"]
+
+
+def test_special_token_only_interval_has_no_fabricated_text_fragment():
+    result = ground_interval(
+        sample_id="01", modality="text", start_index=0, end_index=1,
+        valid_length=5, media_file=None, raw_text="hello, world",
+        text_bert=_text_bert(), tokenizer=_FakeTokenizer(),
+    )
     assert result["grounding_status"] == "unverified"
     assert result["text_fragment"] is None
-    assert result["text_token_mapping"]["mapping_status"] == "TOKEN_MAPPING_VERIFIED"
-    assert result["text_token_mapping"]["text_fragment"] == "hello, world"
-    assert "not verified" in result["mapping_note"]
+    assert "only special tokens" in result["mapping_note"]

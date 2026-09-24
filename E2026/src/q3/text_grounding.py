@@ -1,4 +1,4 @@
-"""Verify BERT token slots against raw text without asserting feature-row provenance."""
+"""Map audited Attachment4 BERT feature rows to raw text character offsets."""
 from __future__ import annotations
 
 import hashlib
@@ -12,6 +12,8 @@ TOKENIZER_REPO = "bert-base-uncased"
 TOKENIZER_REVISION = "86b5e0934494bd15c9632b12f734a8a67f723594"
 TOKENIZER_JSON_SHA256 = "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98"
 MAX_LENGTH = 50
+FEATURE_ROW_MAPPING_STATUS = "FEATURE_ROW_MAPPING_VERIFIED"
+FEATURE_ROW_AUDIT = "Q3-2.6; outputs/q3/q3_text_row_identity.json"
 
 
 def load_pinned_tokenizer(tokenizer_json: str | Path | None = None):
@@ -57,7 +59,8 @@ def ground_text_interval(
     Exact token ID, attention mask, and token-type equality are required before
     returning a verified token-to-text mapping. This does not certify that the
     P2 `text` feature row at the same index was generated from that token; that
-    separate provenance check remains explicit in the result.
+    Q3-2.6 established row identity using source-supported BERT final-layer
+    extraction and a 20-sample numerical reconstruction audit.
     """
     if not isinstance(raw_text, str):
         raise TypeError("raw_text must be a string")
@@ -113,7 +116,7 @@ def ground_text_interval(
         "text_fragment": fragment,
         "excluded_special_tokens": excluded,
         "mapping_status": "TOKEN_MAPPING_VERIFIED",
-        "feature_row_mapping_status": "UNVERIFIED",
+        "feature_row_mapping_status": FEATURE_ROW_MAPPING_STATUS,
         "provenance": {
             "tokenizer": TOKENIZER_REPO,
             "tokenizer_revision": TOKENIZER_REVISION,
@@ -127,6 +130,7 @@ def ground_text_interval(
                 "padding": "right_to_50_with_id_0",
             },
             "verified_arrays": ["input_ids", "attention_mask", "token_type_ids"],
-            "scope_note": "Proves text_bert token slot to raw_text span; does not prove P2 text feature row identity.",
+            "feature_row_identity_audit": FEATURE_ROW_AUDIT,
+            "scope_note": "P2 text feature row identity was verified against source-supported bert-base-uncased final-layer token rows; tokenizer IDs, masks, and type IDs are rechecked for each sample before returning offsets.",
         },
     }

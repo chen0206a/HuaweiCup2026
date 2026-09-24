@@ -24,8 +24,9 @@ def ground_interval(*, sample_id: str, modality: str, start_index: int,
     """Ground an exact half-open slot interval only with an audited mapping record.
 
     ``mapping`` is an independent, reviewed record for this *exact* sample,
-    modality and interval. It is never created from media duration, character
-    proportions, Q1 bins, model attention, or a feature vector's zero pattern.
+    modality and interval. Text also supports the Q3-2.6 audited chain
+    text feature row -> text_bert token -> tokenizer character offsets. Audio
+    and vision still require independent reviewed mappings.
     """
     if modality not in MODALITIES or not sample_id or not 0 <= start_index < end_index <= valid_length <= 50:
         raise ValueError("invalid sample/modality/valid-prefix interval")
@@ -39,10 +40,30 @@ def ground_interval(*, sample_id: str, modality: str, start_index: int,
                 raw_text, text_bert, start_index, end_index, tokenizer=tokenizer
             )
             result["text_token_mapping"] = token_map
-            result["mapping_note"] += (
-                " BERT token identity and raw-text span are verified, but the link "
-                "from this P2 text feature row to the token slot is not verified."
-            )
+            if token_map["feature_row_mapping_status"] == "FEATURE_ROW_MAPPING_VERIFIED":
+                result["text_char_span"] = token_map["raw_text_span"]
+                result["text_token_slots"] = [start_index, end_index]
+                if token_map["text_fragment"] is not None:
+                    result.update({
+                        "grounding_status": "verified",
+                        "mapping_method": "audited_bert_feature_row_to_text_bert_token_to_tokenizer_offsets",
+                        "text_fragment": token_map["text_fragment"],
+                        "mapping_note": (
+                            "Text feature row identity is verified by the Q3-2.6 source-and-numerical audit; "
+                            "text_bert IDs/mask/type IDs were rechecked and tokenizer offsets supply this span. "
+                            "Special tokens are omitted from the surface fragment."
+                        ),
+                    })
+                else:
+                    result["mapping_note"] = (
+                        "The feature-row/token-slot mapping is verified, but this interval contains only "
+                        "special tokens and has no raw-text character span."
+                    )
+            else:
+                result["mapping_note"] += (
+                    " BERT token identity and raw-text span are verified, but the link "
+                    "from this P2 text feature row to the token slot is not verified."
+                )
         return result
     if mapping.get("sample_id") != sample_id or mapping.get("modality") != modality or (
             mapping.get("start_index"), mapping.get("end_index")) != (start_index, end_index):

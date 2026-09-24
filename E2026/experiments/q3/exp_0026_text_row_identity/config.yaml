@@ -1,0 +1,42 @@
+experiment: q3-2.6_text_feature_row_identity_audit
+purpose: Verify Attachment4 aligned-50 text feature row identity against text_bert token slots.
+data:
+  attachment: 4
+  feature_version: aligned_50
+  samples: 20
+  labels_used: false
+  predictor_inference: false
+  heaf_outputs_used: false
+  valid_prefix_source: text_bert[1]
+candidate:
+  model: bert-base-uncased
+  revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+  weights_file: model.safetensors
+  output: BertModel.last_hidden_state
+  hidden_layer: 12
+  pooling: none
+  special_tokens: include_cls_and_sep
+  mode: eval
+  gradients: disabled
+  input_source: provided text_bert input_ids and token_type_ids; valid prefix only
+  attention_mask_argument: omitted_to_mirror_public_unpadded_extraction
+comparisons:
+  exact_numerical: [max_absolute_error, rmse, same_index_row_cosine]
+  similarity_matrix: full_valid_rows_cosine
+  row_identity: argmax_similarity_equals_same_index
+  diagonal_dominance: [mean_diagonal, mean_best_off_diagonal, diagonal_margin]
+alternatives:
+  evaluated: []
+  exclusion_reason: Reviewed public extractors directly return final hidden state; no layer averaging/pooling candidate was source-supported.
+runtime:
+  python_environment: local_cpu
+  torch: 2.12.0+cpu
+  transformers: 4.57.1
+  huggingface_hub: 0.36.2
+  tokenizers: 0.22.2
+  matplotlib: 3.10.0
+status:
+  text_feature_row: VERIFIED
+  grounding: PARTIAL_GROUNDING_READY
+  audio: UNVERIFIED
+  vision: UNVERIFIED

@@ -49,3 +49,9 @@
 
 决定：Attachment4 当前只能确认与 MMSA/Self-MM aligned 数据结构高度吻合，不能确认来源。固定 `bert-base-uncased` tokenizer 对 `text_bert` 20/20 完整数组复现，准许将 token slot 映射到 raw_text character span；P2 768-D `text` feature row 到 token slot、audio/vision row 到时间均保持 `UNVERIFIED`，外层证据字段仍不得填值。Q3-2.5 总体维持 `BLOCKED_BY_GROUNDING`。
 依据：`E2026/outputs/q3/q3_alignment_provenance.json`、`E2026/outputs/q3/q3_alignment_provenance_report.md`、`E2026/outputs/q3/provenance_sources.md`。影响范围：E Q3 证据 grounding；不改变 HEAF、P2、rho/stride 或 Q2 历史结果。日期：2026-09-24。
+
+## D009 - E Q3-2.6 text feature row identity
+
+决定：Attachment4 aligned-50 的 text feature row 与 `text_bert` token slot 同索引语义判为 **VERIFIED**。`evidence_grounding.py` 可沿该映射和固定 tokenizer offsets 返回原文片段；只含 special token 的区间不返回片段。Audio/Vision 继续 `UNVERIFIED`，Q3 总状态为 `PARTIAL_GROUNDING_READY`。
+依据：`E2026/outputs/q3/q3_text_row_identity.json` 中 20 样本、604 有效行的 source-supported final-layer 重建和 full cosine matrix：604/604 对角 argmax，mean diagonal cosine 0.999999994、RMSE 8.3977e-7、最大绝对差 3.0041e-5；真实样本 grounding smoke test 通过。公开代码未锁定 Attachment4 历史使用的确切权重 revision，因此不宣称该历史权重来源已固定。
+影响范围：只更新 E Q3 文本证据定位状态和 API；不修改 HEAF/P2、Q2 历史结果或音频/视觉映射。未运行全量 Attachment4 解释。日期：2026-09-24。

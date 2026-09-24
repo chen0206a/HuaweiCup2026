@@ -2,9 +2,11 @@
 
 2026-09-24：当前 E 题工作目录为 `E2026/`。
 
-- E Q3-2：HEAF 方法已在访问 Attachment4 内容前锁定。对齐版 20 特征/20 视频精确 ID 匹配，全部 feature shape、finite、padding 与 inventory hash 检查通过。缺逐槽原始证据映射，grounding `UNVERIFIED`，状态 `BLOCKED_BY_GROUNDING`；仅审计接口和媒体元数据，未运行最终解释。见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`。
+- E Q3-2.6：BERT 最后层重建与公开预处理代码支持 Attachment4 text 行对应 `text_bert` 同索引 token；604/604 cosine 行最大值在对角，均值 cosine 0.999999994，RMSE 8.40e-7，最大绝对差 3.01e-5。Text grounding 已接入 tokenizer offsets 并对真实样本做 API smoke test。Text=`VERIFIED`，audio/vision=`UNVERIFIED`，当前=`PARTIAL_GROUNDING_READY`。无 HEAF 推理、无训练。详见 `E2026/outputs/q3/q3_text_row_identity_report.md` 与 `E2026/experiments/q3/exp_0026_text_row_identity/`。
 
-- E Q3-2.5：固定版本 `bert-base-uncased` fast tokenizer 对 Attachment4 的 `text_bert` IDs/mask/type IDs 20/20 完全复现，token slot 到 raw_text character span 已 VERIFIED；P2 `text[50,768]` 行和 token slot 同索引语义无附件级 provenance，仍 UNVERIFIED。MMSA/Self-MM 来源高度吻合但不能确认；A/V 时间行也未能 join 到 SDK 源 ID。状态继续 `BLOCKED_BY_GROUNDING`，未跑预测。代码与证据见 `E2026/outputs/q3/q3_alignment_provenance_report.md`、`provenance_sources.md`。
+- E Q3-2（阶段结果）：HEAF 方法已在访问 Attachment4 内容前锁定。对齐版 20 特征/20 视频精确 ID 匹配，全部 feature shape、finite、padding 与 inventory hash 检查通过。当时缺逐槽原始证据映射，阶段结论为 `BLOCKED_BY_GROUNDING`；Q3-2.6 后当前状态已升级为 `PARTIAL_GROUNDING_READY`。见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`。
+
+- E Q3-2.5（阶段结果）：固定版本 `bert-base-uncased` fast tokenizer 对 Attachment4 的 `text_bert` IDs/mask/type IDs 20/20 完全复现，token slot 到 raw_text character span 已 VERIFIED；当时 P2 `text[50,768]` 行同索引语义仍 UNVERIFIED，故该阶段维持 `BLOCKED_BY_GROUNDING`。Q3-2.6 已解决文本行身份；A/V 时间行仍未能 join 到 SDK 源 ID。见 `E2026/outputs/q3/q3_alignment_provenance_report.md`、`provenance_sources.md`。
 
 - E Q3-1：HEAF validation 已完成，状态 `HEAF_VALIDATION_PASSED`；冻结 P2 seed42 clean 复算通过，728 条 valid 的 exact Shapley 效率误差约 `1e-15`，按 video_id 的 design/audit 为 332/396 条，ρ=0.30 在 design 组选定并锁定。Audit 同长度 top−random margin/置信度均值为 +0.400735/+0.077718；10%–40% 删除曲线、分组 bootstrap、seed43/44 稳定性与失败例见 `E2026/outputs/q3/`。区间选择比较存在内生选择优势，不应当作外部因果证明。未训练、未访问 attachment2 test 样本、未解析附件3/4，未做媒体回看。
 
