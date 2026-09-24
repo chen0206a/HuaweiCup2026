@@ -79,6 +79,12 @@ Run `python -m pytest tests/test_b5_pooling.py -q`, then `python -m src.training
 
 Seed-42 screening gave robust scores P0 0.740248, P1 0.744320, and P2 0.745847. These are validation findings only. P2 loses on all four metrics in the 15-example native vision-all-zero subset; P1 worsens its regression metrics. The pooling line requires cross-seed confirmation before any general claim, and no fusion experiment is included in B5-P.
 
+### B5-P2 paired multi-seed replication
+
+`configs/b5_p2_multiseed.yaml` and `src/training/run_b5_p2_multiseed.py` reproduce P2 only at training seeds 43 and 44; seed42 is reused from exp_008. Each P2 run starts from its matching seed's B0-WCE best-selection checkpoint. B0 parameters stay frozen and the frozen projection/fusion/heads are explicitly in eval mode throughout training. The script checks zero-gamma initial identity, exact frozen-tensor equality, checkpoint round-trip, and the frozen benchmark SHA256 before comparing validation results. It loads train/valid only, never attachment2 test or attachment3. Benchmark seed 20260923 and all 54 scenario definitions remain frozen.
+
+Paired robust deltas P2−B0 are +0.005600/+0.003791/−0.000090 for seeds 42/43/44; mean +0.003100 ± 0.002907 sample SD. Two seeds are positive while seed44 is effectively neutral, so retain P2 as a seed-sensitive candidate and avoid claiming a consistent three-seed gain. Full results, subgroup tables, gamma/attention diagnostics, and vision-all-zero subset are in `outputs/metrics/b5_p2_multiseed_report.md` and `b5_p2_multiseed_summary.json`; formal record is `experiments/exp_012_b5_p2_multiseed/`. No z-score or module combination is included.
+
 ## B5-F1 low-rank fusion ablation
 
 F1 is independent of P1/P2 and starts again from the original seed-42 B0-WCE checkpoint. `src/models/fusion_interaction.py` freezes all B0 prediction parameters and holds their Dropout modules in eval mode. It uses three bias-free 128→16 projections, pairwise Hadamard interactions, and a zero-initialized bias-free 48→128 projection to add a residual to the original B0 fusion output. F1 starts with predictions exactly equal to B0. Only the 12,288 interaction parameters train. The original B5-P clean training recipe and the frozen B2 validation benchmark are reused. Frozen train/validation B0 encodings are cached; cached and full validation metrics match exactly.

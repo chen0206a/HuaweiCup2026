@@ -1,0 +1,35 @@
+run_name: B5-P2-multiseed
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+training:
+  seeds: [43, 44]
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  augmentation: none
+  freeze_b0_parameters: true
+  initialization_protocol: corresponding_seed_b0_wce_best_selection_score
+  baseline_checkpoints:
+    43: /root/workspace/E2026/outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt
+    44: /root/workspace/E2026/outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  prefix: b5_p2_multiseed
+  metrics: b5_p2_multiseed_metrics.json
+  history: b5_p2_multiseed_history.json
+  summary: b5_p2_multiseed_summary.json
+  report: b5_p2_multiseed_report.md
