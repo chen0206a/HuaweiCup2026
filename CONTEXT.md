@@ -4,7 +4,9 @@
 
 ## E Q3
 
-Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Shapley、连续窗口和忠实性验证；结果为 `E2026/outputs/q3/heaf_validation_metrics.json`、报告与 `E2026/experiments/q3/exp_001_heaf_validation/`。主模型仍为 B5-P2 seed42，checkpoint 哈希 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；valid clean 与 Q2 锁定指标最大差 `4.01e-9`。按 video_id 分成 design 332/audit 396，锁定 ρ=0.30、stride=1。Audit 同长度 top−random class-margin 均值 +0.400735，95% video-group bootstrap 区间 `[0.363538,0.437243]`；此比较因 top 由同窗口最大值选出而有选择优势，10% 删除曲线仍有失败样本。seed43/44 仅作稳定性审计。Attachment4 仍 SEALED，原始证据时间映射未验证，未生成最终解释卡。
+Q3-2 已先锁定 HEAF 方法（`E2026/configs/final/q3_heaf.yaml`、`E2026/outputs/q3/q3_method_lock.{md,json}`），然后只审计 Attachment4 对齐版。20 pkl 与 20 MP4 的 ID 精确对应，接口合法，但 pkl 没有逐槽文本/音频/视频时间映射；目前局部 grounding 等级 **UNVERIFIED**，结论 `BLOCKED_BY_GROUNDING`。不允许据视频时长均分 50 槽或照搬 Q1 窗口；未运行全量解释或生成最终 CSV。证据及两项候选路线见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`。
+
+Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Shapley、连续窗口和忠实性验证；结果为 `E2026/outputs/q3/heaf_validation_metrics.json`、报告与 `E2026/experiments/q3/exp_001_heaf_validation/`。主模型仍为 B5-P2 seed42，checkpoint 哈希 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；valid clean 与 Q2 锁定指标最大差 `4.01e-9`。按 video_id 分成 design 332/audit 396，锁定 ρ=0.30、stride=1。Audit 同长度 top−random class-margin 均值 +0.400735，95% video-group bootstrap 区间 `[0.363538,0.437243]`；此比较因 top 由同窗口最大值选出而有选择优势，10% 删除曲线仍有失败样本。seed43/44 仅作稳定性审计。至今未生成最终解释卡。
 
 ## E Q2
 

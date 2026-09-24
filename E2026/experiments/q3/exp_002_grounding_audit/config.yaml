@@ -1,0 +1,17 @@
+run_name: Q3-2-Attachment4-grounding-interface-audit
+status: AUDIT_ONLY
+method_lock: outputs/q3/q3_method_lock.json
+source_manifest: data/manifests/q3/attachment4_inventory.json
+attachment: 4
+feature_version: aligned_50
+feature_files: paired_01_to_20_pkl
+media_files: paired_01_to_20_mp4
+required_fields: [id, raw_text, text, audio, vision, text_bert]
+padding_source: text_bert[1]
+video_metadata_probe: OpenCV_VideoCapture_4.10.0
+smoke_sample_ids: ['01', '02']
+smoke_interval: first_up_to_5_valid_slots_for_each_modality
+predictor_inference: false
+labels_used: false
+unaligned_content_read: false
+full_final_csv: false

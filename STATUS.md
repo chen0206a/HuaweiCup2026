@@ -2,6 +2,8 @@
 
 2026-09-24：当前 E 题工作目录为 `E2026/`。
 
+- E Q3-2：HEAF 方法已在访问 Attachment4 内容前锁定。对齐版 20 特征/20 视频精确 ID 匹配，全部 feature shape、finite、padding 与 inventory hash 检查通过。缺逐槽原始证据映射，grounding `UNVERIFIED`，状态 `BLOCKED_BY_GROUNDING`；仅审计接口和媒体元数据，未运行最终解释。见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`。
+
 - E Q3-1：HEAF validation 已完成，状态 `HEAF_VALIDATION_PASSED`；冻结 P2 seed42 clean 复算通过，728 条 valid 的 exact Shapley 效率误差约 `1e-15`，按 video_id 的 design/audit 为 332/396 条，ρ=0.30 在 design 组选定并锁定。Audit 同长度 top−random margin/置信度均值为 +0.400735/+0.077718；10%–40% 删除曲线、分组 bootstrap、seed43/44 稳定性与失败例见 `E2026/outputs/q3/`。区间选择比较存在内生选择优势，不应当作外部因果证明。未训练、未访问 attachment2 test 样本、未解析附件3/4，未做媒体回看。
 
 - E Q1/Q2：完成官方要求、方法与结果审查，见`notes/E_Q1_Q2_REVIEW_20260924.md`。Q1方法/辅助实验可收口，当前摘录交付包缺全量特征和timeline；本地测试10通过、1因缺100条timeline失败。Q2相关测试28通过、2因无CUDA跳过；六checkpoint及benchmark哈希、冻结B0张量、已有主要指标复算通过。不建议继续模型探索，优先补全量交付、正文图表和最终附件3推理入口；本轮未训练、未解封附件3。两问使用不同官方附件是正确安排，无需跨问特征对接。

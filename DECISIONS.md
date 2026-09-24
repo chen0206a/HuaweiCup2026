@@ -39,3 +39,8 @@
 决定：按用户明确指示，E Q2 的论文 baseline 固定为 B0-WCE，最终主模型固定为 B5-P2（冻结 B0 的轻量 attention residual pooling）。停止 Q2 后续模型探索与调参，不组合其他模块。沿用 attachment2 validation clean + 54 缺失场景的现有冻结 benchmark。
 依据：`E2026/outputs/metrics/b5_p2_multiseed_summary.json` 和 `E2026/outputs/final/q2/q2_model_lock.json`。三 seed paired robust delta 为 `+0.003100 ± 0.002907`（sample SD），2/3 为正、seed44 近乎持平；对外表述必须保留 seed 敏感性。
 影响范围：E Q2 最终模型、实验汇总与论文表述；不改变其他题目或共享验证协议。日期：2026-09-24。
+
+## D007 - E Q3 HEAF method lock before Attachment4 audit
+
+决定：按用户明确指示，在解析附件4之前固定 B5-P2 seed42、aligned_50、8 联盟 exact Shapley、分类固定类别 log-odds、原始回归输出、三对 interaction、ρ=0.30/stride=1 连续遮挡、top 区间规则、10/20/30/40% 删除曲线、32 次随机对照及 seed 20260924，解释卡 schema v0.2.0。附件4不得用于重选这些参数。
+依据：`E2026/outputs/q3/heaf_validation_metrics.json`、`E2026/configs/final/q3_heaf.yaml`、`E2026/outputs/q3/q3_method_lock.{md,json}`。影响范围：E Q3；不改变 D006 的 Q2 模型与历史结果。日期：2026-09-24。
