@@ -61,3 +61,9 @@
 决定：公开 aligned-feature 接口与预处理源码不足以证明 Attachment4 的 audio/vision 第 i 行与已验证 text/token 第 i 槽具有相同语义位置。保持 AUDIO/VISION=`UNVERIFIED`；在任何 MP4 音频提取、forced alignment、视频解码或 PTS 推断之前停止。总状态继续 `PARTIAL_GROUNDING_READY`。
 依据：Attachment4 没有 align 记录、slot timestamps、frame/PTS/source IDs 或 producer/hash provenance；公开 MMSA 只记录兼容格式，MMSA-FET 的 token expansion 属于另一明确 pipeline，CMU SDK 的 alignment 需要具名 reference sequence 和 timestamp intervals。审计：`E2026/outputs/q3/q3_av_grounding_audit.{md,json}`。
 影响范围：只锁定本轮 grounding 审计结论；不修改 P2、HEAF、Shapley、rho、faithfulness 或最终预测协议。日期：2026-09-24。
+
+## D011 - E Q3-3 Attachment4 final inference complete
+
+决定：在 D007 锁定的 HEAF 协议和 B5-P2 seed42 checkpoint 上完成 Attachment4 aligned_50 20 个样本的最终无标签解释推理。checkpoint SHA256 前后均为 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；不修改模型、解释协议或 A/V grounding 状态。Text evidence 仅在 VERIFIED 的 slot/token/raw_text 路径上填写；Audio/Vision 保持 UNVERIFIED，媒体时间/frame 为 null。输出状态 `Q3_FINAL_INFERENCE_COMPLETE`。
+依据：`E2026/outputs/q3/final/attachment4_delivery_check.md`、`attachment4_summary.json` 及 20 条 schema-validated JSONL。20/20 输入/配对通过，Shapley efficiency 最大误差低于 `9e-16`。分类主模态 Text/Vision/Audio=`19/1/0`，回归=`18/2/0`，主模态一致 `17/20`；Grounding verified/unverified=`19/1`。无真实标签或性能指标，未使用 Attachment2 test / Attachment3，未训练或调参。
+影响范围：仅完成并记录 E Q3 Attachment4 最终推理与解释交付；不改变 Q1/Q2、P2、HEAF、rho 或 faithfulness 协议。日期：2026-09-24。

@@ -1,0 +1,27 @@
+experiment: Q3-3 Attachment4 final HEAF inference
+predictor:
+  model: B5-P2
+  seed: 42
+  checkpoint_sha256: cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff
+  mode: mean_attention
+  dtype: float32
+  normalization: none
+data:
+  source: Attachment4
+  feature_version: aligned_50
+  samples: 20
+  labels_used: false
+method_lock: configs/final/q3_heaf.yaml
+rho: 0.3
+stride: 1
+random_draws: 32
+random_seed: 20260924
+deletion_fractions:
+- 0.1
+- 0.2
+- 0.3
+- 0.4
+grounding:
+  text: verified
+  audio: unverified
+  vision: unverified
