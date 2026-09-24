@@ -2,9 +2,8 @@
 
 2026-09-24：当前 E 题工作目录为 `E2026/`。
 
-- E Q2：已有可靠基线与缺失评测、多种子重建负结果；B4′后续暂停。B5-P pooling 残差 seed42 筛选为正但原生 vision 全零子集退化；B5-F1 低秩 fusion seed42 为负，按预设规则停止。
-- E Q1/Q3：本轮未核实完成情况，不等同于未开展。
-- 本轮完成：核验 B5-P 冻结 B0 的 Dropout 为 eval；F1 初始化等价、训练、冻结 benchmark、缓存一致性、两种 checkpoint 与 interaction 贡献诊断。
-- 本轮未进行：B4′后续、B5-P 多种子、F1 seed43/44、组合、终局test评估、附件3预测或验证协议更改。
-- 当前结果：`E2026/outputs/metrics/b5_fusion_report.md`；正式记录见 `E2026/experiments/exp_009_b5_fusion/`。
-- A题历史状态：`archive/A_STATUS_before_E_20260923.md`；根目录qX交接仍属于A。
+- E Q2：B5-L1 完成 seed42 screening。原 B0-WCE 的 `lambda_reg=1.0`，四组初始权重、训练顺序、训练类权重一致；lambda1.0 精确复现历史参考。lambda2 robust +0.000808，未达到 +0.002 阈值；保留 lambda1.0 并停止该网格。
+- 既有筛选：B5-P P1/P2 为正但尚未多种子确认；B5-F1 为负并停止；B4′后续暂停；重建路线停止。
+- 本轮 outputs：`E2026/outputs/metrics/b5_l1_lambda_report.md` 与对应 JSON；正式实验 `experiments/exp_010_b5_l1_lambda/`。
+- 未加载 attachment2 test 或 attachment3；不进入 Focal、label smoothing 或其他实验分支。
+- Q1/Q3 当前完成度未核实；A题历史数据和文档仍保留。

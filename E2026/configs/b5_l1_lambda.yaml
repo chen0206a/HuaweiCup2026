@@ -1,0 +1,35 @@
+run_name: B5-L1-seed42
+data:
+  pkl_path: /root/workspace/E2026/data/raw/attachment2/aligned_50.pkl
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+training:
+  seed: 42
+  lambda_reg_baseline: 1.0
+  lambda_reg_multipliers: [0.25, 0.5, 1.0, 2.0]
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  class_weighting: balanced_train
+  optimizer: AdamW
+  scheduler: none
+  augmentation: none
+  initialization: random_seeded_b0_from_scratch
+  selection_metric: robust_validation_score
+  baseline_config: /root/workspace/E2026/configs/b0_weighted_ce_score_selection.yaml
+  baseline_checkpoint: /root/workspace/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+benchmark:
+  definition: /root/workspace/E2026/outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+outputs:
+  metrics: b5_l1_lambda_metrics.json
+  history: b5_l1_lambda_history.json
+  report: b5_l1_lambda_report.md
