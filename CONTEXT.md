@@ -1,19 +1,17 @@
 # Current Context
 
-日期：2026-09-24。用户当前明确选定 E 题（D005）。E 代码、结果与实验位于 `E2026/`。
+日期：2026-09-24。当前选题为 E（D005），E 代码与结果位于 `E2026/`。根目录 `q1/`、`q2/`、`q3/` 属于历史 A 题，不可与 E 的问题编号混用。
 
-## Current progress
+## E Q2
 
-Q2 已完成数据审计、B0/B1、连续缺失基准、多种子稳定性、重建路线验证、B4′单种子诊断、B5-P pooling、B5-F1 fusion、B5-L1 loss balance screening、B5-H0 只读 head consistency diagnostic、B5-P2 seed42/43/44 复现，以及 B5-N1 seed42 文本 z-score screening。
-B0-WCE 仍是参考。B5-P seed42 P1/P2 robust 分别 0.744320/0.745847；P2 paired robust deltas 为 seed42 +0.005600、seed43 +0.003791、seed44 −0.000090，均值 +0.003100 ± 0.002907（sample SD），2/3 为正，存在 seed 敏感性。仅保留为候选，不宣称稳定三 seed 增益。B5-F1 robust 0.738850，停止。B5-L1 保留 lambda_reg=1.0，lambda2 仅+0.000808，不细扫。
-B5-H0 基于历史 B0-WCE seed42，在 clean + 固定54场景、仅validation上分析两头。tau=0 agreement clean/missing 为82.69%/81.62%；both-wrong约30.3%，reg-only-correct约5.1%/5.5%，oracle union上限约69.6%/69.7%。类别判断为部分互补但共享错误明显；Neutral真值回归轴分布较宽，符号映射无法恢复Neutral。详细结果和逐样本输出见 `E2026/outputs/metrics/b5_h0_head_diagnostic.md`、对应JSON与预测CSV/JSONL；正式记录 `experiments/exp_011_b5_h0_head_diagnostic/`。
-B5-N1 原始 B0 seed42 text-only train-stat z-score robust=0.734474 vs N0=0.740248，Δ=−0.005774；Neutral recall/F1 有所上升，但 Accuracy 与总体 robust score 下降，seed42 screening 失败，停止 normalization 路线。
-Q1/Q3 的 E 题完成情况未核实；不要将A题历史成果混入。
+用户已正式锁定 **B0-WCE 为 baseline，B5-P2 attention residual pooling 为最终主模型**。不再进行 Q2 模型探索、调参或组合。冻结验证协议为 attachment2 validation clean + 54 个连续缺失场景，benchmark seed 20260923，SHA256 `3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff`。
 
-## Immediate next steps
+B0 三 seed robust `0.741677 ± 0.001458`；P2 `0.744777 ± 0.001492`；paired delta `+0.003100 ± 0.002907`（sample SD）。seed42/43 为正，seed44 基本持平，结果存在 seed 敏感性。依据：`E2026/outputs/metrics/b5_p2_multiseed_summary.json`。最终配置、数据与 checkpoint manifest、实验索引见 `E2026/configs/final/`、`E2026/data/manifests/`、`E2026/outputs/final/q2/`。
 
-B5-P2 seed43/44 及三 seed 汇总、B5-N1 seed42 screening 均完成；后者不保留为候选。详见 `E2026/outputs/metrics/b5_n1_text_zscore_report.md` 和 `experiments/exp_013_b5_n1_text_zscore/`。不要自动组合 P2 或启动其他 normalization。此次数据源为单体 pickle，程序只索引 train/valid，但 pickle 反序列化会物化顶层内容；test 未建 Dataset、评估或参与任何决策。attachment3未访问。早期 `b0_metrics.json` 有一次test评估，因此不要声称全项目test从未读取。冻结54场景协议未变。
+本地 attachment2 原始文件实际位于 `E2026/data/raw/`；历史服务器配置使用 `data/raw/attachment2/`，该差异已记录，原始大文件未移动。六个 B0/P2 主 checkpoint 均在本地并完成哈希索引。Attachment3 仅做文件名、大小与文件级 SHA256 清单，状态 **SEALED**；本阶段未反序列化或推理。Attachment2 test 只用于结构/标签完整性检查，没有参与本阶段模型选择。
+
+B5-P1 只有 seed42 screening；B4′ 仍为单 seed 诊断；fusion、reconstruction、loss 调整和文本 z-score 路线均未进入最终模型。详细原因以既有实验结果和 `E2026/outputs/final/q2/q2_experiment_index.json` 为准。Q1/Q3 的 E 题建模进度未核实，本轮没有启动 Q3。
 
 ## Historical A work
 
-A题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STATUS_before_E_20260923.md`。根目录 `q1/`、`q2/`、`q3/` 属于A的历史交接，不可混为E。
+A 题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STATUS_before_E_20260923.md`。

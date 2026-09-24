@@ -1,0 +1,216 @@
+{
+  "status": "VERIFIED",
+  "audited_at_utc": "2026-09-24T04:00:28.428205+00:00",
+  "raw_files": {
+    "aligned_50.pkl": {
+      "absolute_path": "D:/华为杯/E2026/data/raw/aligned_50.pkl",
+      "relative_path": "data/raw/aligned_50.pkl",
+      "exists_locally": true,
+      "size_bytes": 993842861,
+      "sha256": "66e867aa74bc70a844e806e5571e371c9abb4a35f9e2887ce9b4d97ff2cb8fcd",
+      "file_type": ".pkl"
+    },
+    "label.xlsx": {
+      "absolute_path": "D:/华为杯/E2026/data/raw/label.xlsx",
+      "relative_path": "data/raw/label.xlsx",
+      "exists_locally": true,
+      "size_bytes": 423826,
+      "sha256": "0d6351ace01a2edee8861b21b2893c82d916d2a3e8b69d3b4f832ca841349875",
+      "file_type": ".xlsx"
+    }
+  },
+  "expected_historical_server_paths": {
+    "aligned_50.pkl": "/root/workspace/E2026/data/raw/attachment2/aligned_50.pkl",
+    "label.xlsx": "/root/workspace/E2026/data/raw/attachment2/label.xlsx"
+  },
+  "local_path_note": "Current local files are in data/raw, not data/raw/attachment2; no file was moved.",
+  "top_level_keys": [
+    "train",
+    "valid",
+    "test"
+  ],
+  "splits": {
+    "train": {
+      "sample_count": 3395,
+      "modality_shapes": {
+        "text": [
+          3395,
+          50,
+          768
+        ],
+        "audio": [
+          3395,
+          50,
+          74
+        ],
+        "vision": [
+          3395,
+          50,
+          35
+        ]
+      },
+      "dtypes": {
+        "text": "float32",
+        "audio": "float64",
+        "vision": "float64",
+        "classification_labels": "float64",
+        "regression_labels": "float64"
+      },
+      "class_counts": {
+        "Negative": 967,
+        "Neutral": 758,
+        "Positive": 1670
+      },
+      "native_effective_zero": {
+        "text": {
+          "zero_valid_timesteps": 0,
+          "valid_timesteps": 83672,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 86078
+        },
+        "audio": {
+          "zero_valid_timesteps": 6855,
+          "valid_timesteps": 83672,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 0
+        },
+        "vision": {
+          "zero_valid_timesteps": 11039,
+          "valid_timesteps": 83672,
+          "all_zero_across_valid_region_samples": 110,
+          "nonzero_timesteps_outside_padding_mask": 0
+        }
+      },
+      "padding_valid_timestep_count": 83672
+    },
+    "valid": {
+      "sample_count": 728,
+      "modality_shapes": {
+        "text": [
+          728,
+          50,
+          768
+        ],
+        "audio": [
+          728,
+          50,
+          74
+        ],
+        "vision": [
+          728,
+          50,
+          35
+        ]
+      },
+      "dtypes": {
+        "text": "float32",
+        "audio": "float64",
+        "vision": "float64",
+        "classification_labels": "float64",
+        "regression_labels": "float64"
+      },
+      "class_counts": {
+        "Negative": 206,
+        "Neutral": 184,
+        "Positive": 338
+      },
+      "native_effective_zero": {
+        "text": {
+          "zero_valid_timesteps": 0,
+          "valid_timesteps": 18628,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 17772
+        },
+        "audio": {
+          "zero_valid_timesteps": 1502,
+          "valid_timesteps": 18628,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 0
+        },
+        "vision": {
+          "zero_valid_timesteps": 2436,
+          "valid_timesteps": 18628,
+          "all_zero_across_valid_region_samples": 15,
+          "nonzero_timesteps_outside_padding_mask": 0
+        }
+      },
+      "padding_valid_timestep_count": 18628
+    },
+    "test": {
+      "sample_count": 727,
+      "modality_shapes": {
+        "text": [
+          727,
+          50,
+          768
+        ],
+        "audio": [
+          727,
+          50,
+          74
+        ],
+        "vision": [
+          727,
+          50,
+          35
+        ]
+      },
+      "dtypes": {
+        "text": "float32",
+        "audio": "float64",
+        "vision": "float64",
+        "classification_labels": "float64",
+        "regression_labels": "float64"
+      },
+      "class_counts": {
+        "Negative": 207,
+        "Neutral": 158,
+        "Positive": 362
+      },
+      "native_effective_zero": {
+        "text": {
+          "zero_valid_timesteps": 0,
+          "valid_timesteps": 18309,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 18041
+        },
+        "audio": {
+          "zero_valid_timesteps": 1454,
+          "valid_timesteps": 18309,
+          "all_zero_across_valid_region_samples": 0,
+          "nonzero_timesteps_outside_padding_mask": 0
+        },
+        "vision": {
+          "zero_valid_timesteps": 2478,
+          "valid_timesteps": 18309,
+          "all_zero_across_valid_region_samples": 28,
+          "nonzero_timesteps_outside_padding_mask": 0
+        }
+      },
+      "padding_valid_timestep_count": 18309
+    }
+  },
+  "split_source": "Existing train/valid/test top-level keys in aligned_50.pkl; XLSX mode agrees; no new split generated.",
+  "sequence_length": 50,
+  "class_mapping": {
+    "0": "Negative",
+    "1": "Neutral",
+    "2": "Positive"
+  },
+  "label_columns": [
+    "label",
+    "annotation",
+    "mode"
+  ],
+  "id_columns": [
+    "video_id",
+    "clip_id"
+  ],
+  "id_rule": "video_id + '$_$' + clip_id",
+  "xlsx_row_count": 4850,
+  "padding_mask_source": "text_bert[:, 1, :] == 1, verified binary valid-prefix mask",
+  "native_zero_rule": "all original feature dimensions are zero within padding_mask=True; data-quality only, never missing/padding by itself",
+  "duplicate_clip_id_audit": "PASS: unique within each split and XLSX; no overlap across splits",
+  "xlsx_id_and_label_crosscheck": "PASS: one-to-one IDs, mode, regression label, classification annotation",
+  "test_usage_this_stage": "structural and label integrity verification only; no prediction or model selection"
+}

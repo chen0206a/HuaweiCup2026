@@ -1,0 +1,661 @@
+{
+  "generated_at_utc": "2026-09-24T04:00:28.428205+00:00",
+  "metric_scope": "attachment2 validation clean + frozen 54 missing scenarios",
+  "experiment_entries": [
+    {
+      "experiment_name": "B0-WCE",
+      "role": "BASELINE",
+      "source_commit": "3ae71251c8894f52bfc9ba5eb5cccffc9c159e03",
+      "training_seeds": [
+        42,
+        43,
+        44
+      ],
+      "hypothesis": "Reference for Q2",
+      "changed_component": "masked mean B0, weighted CE",
+      "robust_result": {
+        "three_seed_mean": 0.7416766986234121,
+        "sample_std": 0.0014580622777859659
+      },
+      "conclusion": "KEEP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_p2_multiseed_summary.json",
+          "relative_path": "outputs/metrics/b5_p2_multiseed_summary.json",
+          "exists_locally": true,
+          "size_bytes": 548216,
+          "sha256": "dcd2e04988bebb57f523fe9976e9f344b9c28a5786846b805bade63adb4adc90",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664280,
+          "sha256": "20231a1436f1908f9271f420d66d209bd9e4f5e0b4c7bb9757820fa0f7e6e80a",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664216,
+          "sha256": "cf51892f79f135faf5e38ff338363552b52aa68b5616c99ea6489ca73f52a3de",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664216,
+          "sha256": "45d60973f3e1b0312fbc88e9f45cbe0a594b75288c59a27fbd781699aeeccc4a",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B1 Transformer",
+      "role": null,
+      "source_commit": "4370a1cb3e3f5eac4ab81efc9187b63753d9563d",
+      "training_seeds": [
+        42,
+        43,
+        44
+      ],
+      "hypothesis": "Test unimodal temporal encoding",
+      "changed_component": "2-layer temporal Transformer per modality",
+      "robust_result": {
+        "three_seed_mean": 0.7351009313312876,
+        "sample_std": 0.0019846419655993965
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b21_multiseed_summary.json",
+          "relative_path": "outputs/metrics/b21_multiseed_summary.json",
+          "exists_locally": true,
+          "size_bytes": 15442,
+          "sha256": "bae33b3f360c427c206c5e91a50da0ad1b9f7a38c0ca2ef97915d5140487696f",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b1_weighted_ce_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b1_weighted_ce_best_selection_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b1_seed_43_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b1_seed_43_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 3893155,
+          "sha256": "90fc426596825db65d0444897e7929cfbe067dfc4f1f45c5254bfa5806ba7a10",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b1_seed_44_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b1_seed_44_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 3893155,
+          "sha256": "1223dc03d479d1cd7a50f1cc031b851eab7a839ea3590a2fb7ff7056cb669bd3",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B2 BlockMask",
+      "role": null,
+      "source_commit": "4370a1cb3e3f5eac4ab81efc9187b63753d9563d",
+      "training_seeds": [
+        42,
+        43,
+        44
+      ],
+      "hypothesis": "Test missing augmentation",
+      "changed_component": "continuous block missing during training",
+      "robust_result": {
+        "B2_B0_three_seed_mean": 0.7385376523220405,
+        "B2_B0_sample_std": 0.0024997776671547476,
+        "B2_B1_three_seed_mean": 0.7348460379810063,
+        "B2_B1_sample_std": 0.0021944053732929824
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b21_multiseed_summary.json",
+          "relative_path": "outputs/metrics/b21_multiseed_summary.json",
+          "exists_locally": true,
+          "size_bytes": 15442,
+          "sha256": "bae33b3f360c427c206c5e91a50da0ad1b9f7a38c0ca2ef97915d5140487696f",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b2_b0_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b2_b0_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 663956,
+          "sha256": "32206a77f61b1077e78d7a42246505517f1f0fd5936c9fe3e5da9c7a5ce3829a",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b2_b1_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b2_b1_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 3892091,
+          "sha256": "fc1862d57b858c7380b259e504cc506d27cce765d40c9ef46da5f2ffc972fb3b",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b2_b0_seed_43_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b2_b0_seed_43_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664344,
+          "sha256": "0893e346dc239fcfb5e515803753fe24d467c94aa7af6be72128fc334fc4c8a9",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b2_b0_seed_44_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b2_b0_seed_44_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664344,
+          "sha256": "cd90d6c0cfe5f6b30a7444136b65084cba01506fd2769a3b1924e96fadf1452e",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b2_b1_seed_43_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b2_b1_seed_43_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 3893283,
+          "sha256": "f39c6efc78cfed7dfe353e208862b8d0d60f9cedba9a6dc0bfeda58d325e98a0",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b2_b1_seed_44_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b21_b2_b1_seed_44_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 3893283,
+          "sha256": "dfcaba83f60b10f93f3627b2fde263917a6eb72a174548d7391d3564a7a86134",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B3 reconstruction",
+      "role": null,
+      "source_commit": "2a3c692030652679120c004b1242c0e06f1f38a7",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Recover missing latent features",
+      "changed_component": "joint cross-modal reconstruction",
+      "robust_result": {
+        "seed42": 0.7323043924794744
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b3_summary.json",
+          "relative_path": "outputs/metrics/b3_summary.json",
+          "exists_locally": true,
+          "size_bytes": 111208,
+          "sha256": "5fde94c4c0e59bcbc536b225a6534e66c18933092249dcd51b52469c26b3fab0",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b3_b0_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b3_b0_best_clean_score.pt",
+          "exists_locally": true,
+          "size_bytes": 1261961,
+          "sha256": "00feb51e0a67fe88331c2ec262c082b5c0ef4623ad3635151a18137dcfc5f502",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b3_b0_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b3_b0_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 1262000,
+          "sha256": "e6579c6906568bea7060e9426f1f0213557f7b72a282201935f1f0df463384db",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B3.1 frozen reconstruction",
+      "role": null,
+      "source_commit": "12172c4df2697fb41f90a3ebceb99f7acce636fb",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Avoid backbone drift",
+      "changed_component": "frozen B0, global alpha blend",
+      "robust_result": {
+        "seed42_by_alpha": {
+          "0.0": 0.7402479306238966,
+          "0.25": 0.7408572746389686,
+          "0.5": 0.7415750412884448,
+          "0.75": 0.7418040826694617,
+          "1.0": 0.7421882617647563
+        }
+      },
+      "conclusion": "DIAGNOSTIC",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b31_alpha_sweep.json",
+          "relative_path": "outputs/metrics/b31_alpha_sweep.json",
+          "exists_locally": true,
+          "size_bytes": 731955,
+          "sha256": "8fb26f6626e955fe033873f8577f6f68341162272f0d1fd39ea6be1f543a50f2",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b31_frozen_reconstructors_seed42.pt",
+          "relative_path": "outputs/checkpoints/b31_frozen_reconstructors_seed42.pt",
+          "exists_locally": false
+        }
+      ]
+    },
+    {
+      "experiment_name": "B3.2 reconstruction stability",
+      "role": null,
+      "source_commit": "12172c4df2697fb41f90a3ebceb99f7acce636fb",
+      "training_seeds": [
+        42,
+        43,
+        44
+      ],
+      "hypothesis": "Check global alpha across seeds",
+      "changed_component": "frozen reconstruction multi-seed",
+      "robust_result": {
+        "three_seed_mean_by_alpha": {
+          "0.0": 0.7416766986234121,
+          "0.25": 0.7402297668183792,
+          "0.5": 0.7400068605379918,
+          "0.75": 0.7400267251875472,
+          "1.0": 0.7402384408141085
+        },
+        "all_seed_gain_consistent": {
+          "0.25": false,
+          "0.5": false,
+          "0.75": false,
+          "1.0": false
+        }
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b32_multiseed_summary.json",
+          "relative_path": "outputs/metrics/b32_multiseed_summary.json",
+          "exists_locally": true,
+          "size_bytes": 85036,
+          "sha256": "d4347f1c715140cac10b85ca84733b5e0453b68b711962813baf14e8b978d5c2",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b31_frozen_reconstructors_seed42.pt",
+          "relative_path": "outputs/checkpoints/b31_frozen_reconstructors_seed42.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b32_frozen_reconstructors_seed_43.pt",
+          "relative_path": "outputs/checkpoints/b32_frozen_reconstructors_seed_43.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b32_frozen_reconstructors_seed_44.pt",
+          "relative_path": "outputs/checkpoints/b32_frozen_reconstructors_seed_44.pt",
+          "exists_locally": false
+        }
+      ]
+    },
+    {
+      "experiment_name": "B4' dynamic gate",
+      "role": null,
+      "source_commit": "d420c0f483e08747fd91e088e0c6077243ccc3aa",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Test reliability-aware dynamic fusion",
+      "changed_component": "reliability gate",
+      "robust_result": {
+        "seed42": 0.743973741918605
+      },
+      "conclusion": "DIAGNOSTIC",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b4_reliability_metrics.json",
+          "relative_path": "outputs/metrics/b4_reliability_metrics.json",
+          "exists_locally": true,
+          "size_bytes": 161785,
+          "sha256": "b2b8fd6ab794b8649946ae04d9f91a9225e7b2a06fb8b6da96f6679040c798ca",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b4_reliability_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b4_reliability_best_clean_score.pt",
+          "exists_locally": true,
+          "size_bytes": 767296,
+          "sha256": "9748bfa31b7c4e0e2fa0499392744ec2a47ae4380c76f3da5f43f37ba526a673",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b4_reliability_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b4_reliability_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 767327,
+          "sha256": "ab8b4cf1bc8d5dadc4648081ecfe119f3a0ef851c834649bde0e6b4cce43c64f",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-P1 Mean+Max",
+      "role": null,
+      "source_commit": "82708329208bb5c5751140eea4807af0acc89d25",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Test pooling bottleneck",
+      "changed_component": "mean plus max residual",
+      "robust_result": {
+        "seed42": 0.7443201514277025
+      },
+      "conclusion": "DIAGNOSTIC",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_pooling_metrics.json",
+          "relative_path": "outputs/metrics/b5_pooling_metrics.json",
+          "exists_locally": true,
+          "size_bytes": 299989,
+          "sha256": "65a6a76019a347a6d6dbc39cff3765ca9b9371fa58343b0da09e47417a723c56",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_pooling_p1_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_pooling_p1_best_clean_score.pt",
+          "exists_locally": true,
+          "size_bytes": 665165,
+          "sha256": "41ffcfa6797893678a3d543861d75b2a2900d7d9e70bfbad40250ac889fed62b",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_pooling_p1_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_pooling_p1_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 665195,
+          "sha256": "96c0684c39659b7233ae65e5d66939a042a34fd3629830dda4665e68deef77fa",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-P2 Attention",
+      "role": "FINAL",
+      "source_commit": "3ae71251c8894f52bfc9ba5eb5cccffc9c159e03",
+      "training_seeds": [
+        42,
+        43,
+        44
+      ],
+      "hypothesis": "Test pooling bottleneck",
+      "changed_component": "mean plus lightweight attention residual",
+      "robust_result": {
+        "three_seed_mean": 0.7447771500030718,
+        "sample_std": 0.0014921217407082457,
+        "paired_delta_mean": 0.0031004513796594932,
+        "paired_delta_sample_std": 0.002906890840329915
+      },
+      "conclusion": "KEEP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_p2_multiseed_summary.json",
+          "relative_path": "outputs/metrics/b5_p2_multiseed_summary.json",
+          "exists_locally": true,
+          "size_bytes": 548216,
+          "sha256": "dcd2e04988bebb57f523fe9976e9f344b9c28a5786846b805bade63adb4adc90",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_pooling_p2_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_pooling_p2_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 671017,
+          "sha256": "cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 671725,
+          "sha256": "e4f814a5a986a37e217794a80fe5fb7e65c595b213844381076b63810b939e89",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 671725,
+          "sha256": "cbd486e03a44f86311c5a61896846e529ce4d91f53b8a47d31b645fd08ea5d81",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_pooling_p2_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_pooling_p2_best_clean_score.pt",
+          "exists_locally": true,
+          "size_bytes": 670917,
+          "sha256": "4a4ab039f3e239961bf68e7afea6a187932f00b14481a8bc757df61ac05644a0",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed43_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed43_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed44_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed44_best_clean_score.pt",
+          "exists_locally": false
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-F low-rank fusion",
+      "role": null,
+      "source_commit": "2fb68ff6f850c0565208e3b5f4ed641ac4b2a3ed",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Test pairwise multiplicative interaction",
+      "changed_component": "low-rank fusion residual",
+      "robust_result": {
+        "seed42": 0.738850020044878
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_fusion_metrics.json",
+          "relative_path": "outputs/metrics/b5_fusion_metrics.json",
+          "exists_locally": true,
+          "size_bytes": 157731,
+          "sha256": "95dfa2fed26e2359e7164e2a4de118f51acbe997979d733274f9b9d08564ac29",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_fusion_f1_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_fusion_f1_best_clean_score.pt",
+          "exists_locally": true,
+          "size_bytes": 715010,
+          "sha256": "8434e6a19e0b695782375883882c72a2c910663e6333d105ca735c4f86b85d00",
+          "file_type": ".pt"
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_fusion_f1_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_fusion_f1_best_robust_score.pt",
+          "exists_locally": true,
+          "size_bytes": 715041,
+          "sha256": "a7bbef79e2062aa6b1e409ffc6f7d15fe6023bd3054ef41b65a71d284d019426",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-L1 lambda balance",
+      "role": null,
+      "source_commit": "4e0434490f61d0bf2c03ac65929b7f55e13fa035",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Test classification/regression loss balance",
+      "changed_component": "lambda_reg grid only",
+      "robust_result": {
+        "lambda_0.25": 0.729304728793398,
+        "lambda_0.5": 0.7373280259244098,
+        "lambda_1": 0.7402479306238966,
+        "lambda_2": 0.7410557085987006
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_l1_lambda_metrics.json",
+          "relative_path": "outputs/metrics/b5_l1_lambda_metrics.json",
+          "exists_locally": true,
+          "size_bytes": 1273631,
+          "sha256": "0d34b0cddb37e70e600b0c0326ed97cd2ebe4d31428bf01fe533ba8f29234e59",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_0.25_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_0.25_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_0.25_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_0.25_best_robust_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_0.5_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_0.5_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_0.5_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_0.5_best_robust_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_1_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_1_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_1_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_1_best_robust_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_2_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_2_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_l1_lambda_2_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_l1_lambda_2_best_robust_score.pt",
+          "exists_locally": false
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-H0 head diagnostic",
+      "role": null,
+      "source_commit": "d04fdb3002800940ea6db86ff0336b540279bc17",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Measure classification/regression head complementarity",
+      "changed_component": "no training; predictions only",
+      "robust_result": null,
+      "conclusion": "DIAGNOSTIC",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_h0_head_diagnostic.json",
+          "relative_path": "outputs/metrics/b5_h0_head_diagnostic.json",
+          "exists_locally": true,
+          "size_bytes": 182971,
+          "sha256": "f9ecf14e58dfee48d236b68531e70143c1adef017ed2dcc7cce0fc7423b2a431",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+          "relative_path": "outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+          "exists_locally": true,
+          "size_bytes": 664280,
+          "sha256": "20231a1436f1908f9271f420d66d209bd9e4f5e0b4c7bb9757820fa0f7e6e80a",
+          "file_type": ".pt"
+        }
+      ]
+    },
+    {
+      "experiment_name": "B5-N1 text z-score",
+      "role": null,
+      "source_commit": "aa3f07cc8a43d2ffe46f81f3d150143b7fd485fe",
+      "training_seeds": [
+        42
+      ],
+      "hypothesis": "Test train-only text normalization",
+      "changed_component": "text featurewise z-score",
+      "robust_result": {
+        "seed42": 0.7344743054699618
+      },
+      "conclusion": "STOP",
+      "output_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_n1_text_zscore_metrics.json",
+          "relative_path": "outputs/metrics/b5_n1_text_zscore_metrics.json",
+          "exists_locally": true,
+          "size_bytes": 462859,
+          "sha256": "a8eea6da6eb614f72993af3e664072e7f1978bc2fcaa65c3c8dbab990a4769d5",
+          "file_type": ".json"
+        }
+      ],
+      "checkpoint_paths": [
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_n1_text_zscore_best_clean_score.pt",
+          "relative_path": "outputs/checkpoints/b5_n1_text_zscore_best_clean_score.pt",
+          "exists_locally": false
+        },
+        {
+          "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_n1_text_zscore_best_robust_score.pt",
+          "relative_path": "outputs/checkpoints/b5_n1_text_zscore_best_robust_score.pt",
+          "exists_locally": false
+        }
+      ]
+    }
+  ],
+  "final_choice": "B5-P2",
+  "baseline": "B0-WCE",
+  "note": "Missing local optional checkpoints are recorded explicitly; no metric was inferred from a missing checkpoint."
+}

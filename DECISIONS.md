@@ -33,3 +33,9 @@
 进度依据：E2026/outputs/metrics 中的真实结果；复核与待测建议见 E2026/Q2_PROGRESS_REVIEW.md。
 本决定不批准或修改新的验证协议，不将候选模型视为已有效。沿用既有E冻结基准，协议同步需另行审阅。
 日期：2026-09-23。
+
+## D006 - E Q2 final main model lock
+
+决定：按用户明确指示，E Q2 的论文 baseline 固定为 B0-WCE，最终主模型固定为 B5-P2（冻结 B0 的轻量 attention residual pooling）。停止 Q2 后续模型探索与调参，不组合其他模块。沿用 attachment2 validation clean + 54 缺失场景的现有冻结 benchmark。
+依据：`E2026/outputs/metrics/b5_p2_multiseed_summary.json` 和 `E2026/outputs/final/q2/q2_model_lock.json`。三 seed paired robust delta 为 `+0.003100 ± 0.002907`（sample SD），2/3 为正、seed44 近乎持平；对外表述必须保留 seed 敏感性。
+影响范围：E Q2 最终模型、实验汇总与论文表述；不改变其他题目或共享验证协议。日期：2026-09-24。

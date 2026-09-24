@@ -1,0 +1,64 @@
+run_name: Q2-final-B5-P2
+model_status: LOCKED
+project_root: D:/华为杯/E2026
+data:
+  pkl_path: data/raw/aligned_50.pkl
+  pkl_path_absolute: D:/华为杯/E2026/data/raw/aligned_50.pkl
+  train_split: train
+  valid_split: valid
+  test_split: test
+  batch_size: 128
+  num_workers: 0
+  sequence_length: 50
+  feature_dimensions:
+    text: 768
+    audio: 74
+    vision: 35
+  padding_mask_source: text_bert[:,1,:] == 1
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+  classification_classes: 3
+  regression_outputs: 1
+  architecture: B5PoolingResidual
+  mode: mean_attention
+  attention_scorer: per-modality Linear(input_dim,1)
+  attention_padding: masked before softmax
+  residual: project(masked_mean(x)) + gamma*project(attention_pool(x))
+  gamma_initial_value: 0
+training:
+  seeds:
+  - 42
+  - 43
+  - 44
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: AdamW
+  classification_loss: balanced_train_weighted_cross_entropy
+  regression_loss: SmoothL1
+  lambda_reg: 1.0
+  class_weighting: balanced_train
+  augmentation: none
+  evaluate_test: false
+  freeze_b0_parameters: true
+  frozen_b0_eval_mode: true
+  trainable_components:
+  - attention_scorer
+  - gamma
+  checkpoint_selection: best_validation_robust_score
+  initialization_protocol: corresponding_seed_b0_wce_best_selection_score
+benchmark:
+  definition: outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+  selection_score: 0.25*Accuracy + 0.25*MacroF1 + 0.25*(1-MAE/6) + 0.25*(Pearson+1)/2
+  robust_score: 0.5*clean_selection_score + 0.5*mean_missing_selection_score
+checkpoints:
+  '42': outputs/checkpoints/b5_pooling_p2_best_robust_score.pt
+  '43': outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt
+  '44': outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt
