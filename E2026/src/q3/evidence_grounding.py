@@ -17,7 +17,10 @@ def _empty(status: str, media_file: str | Path | None, note: str) -> dict:
 def ground_interval(*, sample_id: str, modality: str, start_index: int,
                     end_index: int, valid_length: int,
                     media_file: str | Path | None,
-                    mapping: dict[str, Any] | None = None) -> dict:
+                    mapping: dict[str, Any] | None = None,
+                    raw_text: str | None = None,
+                    text_bert: Any | None = None,
+                    tokenizer: Any | None = None) -> dict:
     """Ground an exact half-open slot interval only with an audited mapping record.
 
     ``mapping`` is an independent, reviewed record for this *exact* sample,
@@ -27,8 +30,20 @@ def ground_interval(*, sample_id: str, modality: str, start_index: int,
     if modality not in MODALITIES or not sample_id or not 0 <= start_index < end_index <= valid_length <= 50:
         raise ValueError("invalid sample/modality/valid-prefix interval")
     if mapping is None:
-        return _empty("unverified", media_file,
-                      "No reviewed aligned-slot-to-raw-evidence mapping for this interval; text/time/frame withheld.")
+        result = _empty("unverified", media_file,
+                        "No reviewed feature-row-to-raw-evidence mapping for this interval; raw evidence withheld.")
+        if modality == "text" and raw_text is not None and text_bert is not None:
+            from src.q3.text_grounding import ground_text_interval
+
+            token_map = ground_text_interval(
+                raw_text, text_bert, start_index, end_index, tokenizer=tokenizer
+            )
+            result["text_token_mapping"] = token_map
+            result["mapping_note"] += (
+                " BERT token identity and raw-text span are verified, but the link "
+                "from this P2 text feature row to the token slot is not verified."
+            )
+        return result
     if mapping.get("sample_id") != sample_id or mapping.get("modality") != modality or (
             mapping.get("start_index"), mapping.get("end_index")) != (start_index, end_index):
         raise ValueError("mapping provenance does not match requested interval")

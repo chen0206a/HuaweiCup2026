@@ -1,0 +1,2070 @@
+{
+  "stage": "Q3-2.5 Alignment Provenance Recovery",
+  "attachment4_access": "aligned_50 provenance/interface audit only; no labels or predictor outputs",
+  "overall_status": "BLOCKED_BY_GROUNDING",
+  "grounding_status_by_modality": {
+    "text": "UNVERIFIED",
+    "text_token_to_raw_span_submapping": "VERIFIED",
+    "text_feature_row_to_token_slot": "UNVERIFIED",
+    "audio": "UNVERIFIED",
+    "vision": "UNVERIFIED"
+  },
+  "attachment_provenance": {
+    "finding": "high_structural_similarity_to_MMSA_and_Self_MM_releases_but_not_confirmed",
+    "evidence": [
+      "20 sample-level pickle files, not the public split-level aggregate",
+      "generic IDs 01..20 rather than video_id$_$clip_id",
+      "no upstream file hash, commit, preprocessing manifest, or source IDs in samples",
+      "public code/configs explain candidate formats but do not bind these file hashes to a release"
+    ]
+  },
+  "tokenizer": {
+    "repo": "bert-base-uncased",
+    "revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+    "tokenizer_json_sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98",
+    "tokenizers_version": "0.23.2",
+    "huggingface_hub_version": "1.1.2",
+    "settings": {
+      "fast_tokenizer": true,
+      "lowercase": true,
+      "add_special_tokens": true,
+      "max_length": 50,
+      "truncation": "right",
+      "padding": "right_to_50_with_id_0"
+    }
+  },
+  "tokenizer_candidates": [
+    {
+      "name": "bert-base-uncased-fast-right-truncate-50-pad-right",
+      "settings": {
+        "lowercase": true,
+        "add_special_tokens": true,
+        "max_length": 50,
+        "truncation": "right",
+        "padding": "right_to_50"
+      },
+      "exact_match_count": 20,
+      "sample_count": 20,
+      "mismatches": []
+    },
+    {
+      "name": "bert-base-uncased-fast-left-truncate-50-pad-right",
+      "settings": {
+        "lowercase": true,
+        "add_special_tokens": true,
+        "max_length": 50,
+        "truncation": "left",
+        "padding": "right_to_50"
+      },
+      "exact_match_count": 18,
+      "sample_count": 20,
+      "mismatches": [
+        {
+          "sample_id": "07",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2004,
+            "reconstructed_id": 2654,
+            "provided_token": "as",
+            "reconstructed_token": "28"
+          },
+          "raw_text": "As Linn’s associate editor Michael Baadke reports in our November 28 issue, attendees “enthusiastically discussed the topics of growing the hobby, the future of stamp shows, and dealers and philatelic partnerships, along with ways the leading organizations involved in the stamp hobby can work together to make it succeed and grow",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "18",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 1011,
+            "reconstructed_id": 22880,
+            "provided_token": "-",
+            "reconstructed_token": "fishery"
+          },
+          "raw_text": "-And in Denmark - the first Baltic Cod fishery has been MSC – certified -Meanwhile, the Faeroese Mackerel Fishery has been denied MSC certification based on the fact that the fishery has failed to reach an agreement on mackerel quotas with Norway and the European Union.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "bert-base-uncased-fast-no-special-tokens",
+      "settings": {
+        "lowercase": true,
+        "add_special_tokens": false,
+        "max_length": 50,
+        "truncation": "right",
+        "padding": "right_to_50"
+      },
+      "exact_match_count": 0,
+      "sample_count": 20,
+      "mismatches": [
+        {
+          "sample_id": "01",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 24,
+          "reconstructed_length": 22,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 6419,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "replacing"
+          },
+          "raw_text": "Replacing these wear components when replacing the timing belt is essential to ensuring the new belt performs to its mileage requirements",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "02",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 21,
+          "reconstructed_length": 19,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2057,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "we"
+          },
+          "raw_text": "We want to live by each other’s happiness - not by each other’s misery.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "03",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 35,
+          "reconstructed_length": 33,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2045,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "there"
+          },
+          "raw_text": "There's one lender at the moment which I think is just Bankwest who don't take rental income into account, they take rental yield into account.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "04",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 28,
+          "reconstructed_length": 26,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2065,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "if"
+          },
+          "raw_text": "If I blow it at the team exercise, should I kiss my chances of cheering \"GO BLUE\" goodbye?] Absolutely not.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "05",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 17,
+          "reconstructed_length": 15,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 7632,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "hi"
+          },
+          "raw_text": "Hi, my name is Chloe, video marketer for Red Wagon Marketing.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "06",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 37,
+          "reconstructed_length": 35,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2065,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "if"
+          },
+          "raw_text": "If you're a fan of dancing in that sense, just like to watch people dance, see impressive dance moves then you might want to check out this movie solely for that",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "07",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2004,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "as"
+          },
+          "raw_text": "As Linn’s associate editor Michael Baadke reports in our November 28 issue, attendees “enthusiastically discussed the topics of growing the hobby, the future of stamp shows, and dealers and philatelic partnerships, along with ways the leading organizations involved in the stamp hobby can work together to make it succeed and grow",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "08",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 13,
+          "reconstructed_length": 11,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2008,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "that"
+          },
+          "raw_text": "That brings us to tonight, the Universal Design Grand Challenge",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "09",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 20,
+          "reconstructed_length": 18,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 1006,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "("
+          },
+          "raw_text": "(uhh) I did not like this movie at all, I would not recommend it",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "10",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 32,
+          "reconstructed_length": 30,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 1006,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "("
+          },
+          "raw_text": "(umm) And you know I really do like to see fluffy chick flicks sometimes so I'm not against that but this one was pretty terrible",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "11",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 16,
+          "reconstructed_length": 14,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 1045,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "i"
+          },
+          "raw_text": "I would be ashamed to have made this film if I was a director",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "12",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 44,
+          "reconstructed_length": 42,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2030,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "or"
+          },
+          "raw_text": "Or worse, an individual previously had good credit, but usually by no fault of their own, or perhaps by fault of their own, they have let their credit sag, and credit scores is very low.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "13",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 32,
+          "reconstructed_length": 30,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2005,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "for"
+          },
+          "raw_text": "For example, I could take a set of data and from that data, I can find a relationship between any two of the given factors or more.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "14",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 37,
+          "reconstructed_length": 35,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2002,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "he"
+          },
+          "raw_text": "He is the co-founder of Rossen and Vettese Limited and the former Executive Director of Uniform Final Examination (UFE) courses at Toronto's York University.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "15",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 23,
+          "reconstructed_length": 21,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2174,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "however"
+          },
+          "raw_text": "However, despite their poverty, the family prioritize education because they believed in its power to transform lives",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "16",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 13,
+          "reconstructed_length": 11,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2009,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "it"
+          },
+          "raw_text": "It's a terrible, this is a terrible movie",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "17",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 26,
+          "reconstructed_length": 24,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 11243,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "applying"
+          },
+          "raw_text": "Applying these four design concepts to your presentations is simple, easy and will make people think you turned into a design guru.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "18",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 1011,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "-"
+          },
+          "raw_text": "-And in Denmark - the first Baltic Cod fishery has been MSC – certified -Meanwhile, the Faeroese Mackerel Fishery has been denied MSC certification based on the fact that the fishery has failed to reach an agreement on mackerel quotas with Norway and the European Union.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "19",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 41,
+          "reconstructed_length": 39,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 2111,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "people"
+          },
+          "raw_text": "People are surprisingly forgiving brands when they own up to mistakes, and unfortunately some haters out there love to point fingers and jump all over imperfections, but for the most part, people understand",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "20",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 45,
+          "reconstructed_length": 43,
+          "first_mismatch": {
+            "slot_index": 0,
+            "provided_id": 101,
+            "reconstructed_id": 1998,
+            "provided_token": "[CLS]",
+            "reconstructed_token": "and"
+          },
+          "raw_text": "And of course, click in the link of the description of this video for more, and we'll have more live updates and a stock market video (wrap-up) at the end of the day today.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "bert-base-uncased-fast-case-sensitive",
+      "settings": {
+        "lowercase": false,
+        "add_special_tokens": true,
+        "max_length": 50,
+        "truncation": "right",
+        "padding": "right_to_50"
+      },
+      "exact_match_count": 0,
+      "sample_count": 20,
+      "mismatches": [
+        {
+          "sample_id": "01",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 24,
+          "reconstructed_length": 24,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 6419,
+            "reconstructed_id": 100,
+            "provided_token": "replacing",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "Replacing these wear components when replacing the timing belt is essential to ensuring the new belt performs to its mileage requirements",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "02",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 21,
+          "reconstructed_length": 21,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2057,
+            "reconstructed_id": 100,
+            "provided_token": "we",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "We want to live by each other’s happiness - not by each other’s misery.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "03",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 35,
+          "reconstructed_length": 34,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2045,
+            "reconstructed_id": 100,
+            "provided_token": "there",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "There's one lender at the moment which I think is just Bankwest who don't take rental income into account, they take rental yield into account.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "04",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 28,
+          "reconstructed_length": 28,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2065,
+            "reconstructed_id": 100,
+            "provided_token": "if",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "If I blow it at the team exercise, should I kiss my chances of cheering \"GO BLUE\" goodbye?] Absolutely not.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "05",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 17,
+          "reconstructed_length": 17,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 7632,
+            "reconstructed_id": 100,
+            "provided_token": "hi",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "Hi, my name is Chloe, video marketer for Red Wagon Marketing.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "06",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 37,
+          "reconstructed_length": 37,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2065,
+            "reconstructed_id": 100,
+            "provided_token": "if",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "If you're a fan of dancing in that sense, just like to watch people dance, see impressive dance moves then you might want to check out this movie solely for that",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "07",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2004,
+            "reconstructed_id": 100,
+            "provided_token": "as",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "As Linn’s associate editor Michael Baadke reports in our November 28 issue, attendees “enthusiastically discussed the topics of growing the hobby, the future of stamp shows, and dealers and philatelic partnerships, along with ways the leading organizations involved in the stamp hobby can work together to make it succeed and grow",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "08",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 13,
+          "reconstructed_length": 13,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2008,
+            "reconstructed_id": 100,
+            "provided_token": "that",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "That brings us to tonight, the Universal Design Grand Challenge",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "09",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 20,
+          "reconstructed_length": 20,
+          "first_mismatch": {
+            "slot_index": 5,
+            "provided_id": 1045,
+            "reconstructed_id": 100,
+            "provided_token": "i",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "(uhh) I did not like this movie at all, I would not recommend it",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "10",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 32,
+          "reconstructed_length": 32,
+          "first_mismatch": {
+            "slot_index": 4,
+            "provided_id": 1998,
+            "reconstructed_id": 100,
+            "provided_token": "and",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "(umm) And you know I really do like to see fluffy chick flicks sometimes so I'm not against that but this one was pretty terrible",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "11",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 16,
+          "reconstructed_length": 16,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 1045,
+            "reconstructed_id": 100,
+            "provided_token": "i",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "I would be ashamed to have made this film if I was a director",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "12",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 44,
+          "reconstructed_length": 44,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2030,
+            "reconstructed_id": 100,
+            "provided_token": "or",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "Or worse, an individual previously had good credit, but usually by no fault of their own, or perhaps by fault of their own, they have let their credit sag, and credit scores is very low.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "13",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 32,
+          "reconstructed_length": 32,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2005,
+            "reconstructed_id": 100,
+            "provided_token": "for",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "For example, I could take a set of data and from that data, I can find a relationship between any two of the given factors or more.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "14",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": true,
+          "valid_length": 37,
+          "reconstructed_length": 33,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2002,
+            "reconstructed_id": 100,
+            "provided_token": "he",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "He is the co-founder of Rossen and Vettese Limited and the former Executive Director of Uniform Final Examination (UFE) courses at Toronto's York University.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "15",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 23,
+          "reconstructed_length": 23,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2174,
+            "reconstructed_id": 100,
+            "provided_token": "however",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "However, despite their poverty, the family prioritize education because they believed in its power to transform lives",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "16",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 13,
+          "reconstructed_length": 13,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2009,
+            "reconstructed_id": 100,
+            "provided_token": "it",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "It's a terrible, this is a terrible movie",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "17",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 26,
+          "reconstructed_length": 26,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 11243,
+            "reconstructed_id": 100,
+            "provided_token": "applying",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "Applying these four design concepts to your presentations is simple, easy and will make people think you turned into a design guru.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "18",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 50,
+          "reconstructed_length": 50,
+          "first_mismatch": {
+            "slot_index": 2,
+            "provided_id": 1998,
+            "reconstructed_id": 100,
+            "provided_token": "and",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "-And in Denmark - the first Baltic Cod fishery has been MSC – certified -Meanwhile, the Faeroese Mackerel Fishery has been denied MSC certification based on the fact that the fishery has failed to reach an agreement on mackerel quotas with Norway and the European Union.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "19",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 41,
+          "reconstructed_length": 41,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 2111,
+            "reconstructed_id": 100,
+            "provided_token": "people",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "People are surprisingly forgiving brands when they own up to mistakes, and unfortunately some haters out there love to point fingers and jump all over imperfections, but for the most part, people understand",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "20",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": true,
+          "token_type_ids_exact": true,
+          "valid_length": 45,
+          "reconstructed_length": 45,
+          "first_mismatch": {
+            "slot_index": 1,
+            "provided_id": 1998,
+            "reconstructed_id": 100,
+            "provided_token": "and",
+            "reconstructed_token": "[UNK]"
+          },
+          "raw_text": "And of course, click in the link of the description of this video for more, and we'll have more live updates and a stock market video (wrap-up) at the end of the day today.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "bert-base-uncased-fast-no-truncation-no-padding",
+      "settings": {
+        "lowercase": true,
+        "add_special_tokens": true,
+        "max_length": null,
+        "truncation": "none",
+        "padding": "none"
+      },
+      "exact_match_count": 0,
+      "sample_count": 20,
+      "mismatches": [
+        {
+          "sample_id": "01",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 24,
+          "reconstructed_length": 24,
+          "first_mismatch": {
+            "slot_index": 24,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "Replacing these wear components when replacing the timing belt is essential to ensuring the new belt performs to its mileage requirements",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "02",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 21,
+          "reconstructed_length": 21,
+          "first_mismatch": {
+            "slot_index": 21,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "We want to live by each other’s happiness - not by each other’s misery.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "03",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 35,
+          "reconstructed_length": 35,
+          "first_mismatch": {
+            "slot_index": 35,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "There's one lender at the moment which I think is just Bankwest who don't take rental income into account, they take rental yield into account.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "04",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 28,
+          "reconstructed_length": 28,
+          "first_mismatch": {
+            "slot_index": 28,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "If I blow it at the team exercise, should I kiss my chances of cheering \"GO BLUE\" goodbye?] Absolutely not.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "05",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 17,
+          "reconstructed_length": 17,
+          "first_mismatch": {
+            "slot_index": 17,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "Hi, my name is Chloe, video marketer for Red Wagon Marketing.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "06",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 37,
+          "reconstructed_length": 37,
+          "first_mismatch": {
+            "slot_index": 37,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "If you're a fan of dancing in that sense, just like to watch people dance, see impressive dance moves then you might want to check out this movie solely for that",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "07",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 50,
+          "reconstructed_length": 65,
+          "first_mismatch": {
+            "slot_index": 49,
+            "provided_id": 102,
+            "reconstructed_id": 4411,
+            "provided_token": "[SEP]",
+            "reconstructed_token": "organizations"
+          },
+          "raw_text": "As Linn’s associate editor Michael Baadke reports in our November 28 issue, attendees “enthusiastically discussed the topics of growing the hobby, the future of stamp shows, and dealers and philatelic partnerships, along with ways the leading organizations involved in the stamp hobby can work together to make it succeed and grow",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "08",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 13,
+          "reconstructed_length": 13,
+          "first_mismatch": {
+            "slot_index": 13,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "That brings us to tonight, the Universal Design Grand Challenge",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "09",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 20,
+          "reconstructed_length": 20,
+          "first_mismatch": {
+            "slot_index": 20,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "(uhh) I did not like this movie at all, I would not recommend it",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "10",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 32,
+          "reconstructed_length": 32,
+          "first_mismatch": {
+            "slot_index": 32,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "(umm) And you know I really do like to see fluffy chick flicks sometimes so I'm not against that but this one was pretty terrible",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "11",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 16,
+          "reconstructed_length": 16,
+          "first_mismatch": {
+            "slot_index": 16,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "I would be ashamed to have made this film if I was a director",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "12",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 44,
+          "reconstructed_length": 44,
+          "first_mismatch": {
+            "slot_index": 44,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "Or worse, an individual previously had good credit, but usually by no fault of their own, or perhaps by fault of their own, they have let their credit sag, and credit scores is very low.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "13",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 32,
+          "reconstructed_length": 32,
+          "first_mismatch": {
+            "slot_index": 32,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "For example, I could take a set of data and from that data, I can find a relationship between any two of the given factors or more.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "14",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 37,
+          "reconstructed_length": 37,
+          "first_mismatch": {
+            "slot_index": 37,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "He is the co-founder of Rossen and Vettese Limited and the former Executive Director of Uniform Final Examination (UFE) courses at Toronto's York University.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "15",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 23,
+          "reconstructed_length": 23,
+          "first_mismatch": {
+            "slot_index": 23,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "However, despite their poverty, the family prioritize education because they believed in its power to transform lives",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "16",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 13,
+          "reconstructed_length": 13,
+          "first_mismatch": {
+            "slot_index": 13,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "It's a terrible, this is a terrible movie",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "17",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 26,
+          "reconstructed_length": 26,
+          "first_mismatch": {
+            "slot_index": 26,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "Applying these four design concepts to your presentations is simple, easy and will make people think you turned into a design guru.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "18",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 50,
+          "reconstructed_length": 59,
+          "first_mismatch": {
+            "slot_index": 49,
+            "provided_id": 102,
+            "reconstructed_id": 20563,
+            "provided_token": "[SEP]",
+            "reconstructed_token": "quota"
+          },
+          "raw_text": "-And in Denmark - the first Baltic Cod fishery has been MSC – certified -Meanwhile, the Faeroese Mackerel Fishery has been denied MSC certification based on the fact that the fishery has failed to reach an agreement on mackerel quotas with Norway and the European Union.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "19",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 41,
+          "reconstructed_length": 41,
+          "first_mismatch": {
+            "slot_index": 41,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "People are surprisingly forgiving brands when they own up to mistakes, and unfortunately some haters out there love to point fingers and jump all over imperfections, but for the most part, people understand",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        },
+        {
+          "sample_id": "20",
+          "exact_ids_mask_and_types": false,
+          "ids_exact": false,
+          "attention_mask_exact": false,
+          "token_type_ids_exact": false,
+          "valid_length": 45,
+          "reconstructed_length": 45,
+          "first_mismatch": {
+            "slot_index": 45,
+            "provided_id": 0,
+            "reconstructed_id": null,
+            "provided_token": "[PAD]",
+            "reconstructed_token": null
+          },
+          "raw_text": "And of course, click in the link of the description of this video for more, and we'll have more live updates and a stock market video (wrap-up) at the end of the day today.",
+          "special_tokens": {
+            "provided_first_valid": 101,
+            "provided_last_valid": 102,
+            "provided_cls_sep": true
+          }
+        }
+      ]
+    }
+  ],
+  "selected_configuration": {
+    "exact_id_mask_type_match_count": 20,
+    "sample_count": 20,
+    "first_mismatch_index": null,
+    "all_cls_sep_correct": true,
+    "all_ids_mask_types_exact_including_padding": true,
+    "max_valid_length": 50,
+    "truncated_samples_at_50": [
+      "07",
+      "18"
+    ],
+    "per_sample_token_match": [
+      {
+        "sample_id": "01",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 24,
+        "reconstructed_length": 24,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "02",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 21,
+        "reconstructed_length": 21,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "03",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 35,
+        "reconstructed_length": 35,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "04",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 28,
+        "reconstructed_length": 28,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "05",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 17,
+        "reconstructed_length": 17,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "06",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 37,
+        "reconstructed_length": 37,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "07",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 50,
+        "reconstructed_length": 50,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "08",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 13,
+        "reconstructed_length": 13,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "09",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 20,
+        "reconstructed_length": 20,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "10",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 32,
+        "reconstructed_length": 32,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "11",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 16,
+        "reconstructed_length": 16,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "12",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 44,
+        "reconstructed_length": 44,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "13",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 32,
+        "reconstructed_length": 32,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "14",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 37,
+        "reconstructed_length": 37,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "15",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 23,
+        "reconstructed_length": 23,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "16",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 13,
+        "reconstructed_length": 13,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "17",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 26,
+        "reconstructed_length": 26,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "18",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 50,
+        "reconstructed_length": 50,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "19",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 41,
+        "reconstructed_length": 41,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      },
+      {
+        "sample_id": "20",
+        "exact_ids_mask_and_types": true,
+        "ids_exact": true,
+        "attention_mask_exact": true,
+        "token_type_ids_exact": true,
+        "valid_length": 45,
+        "reconstructed_length": 45,
+        "first_mismatch": null,
+        "raw_text": null,
+        "special_tokens": {
+          "provided_first_valid": 101,
+          "provided_last_valid": 102,
+          "provided_cls_sep": true
+        }
+      }
+    ],
+    "punctuation_apostrophe_and_wordpiece_behavior": "Included in the exact per-sample ID equality; no word/space splitting was used."
+  },
+  "text_feature_row_audit": {
+    "attachment_feature_shape": [
+      50,
+      768
+    ],
+    "text_bert_shape": [
+      3,
+      50
+    ],
+    "tokenizer_ids_match": true,
+    "source_proves_attachment_text_row_index_equals_text_bert_slot": false,
+    "reason": "The public candidate pipelines are not tied to Attachment4 hashes; the local sample files carry no feature-extraction provenance. Exact text_bert IDs alone do not identify the generation of the 768-D text rows."
+  },
+  "audio_vision_audit": {
+    "attachment_dims": {
+      "audio": 74,
+      "vision": 35
+    },
+    "likely_public_feature_families": {
+      "audio": "COVAREP 74-D",
+      "vision": "FACET 35-D"
+    },
+    "source_proves_attachment_rows_share_text_slot_alignment": false,
+    "timestamped_intervals_present_in_pkl": false,
+    "original_source_ids_present": false
+  },
+  "timestamps_recoverable_from_public_provenance": {
+    "in_principle": "yes when original video_id$_$clip_id and exact source/version are known; CMU SDK CSD computational sequences preserve feature intervals",
+    "for_these_samples": false,
+    "reason": "Only generic IDs 01..20 are present and no source-key mapping or feature-generation hash is supplied; no large external corpus was downloaded."
+  },
+  "smoke_cases": [
+    {
+      "sample_id": "01",
+      "slot_interval_half_open": [
+        1,
+        5
+      ],
+      "token_mapping": {
+        "token_ids": [
+          6419,
+          2122,
+          4929,
+          6177
+        ],
+        "tokens": [
+          "replacing",
+          "these",
+          "wear",
+          "components"
+        ],
+        "raw_text_span": {
+          "start_char": 0,
+          "end_char": 31
+        },
+        "text_fragment": "Replacing these wear components",
+        "excluded_special_tokens": [],
+        "mapping_status": "TOKEN_MAPPING_VERIFIED",
+        "feature_row_mapping_status": "UNVERIFIED",
+        "provenance": {
+          "tokenizer": "bert-base-uncased",
+          "tokenizer_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+          "tokenizer_json_sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98",
+          "settings": {
+            "fast_tokenizer": true,
+            "lowercase": true,
+            "add_special_tokens": true,
+            "max_length": 50,
+            "truncation": "right",
+            "padding": "right_to_50_with_id_0"
+          },
+          "verified_arrays": [
+            "input_ids",
+            "attention_mask",
+            "token_type_ids"
+          ],
+          "scope_note": "Proves text_bert token slot to raw_text span; does not prove P2 text feature row identity."
+        }
+      },
+      "feature_evidence_result": {
+        "grounding_status": "unverified",
+        "mapping_method": null,
+        "media_file": null,
+        "text_fragment": null,
+        "audio_time_range": null,
+        "video_frame_time": null,
+        "mapping_note": "No reviewed feature-row-to-raw-evidence mapping for this interval; raw evidence withheld. BERT token identity and raw-text span are verified, but the link from this P2 text feature row to the token slot is not verified.",
+        "text_token_mapping": {
+          "token_ids": [
+            6419,
+            2122,
+            4929,
+            6177
+          ],
+          "tokens": [
+            "replacing",
+            "these",
+            "wear",
+            "components"
+          ],
+          "raw_text_span": {
+            "start_char": 0,
+            "end_char": 31
+          },
+          "text_fragment": "Replacing these wear components",
+          "excluded_special_tokens": [],
+          "mapping_status": "TOKEN_MAPPING_VERIFIED",
+          "feature_row_mapping_status": "UNVERIFIED",
+          "provenance": {
+            "tokenizer": "bert-base-uncased",
+            "tokenizer_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+            "tokenizer_json_sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98",
+            "settings": {
+              "fast_tokenizer": true,
+              "lowercase": true,
+              "add_special_tokens": true,
+              "max_length": 50,
+              "truncation": "right",
+              "padding": "right_to_50_with_id_0"
+            },
+            "verified_arrays": [
+              "input_ids",
+              "attention_mask",
+              "token_type_ids"
+            ],
+            "scope_note": "Proves text_bert token slot to raw_text span; does not prove P2 text feature row identity."
+          }
+        }
+      },
+      "feature_row_mapping_status": "UNVERIFIED"
+    },
+    {
+      "sample_id": "07",
+      "slot_interval_half_open": [
+        1,
+        5
+      ],
+      "token_mapping": {
+        "token_ids": [
+          2004,
+          11409,
+          2078,
+          1521
+        ],
+        "tokens": [
+          "as",
+          "lin",
+          "##n",
+          "’"
+        ],
+        "raw_text_span": {
+          "start_char": 0,
+          "end_char": 8
+        },
+        "text_fragment": "As Linn’",
+        "excluded_special_tokens": [],
+        "mapping_status": "TOKEN_MAPPING_VERIFIED",
+        "feature_row_mapping_status": "UNVERIFIED",
+        "provenance": {
+          "tokenizer": "bert-base-uncased",
+          "tokenizer_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+          "tokenizer_json_sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98",
+          "settings": {
+            "fast_tokenizer": true,
+            "lowercase": true,
+            "add_special_tokens": true,
+            "max_length": 50,
+            "truncation": "right",
+            "padding": "right_to_50_with_id_0"
+          },
+          "verified_arrays": [
+            "input_ids",
+            "attention_mask",
+            "token_type_ids"
+          ],
+          "scope_note": "Proves text_bert token slot to raw_text span; does not prove P2 text feature row identity."
+        }
+      },
+      "feature_evidence_result": {
+        "grounding_status": "unverified",
+        "mapping_method": null,
+        "media_file": null,
+        "text_fragment": null,
+        "audio_time_range": null,
+        "video_frame_time": null,
+        "mapping_note": "No reviewed feature-row-to-raw-evidence mapping for this interval; raw evidence withheld. BERT token identity and raw-text span are verified, but the link from this P2 text feature row to the token slot is not verified.",
+        "text_token_mapping": {
+          "token_ids": [
+            2004,
+            11409,
+            2078,
+            1521
+          ],
+          "tokens": [
+            "as",
+            "lin",
+            "##n",
+            "’"
+          ],
+          "raw_text_span": {
+            "start_char": 0,
+            "end_char": 8
+          },
+          "text_fragment": "As Linn’",
+          "excluded_special_tokens": [],
+          "mapping_status": "TOKEN_MAPPING_VERIFIED",
+          "feature_row_mapping_status": "UNVERIFIED",
+          "provenance": {
+            "tokenizer": "bert-base-uncased",
+            "tokenizer_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+            "tokenizer_json_sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98",
+            "settings": {
+              "fast_tokenizer": true,
+              "lowercase": true,
+              "add_special_tokens": true,
+              "max_length": 50,
+              "truncation": "right",
+              "padding": "right_to_50_with_id_0"
+            },
+            "verified_arrays": [
+              "input_ids",
+              "attention_mask",
+              "token_type_ids"
+            ],
+            "scope_note": "Proves text_bert token slot to raw_text span; does not prove P2 text feature row identity."
+          }
+        }
+      },
+      "feature_row_mapping_status": "UNVERIFIED"
+    }
+  ],
+  "public_sources": {
+    "MMSA": {
+      "repo": "https://github.com/thuiar/MMSA",
+      "commit": "a94e65d07fa1ae0d44e552390074b29b0898edfd"
+    },
+    "Self-MM": {
+      "repo": "https://github.com/thuiar/Self-MM",
+      "commit": "1786283c81eeb507f317fa1c70a3faf77e67cee0",
+      "branch": "main",
+      "legacy_master_commit": "e694b8c88efe9ce6f2b996ac7793c886c5df10e4"
+    },
+    "MMSA-FET": {
+      "repo": "https://github.com/thuiar/MMSA-FET",
+      "commit": "f8fbd2d88d4f77580ea1ded0b3469073488c5c19"
+    },
+    "CMU-MultimodalSDK": {
+      "repo": "https://github.com/CMU-MultiComp-Lab/CMU-MultimodalSDK",
+      "commit": "4f2eadcd7e7b9e20e83b868cdad385b41830285c"
+    }
+  },
+  "history_review": {
+    "MMSA_checksum_history_commit": "bf88dfc8073193a7566dadeae7d6de82f1e86a56",
+    "MMSA_readme_update_commit": "05c9d1407300fce7977a9d140058c4ed0db9dcdd",
+    "Self_MM_preprocessing_update_commit": "e3a4a5378b14192d91e361fa7ae2c327a2664144",
+    "MMSA_FET_aligner_rewrite_commit": "1548bda6e15ae08a2c16a1d284605f9c4f1b13fc",
+    "CMU_MultimodalSDK_history_commit": "3e27d3781fe38b660432c7edfa7912bd0d256ee1"
+  },
+  "limitations": [
+    "No Attachment4 labels used.",
+    "No Attachment2 test or Attachment3 content accessed.",
+    "No training or HEAF/P2 parameter changes.",
+    "No final prediction CSV or batch explanation cards produced."
+  ]
+}

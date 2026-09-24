@@ -1,0 +1,43 @@
+run_name: Q3-2.5-alignment-provenance-recovery
+date: 2026-09-24
+stage: provenance_research_and_text_token_replay
+attachment: 4
+feature_version: aligned_50
+input_files: aligned sample-level pkl only
+labels_used: false
+predictor_loaded: false
+heaf_parameters_changed: false
+external_feature_or_label_data_downloaded: false
+public_source_revisions:
+  MMSA: a94e65d07fa1ae0d44e552390074b29b0898edfd
+  Self-MM-main: 1786283c81eeb507f317fa1c70a3faf77e67cee0
+  Self-MM-legacy-master: e694b8c88efe9ce6f2b996ac7793c886c5df10e4
+  MMSA-FET: f8fbd2d88d4f77580ea1ded0b3469073488c5c19
+  CMU-MultimodalSDK: 4f2eadcd7e7b9e20e83b868cdad385b41830285c
+history_commits:
+  MMSA_checksums_added: bf88dfc8073193a7566dadeae7d6de82f1e86a56
+  Self-MM_preprocessing_update: e3a4a5378b14192d91e361fa7ae2c327a2664144
+  MMSA-FET_aligner_rewrite: 1548bda6e15ae08a2c16a1d284605f9c4f1b13fc
+  CMU-MultimodalSDK_alignment_history: 3e27d3781fe38b660432c7edfa7912bd0d256ee1
+tokenizer:
+  repository: bert-base-uncased
+  revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+  tokenizer_json_sha256: ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98
+  fast: true
+  lowercase: true
+  add_special_tokens: true
+  max_length: 50
+  truncation: right
+  padding: right_to_50_with_id_0
+candidate_variants:
+  - right_truncation_with_specials_and_padding
+  - left_truncation_with_specials_and_padding
+  - no_special_tokens
+  - case_sensitive
+  - no_truncation_or_padding
+output_status:
+  text_token_to_raw_span: VERIFIED
+  text_feature_row_to_token_slot: UNVERIFIED
+  audio: UNVERIFIED
+  vision: UNVERIFIED
+  overall: BLOCKED_BY_GROUNDING

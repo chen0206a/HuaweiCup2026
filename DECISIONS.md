@@ -44,3 +44,8 @@
 
 决定：按用户明确指示，在解析附件4之前固定 B5-P2 seed42、aligned_50、8 联盟 exact Shapley、分类固定类别 log-odds、原始回归输出、三对 interaction、ρ=0.30/stride=1 连续遮挡、top 区间规则、10/20/30/40% 删除曲线、32 次随机对照及 seed 20260924，解释卡 schema v0.2.0。附件4不得用于重选这些参数。
 依据：`E2026/outputs/q3/heaf_validation_metrics.json`、`E2026/configs/final/q3_heaf.yaml`、`E2026/outputs/q3/q3_method_lock.{md,json}`。影响范围：E Q3；不改变 D006 的 Q2 模型与历史结果。日期：2026-09-24。
+
+## D008 - E Q3-2.5 provenance and token-grounding status
+
+决定：Attachment4 当前只能确认与 MMSA/Self-MM aligned 数据结构高度吻合，不能确认来源。固定 `bert-base-uncased` tokenizer 对 `text_bert` 20/20 完整数组复现，准许将 token slot 映射到 raw_text character span；P2 768-D `text` feature row 到 token slot、audio/vision row 到时间均保持 `UNVERIFIED`，外层证据字段仍不得填值。Q3-2.5 总体维持 `BLOCKED_BY_GROUNDING`。
+依据：`E2026/outputs/q3/q3_alignment_provenance.json`、`E2026/outputs/q3/q3_alignment_provenance_report.md`、`E2026/outputs/q3/provenance_sources.md`。影响范围：E Q3 证据 grounding；不改变 HEAF、P2、rho/stride 或 Q2 历史结果。日期：2026-09-24。
