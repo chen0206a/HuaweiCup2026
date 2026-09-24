@@ -31,6 +31,7 @@ mpl.rcParams.update({
     "xtick.major.width": 0.6,
     "ytick.major.width": 0.6,
     "legend.frameon": False,
+    "hatch.linewidth": 0.55,
     "pdf.fonttype": 42,
     "svg.fonttype": "none",
     "savefig.bbox": None,
@@ -50,9 +51,11 @@ PREVIEW = OUT / "preview"
 METRICS = ROOT / "outputs" / "q3" / "heaf_validation_metrics.json"
 BASE = OUT / "figure8_q3_faithfulness"
 
-TEXT = "#4477AA"
-VISION = "#EECC66"
-AUDIO = "#CC6677"
+TEXT = "#BFDCE6"
+VISION = "#E9C9CC"
+AUDIO = "#EEE7B0"
+MAIN = "#4F7F95"
+ACCENT = "#F0B36D"
 DARK = "#333333"
 GRID = "#D9D9D9"
 MODALITIES = (("text", "文本", TEXT), ("vision", "视觉", VISION), ("audio", "音频", AUDIO))
@@ -81,6 +84,11 @@ def archive_previous() -> None:
         shutil.copy2(current, archived)
         if sha256(current) != sha256(archived):
             raise RuntimeError(f"Cannot verify archived Figure 8 {ext}")
+    for ext in ("png", "pdf", "svg"):
+        current = BASE.with_suffix(f".{ext}")
+        archived = ARCHIVE / f"figure8_q3_faithfulness_scheme_c.{ext}"
+        if not archived.exists():
+            shutil.copy2(current, archived)
 
 
 def load_metrics() -> dict:
@@ -107,8 +115,8 @@ def style_axis(ax) -> None:
     ax.set_facecolor("white")
     ax.set_axisbelow(True)
     ax.grid(axis="y", color=GRID, linewidth=0.55)
-    ax.spines["left"].set_color("#777777")
-    ax.spines["bottom"].set_color("#777777")
+    ax.spines["left"].set_color(DARK)
+    ax.spines["bottom"].set_color(DARK)
     ax.spines["left"].set_linewidth(0.6)
     ax.spines["bottom"].set_linewidth(0.6)
     ax.tick_params(axis="both", colors=DARK, labelsize=7, width=0.6, length=2.3)
@@ -124,9 +132,9 @@ def draw_primary_counts(ax, metrics: dict) -> None:
     class_counts = [count["classification_counts"][key] for key, _, _ in MODALITIES]
     reg_counts = [count["regression_counts"][key] for key, _, _ in MODALITIES]
     bars_class = ax.bar(x - width / 2, class_counts, width, color=colors,
-                        edgecolor="white", linewidth=0.55, zorder=3)
+                        edgecolor=DARK, linewidth=0.7, hatch="..", zorder=3)
     bars_reg = ax.bar(x + width / 2, reg_counts, width, color=colors,
-                      edgecolor="#777777", linewidth=0.45, hatch="///", zorder=3)
+                      edgecolor=DARK, linewidth=0.7, hatch="...", zorder=3)
     ax.bar_label(bars_class, padding=2, fontsize=7, color=DARK)
     ax.bar_label(bars_reg, padding=2, fontsize=7, color=DARK)
     ax.set_xticks(x, [label for _, label, _ in MODALITIES])
@@ -135,8 +143,8 @@ def draw_primary_counts(ax, metrics: dict) -> None:
     ax.set_ylim(0, 800)
     ax.set_yticks([0, 200, 400, 600, 800])
     ax.legend(handles=[
-        Patch(facecolor="white", edgecolor="#777777", label="分类主模态"),
-        Patch(facecolor="white", edgecolor="#777777", hatch="///", label="回归主模态"),
+        Patch(facecolor=TEXT, edgecolor=DARK, linewidth=0.7, hatch="..", label="分类主模态"),
+        Patch(facecolor=TEXT, edgecolor=DARK, linewidth=0.7, hatch="...", label="回归主模态"),
     ], loc="upper right", fontsize=6.6, handlelength=1.2, labelspacing=0.25)
     style_axis(ax)
 
@@ -145,12 +153,14 @@ def draw_deletion_curve(ax, metrics: dict) -> None:
     nodes = metrics["faithfulness"]["deletion_curve"]
     x = np.array([10, 20, 30, 40], dtype=float)
     for prefix, name, color in (
-        ("top", "高贡献窗口", TEXT),
-        ("random", "随机等长窗口", AUDIO),
+        ("top", "高贡献窗口", MAIN),
+        ("random", "随机等长窗口", ACCENT),
     ):
         mean = np.array([nodes[r]["class_margin"][f"{prefix}_mean"] for r in RATIOS])
         ci = np.array([nodes[r]["class_margin"][f"{prefix}_grouped_bootstrap_95ci"] for r in RATIOS])
-        ax.fill_between(x, ci[:, 0], ci[:, 1], color=color, alpha=0.18,
+        ax.fill_between(x, ci[:, 0], ci[:, 1],
+                        color=TEXT if prefix == "top" else ACCENT,
+                        alpha=0.22 if prefix == "top" else 0.18,
                         linewidth=0, zorder=1)
         ax.plot(x, mean, color=color, linewidth=2.4, marker="o", markersize=4.5,
                 markerfacecolor=color, markeredgecolor="white", markeredgewidth=0.45,
@@ -173,11 +183,11 @@ def draw_margin_gain(ax, metrics: dict) -> None:
     ci = np.array([nodes[r]["class_margin"]["top_minus_random_grouped_bootstrap_95ci"] for r in RATIOS])
     if not np.all((ci[:, 0] <= means) & (means <= ci[:, 1])):
         raise RuntimeError("Paired bootstrap interval does not contain the reported mean")
-    ax.fill_between(x, ci[:, 0], ci[:, 1], color=TEXT, alpha=0.18,
+    ax.fill_between(x, ci[:, 0], ci[:, 1], color=TEXT, alpha=0.22,
                     linewidth=0, zorder=1)
     ax.errorbar(x, means, yerr=np.vstack((means - ci[:, 0], ci[:, 1] - means)),
-                color=TEXT, linewidth=2.4, marker="o", markersize=4.5,
-                markerfacecolor=TEXT, markeredgecolor="white", markeredgewidth=0.45,
+                color=MAIN, linewidth=2.4, marker="o", markersize=4.5,
+                markerfacecolor=MAIN, markeredgecolor="white", markeredgewidth=0.45,
                 elinewidth=0.75, capsize=2.3, zorder=3)
     ax.axhline(0, color="#999999", linewidth=0.6, linestyle="--", zorder=1)
     ax.set_xticks(x, ["10%", "20%", "30%", "40%"])
@@ -190,8 +200,8 @@ def draw_margin_gain(ax, metrics: dict) -> None:
 
 def draw(metrics: dict):
     mm = 1 / 25.4
-    fig = plt.figure(figsize=(183 * mm, 116 * mm), facecolor="white")
-    fig.text(0.07, 0.966, "图8  基于验证集的解释有效性与主导模态统计",
+    fig = plt.figure(figsize=(183 * mm, 110 * mm), facecolor="white")
+    fig.text(0.07, 0.966, "图8  解释有效性与主导模态统计",
              ha="left", va="top", fontsize=9.3, fontweight="bold", color=DARK)
     gs = GridSpec(2, 2, figure=fig, width_ratios=[1.0, 1.28],
                   left=0.105, right=0.96, top=0.835, bottom=0.135,
@@ -203,9 +213,9 @@ def draw(metrics: dict):
     draw_deletion_curve(ax_b, metrics)
     draw_margin_gain(ax_c, metrics)
     for ax, title in (
-        (ax_a, "（A）主导模态样本数统计"),
-        (ax_b, "（B）删除实验曲线"),
-        (ax_c, "（C）高贡献与随机窗口的平均边际差值"),
+        (ax_a, "（A）主导模态分布"),
+        (ax_b, "（B）删除比例与分类边际变化"),
+        (ax_c, "（C）高贡献区间与随机区间对比"),
     ):
         ax.set_title(title, loc="left", fontsize=8.2, fontweight="bold", color=DARK, pad=9)
     return fig

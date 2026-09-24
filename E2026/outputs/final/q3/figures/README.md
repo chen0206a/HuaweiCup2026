@@ -1,6 +1,6 @@
 # E2026 Q3 Figures 8–9
 
-These figures use the frozen Q3 results. The current Figure 8 is the Chinese, Scheme C paper version of the **Attachment2 validation audit** interventions. Figure 9 v2 shows two fixed **Attachment4** cases (14 and 02) with original-video scene images and the same Scheme C colors. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. The earlier versions remain in `archive/`.
+These figures use the frozen Q3 results. The current Figure 8 and Figure 9 v2 are Chinese paper figures with a shared muted palette, dark bordered dotted bars, white backgrounds and restrained axes. Figure 8 uses **Attachment2 validation** results; Figure 9 retains the two fixed **Attachment4** cases (14 and 02) and original-video scene images. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. Earlier versions remain in `archive/`.
 
 ## Reproduce
 
@@ -12,7 +12,7 @@ python outputs/final/q3/figures/scripts/extract_figure9_context_frames.py
 python outputs/final/q3/figures/scripts/figure9_q3_case_studies_v2.py
 ```
 
-The first script reads the frozen validation metrics and generates the current Figure 8. The last two commands regenerate the fixed-position scene frames and Figure 9 v2; run the frame extractor before its plotter. The original scripts are retained as legacy sources: running `figure8_q3_faithfulness.py` would overwrite the current Figure 8 files, while `figure9_q3_case_studies.py` writes the separate v1 filenames. Both final figures use Scheme C, Microsoft YaHei, a white background, light gray guides and restrained labels.
+The first script reads the frozen validation metrics and generates the current Figure 8. The last two commands regenerate the fixed-position scene frames and Figure 9 v2; run the frame extractor before its plotter. The original scripts are retained as legacy sources: running `figure8_q3_faithfulness.py` would overwrite the current Figure 8 files, while `figure9_q3_case_studies.py` writes the separate v1 filenames. Both final figures use the user-selected pale text/audio/vision colors (`#BFDCE6`, `#EEE7B0`, `#E9C9CC`), deep-blue trend line (`#4F7F95`), Microsoft YaHei, light gray guides and dotted bar hatches.
 
 ## Figure 8 — 中文版解释有效性与主导模态统计
 
@@ -24,7 +24,7 @@ The first script reads the frozen validation metrics and generates the current F
 
 | Panel | Content and data source | Asset/style reference |
 |---|---|---|
-| A | Classification vs regression primary-modality counts over all 728 Attachment2 valid samples: Text 656/620, Vision 65/104, Audio 7/4. Scheme C colors identify modalities; hatching identifies regression. | `assets/figures/GroupedBarChart/plot_GroupedBarChartv1.py`; grouped bar spacing and direct count labels adapted. |
+| A | Classification vs regression primary-modality counts over all 728 Attachment2 valid samples: Text 656/620, Vision 65/104, Audio 7/4. Pale modality colors and sparse/dense dotted hatches identify the two heads. | `assets/figures/GroupedBarChart/plot_GroupedBarChartv1.py`; grouped bar spacing and direct count labels adapted. |
 | B | Top-interval vs same-length random deletion class-margin drop at 10/20/30/40%; means and video-group bootstrap 95% CIs. Audit group: 396 clips, 126 video IDs, 1,000 bootstrap replicates. | `assets/figures/LineTrend/plot_trend.py`; line/marker and sparse-axis parameters inherited. |
 | C | Top-minus-random class-margin mean difference with video-group bootstrap 95% CIs. | `assets/figures/BarComparison/plot_comparison_Trajectory.py`; direct comparison and zero-reference styling adapted. |
 
@@ -53,9 +53,11 @@ The v2 plotter validates that both case records come from `attachment4_explanati
 
 The Figure 9 v1 PNG/PDF/SVG remain at their original filenames and have identical copies in `archive/`. Sample 16, Sample 19, pair interactions, regression Shapley detail, and other full explanation fields remain in the v1 figure, four case-card JSON files, and original final results; they are omitted only from the v2 paper figure.
 
-**v2 QA:** Both plotted case records were loaded from the final JSONL; no prediction, Shapley or curve values were regenerated. The Sample 14 fragment was checked against the original `14.pkl` raw-text span. Sample 02 retains null raw visual timing and an explicit unverified label. All screenshots were selected from fixed MP4 duration fractions independent of HEAF. The old Figure 9 files and archive copies have matching SHA256 values; the final prediction/explanation files were not modified. The SVG parses as XML, the PDF has one 183 × 148 mm page, and the PNG is 2161 × 1748 pixels with 300 dpi metadata. The labels are legible at the intended 183 mm width. This v2 is ready for a Huawei Cup Chinese manuscript draft with the caption above.
+**v2 QA:** Both plotted case records were loaded from the final JSONL; no prediction, Shapley or curve values were regenerated. The Sample 14 fragment was checked against the original `14.pkl` raw-text span. Sample 02 retains null raw visual timing and an explicit unverified label. All screenshots were selected from fixed MP4 duration fractions independent of HEAF. The old Figure 9 files and archive copies have matching SHA256 values; the final prediction/explanation files were not modified. The SVG parses as XML; the current PDF has one 183 × 140 mm page and the PNG is 300 dpi. The labels are legible at the intended 183 mm width. This v2 is ready for a Huawei Cup Chinese manuscript draft with the caption above.
 
 The Figure 9 v2 Scheme C update changed only the text/audio/vision hues, temporal line weight, white-background interval tint, and thin gray grid. Its earlier two-case raster/vector files are in `archive/figure9_q3_case_studies_v2_before_scheme_c.*`. The paired MP4 screenshots, explanations and grounding statuses were not modified.
+
+The current pale-color update preserves the same two cases and video frames. It adds dark outlines and dotted hatches to Shapley bars, uses a common deep-blue temporal line and a pale orange feature-slot highlight, and moves the two short grounding notes into light boxes. The preceding Scheme C exports are in `archive/figure9_q3_case_studies_v2_scheme_c.*`. The raw English text fragment remains verbatim evidence; all explanatory labels are Chinese. Figure 9 stays at two cases under the previously agreed case selection, since this revision changes presentation only.
 
 ## Figure 9 v1 — archived four-case version
 
@@ -84,11 +86,13 @@ The style inspiration is the public [academic-figure-skill repository](https://g
 
 - `figure8_q3_faithfulness.png`, `.pdf`, `.svg`
 - `archive/figure8_q3_faithfulness_v1.png`, `.pdf`, `.svg` (English original)
+- `archive/figure8_q3_faithfulness_scheme_c.png`, `.pdf`, `.svg` (previous Chinese palette)
 - `figure8_zh_README.md` (Chinese caption, source and QA)
 - `figure9_q3_case_studies.png`, `.pdf`, `.svg`
 - `figure9_q3_case_studies_v2.png`, `.pdf`, `.svg` (300 dpi PNG; editable vector PDF/SVG)
 - `archive/figure9_q3_case_studies.png`, `.pdf`, `.svg` (unchanged v1 copies)
 - `archive/figure9_q3_case_studies_v2_before_scheme_c.png`, `.pdf`, `.svg`
+- `archive/figure9_q3_case_studies_v2_scheme_c.png`, `.pdf`, `.svg`
 - `data/sample14_context_frame.png`, `data/sample02_context_25.png`, `data/sample02_context_50.png`, `data/sample02_context_75.png`
 - `data/figure9_video_frame_manifest.json`
 - 300 dpi raster previews duplicated in `preview/`

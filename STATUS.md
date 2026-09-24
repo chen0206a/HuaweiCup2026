@@ -4,7 +4,7 @@
 
 - E Q3-3：Attachment4 aligned_50 20/20 frozen B5-P2 seed42 + 锁定 HEAF 全量推理完成，状态 `Q3_FINAL_INFERENCE_COMPLETE`。checkpoint hash 前后不变；输入、ID、finite/mask、Shapley efficiency、schema、raw_text span 和 A/V null 字段 QA 通过。Text/Vision/Audio 分类主模态 19/1/0，回归 18/2/0，主模态一致 17/20；grounding verified 19、unverified 1。没有标签性能指标。交付 `E2026/outputs/q3/final/`；见 `attachment4_delivery_check.md`。
 
-- E Q3 Figures 8/9：Figure 8 中文论文版已完成并目视检查，保留 Attachment2 valid 三幅原始统计的全部数值，方案 C 配色和分组 bootstrap 95% 半透明置信带；Figure 9 v2 仅呈现 Attachment4 样本14/02，并以相同配色展示原视频场景截图（不代表 HEAF 关键帧）。PNG 为 300 dpi，PDF/SVG 为矢量，旧版均归档。A/V 原始时间 grounding 仍未验证。数据、脚本、图注和 QA 见 `E2026/outputs/final/q3/figures/`。
+- E Q3 Figures 8/9：两图已统一重绘为中文低饱和论文风，采用浅蓝/浅黄/浅粉模态色、黑边点纹柱体与深蓝曲线。Figure 8 保留 Attachment2 valid 三幅原始统计和真实分组 bootstrap 95% 区间；Figure 9 v2 仍仅含 Attachment4 样本14/02及原视频场景截图（不代表 HEAF 关键帧）。PNG 为 300 dpi，PDF/SVG 为矢量，旧版均归档。A/V 原始时间 grounding 仍未验证；原始指标和解释结果不变。文件、图注与 QA 见 `E2026/outputs/final/q3/figures/`。
 
 - E Q3-2.6：BERT 最后层重建与公开预处理代码支持 Attachment4 text 行对应 `text_bert` 同索引 token；604/604 cosine 行最大值在对角，均值 cosine 0.999999994，RMSE 8.40e-7，最大绝对差 3.01e-5。Text grounding 已接入 tokenizer offsets 并对真实样本做 API smoke test。Text=`VERIFIED`，audio/vision=`UNVERIFIED`，当前=`PARTIAL_GROUNDING_READY`。无 HEAF 推理、无训练。详见 `E2026/outputs/q3/q3_text_row_identity_report.md` 与 `E2026/experiments/q3/exp_0026_text_row_identity/`。
 

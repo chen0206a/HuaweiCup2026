@@ -37,6 +37,7 @@ mpl.rcParams.update({
     "xtick.major.width": 0.6,
     "ytick.major.width": 0.6,
     "legend.frameon": False,
+    "hatch.linewidth": 0.55,
     "pdf.fonttype": 42,
     "svg.fonttype": "none",
     "savefig.bbox": None,  # preserve the intended 183 mm manuscript width
@@ -59,7 +60,9 @@ BASE = OUT / "figure9_q3_case_studies_v2"
 BLACK = "#333333"
 GREY = "#666666"
 LIGHT_GREY = "#D9D9D9"
-COLORS = {"text": "#4477AA", "audio": "#CC6677", "vision": "#EECC66"}
+COLORS = {"text": "#BFDCE6", "audio": "#EEE7B0", "vision": "#E9C9CC"}
+MAIN = "#4F7F95"
+ACCENT = "#F0B36D"
 MODALITY_LABELS = {"text": "文本", "audio": "音频", "vision": "视觉"}
 CLASS_LABELS = {"Negative": "负面", "Neutral": "中性", "Positive": "正面"}
 ORDER = ("text", "audio", "vision")
@@ -165,6 +168,11 @@ def archive_old_figure() -> None:
         archived_v2 = ARCHIVE / f"figure9_q3_case_studies_v2_before_scheme_c.{extension}"
         if not archived_v2.exists() and original_v2.is_file():
             shutil.copy2(original_v2, archived_v2)
+    for extension in ("png", "pdf", "svg"):
+        current = BASE.with_suffix(f".{extension}")
+        archived = ARCHIVE / f"figure9_q3_case_studies_v2_scheme_c.{extension}"
+        if not archived.exists():
+            shutil.copy2(current, archived)
 
 
 def add_scene(fig, bounds, path: Path) -> None:
@@ -192,8 +200,9 @@ def add_shapley(fig, card: dict, bounds) -> None:
     ax = fig.add_axes(bounds)
     vals = [float(card["modality_contribution"]["classification_log_odds"][key]) for key in ORDER]
     y = np.arange(3)
-    ax.barh(y, vals, color=[COLORS[key] for key in ORDER], height=0.53, zorder=2)
-    ax.axvline(0, lw=0.65, color="#777777", zorder=1)
+    ax.barh(y, vals, color=[COLORS[key] for key in ORDER], height=0.53,
+            edgecolor=BLACK, linewidth=0.7, hatch="..", zorder=2)
+    ax.axvline(0, lw=0.65, color=BLACK, zorder=1)
     ax.set_yticks(y, [MODALITY_LABELS[key] for key in ORDER])
     ax.invert_yaxis()
     span = max(0.25, max(abs(value) for value in vals))
@@ -206,7 +215,7 @@ def add_shapley(fig, card: dict, bounds) -> None:
     ax.tick_params(axis="x", labelsize=6.6, length=2)
     ax.tick_params(axis="y", labelsize=7.2, length=0, pad=2)
     ax.spines["left"].set_visible(False)
-    ax.spines["bottom"].set_color("#888888")
+    ax.spines["bottom"].set_color(BLACK)
     ax.spines["bottom"].set_linewidth(0.5)
 
 
@@ -221,27 +230,27 @@ def add_temporal(fig, card: dict, bounds) -> None:
     start, end = int(interval["start_index"]), int(interval["end_index"])
     if not (0 <= start < end <= valid):
         raise RuntimeError("Invalid feature-space key interval")
-    ax.axvspan(start - 0.5, end - 0.5, color=COLORS[interval["modality"]],
+    ax.axvspan(start - 0.5, end - 0.5, color=ACCENT,
                alpha=0.18, lw=0, zorder=0)
-    ax.plot(np.arange(valid), values, color=COLORS[interval["modality"]],
-            linewidth=2.4, marker="o", markersize=2.5, zorder=2)
+    ax.plot(np.arange(valid), values, color=MAIN,
+            linewidth=1.8, marker="o", markersize=2.3, zorder=2)
     ax.axhline(0, color="#999999", lw=0.55, ls="--", zorder=1)
     ax.grid(axis="y", color=LIGHT_GREY, lw=0.45, zorder=0)
     ax.set_xlim(-0.5, valid - 0.5)
     ax.set_xlabel("特征槽位", fontsize=7.0, labelpad=1.0)
     ax.set_ylabel("类别边际下降", fontsize=7.0, labelpad=0.5)
     ax.tick_params(axis="both", labelsize=6.6, length=2)
-    ax.spines["left"].set_color("#888888")
-    ax.spines["bottom"].set_color("#888888")
+    ax.spines["left"].set_color(BLACK)
+    ax.spines["bottom"].set_color(BLACK)
     ax.spines["left"].set_linewidth(0.5)
     ax.spines["bottom"].set_linewidth(0.5)
-    fig.text(bounds[0], bounds[1] - 0.072, f"关键特征区间  [{start}, {end})",
+    fig.text(bounds[0], bounds[1] - 0.072, f"关键区间（槽位） [{start}, {end})",
              fontsize=7.0, ha="left", va="top", color=GREY)
 
 
 def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     mm = 1 / 25.4
-    fig = plt.figure(figsize=(183 * mm, 148 * mm), facecolor="white")
+    fig = plt.figure(figsize=(183 * mm, 140 * mm), facecolor="white")
     fig.text(0.06, 0.968, "A", fontsize=9.5, fontweight="bold", ha="left", va="top", color=BLACK)
     fig.text(0.088, 0.968, "文本主导典型案例（样本14）", fontsize=9.0,
              fontweight="bold", ha="left", va="top", color=BLACK)
@@ -256,14 +265,17 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     add_scene(fig, [0.061, 0.718, 0.288, 0.204], frames["14"][0])
     fig.text(0.061, 0.707, "原视频场景", fontsize=7.2, ha="left", va="top", color=GREY)
     add_prediction(fig, cards["14"], 0.061, 0.673)
-    fig.text(0.398, 0.922, "模态 Shapley 贡献", fontsize=8.0,
+    fig.text(0.398, 0.922, "分类 Shapley 贡献", fontsize=8.0,
              fontweight="semibold", ha="left", va="bottom", color=BLACK)
     add_shapley(fig, cards["14"], [0.398, 0.704, 0.259, 0.204])
     fig.text(0.706, 0.922, "时间遮挡曲线", fontsize=8.0,
              fontweight="semibold", ha="left", va="bottom", color=BLACK)
     add_temporal(fig, cards["14"], [0.706, 0.704, 0.251, 0.204])
-    fig.text(0.061, 0.585, "验证文本证据", fontsize=7.6,
-             fontweight="semibold", ha="left", va="center", color=COLORS["text"])
+    fig.add_artist(Rectangle((0.055, 0.559), 0.905, 0.052, transform=fig.transFigure,
+                             facecolor=COLORS["text"], edgecolor=LIGHT_GREY,
+                             linewidth=0.55, alpha=0.42, zorder=0))
+    fig.text(0.061, 0.585, "已验证文本证据", fontsize=7.6,
+             fontweight="semibold", ha="left", va="center", color=BLACK)
     fig.text(0.221, 0.585, f"“{fragment}”", fontsize=7.6,
              ha="left", va="center", color=BLACK)
 
@@ -274,13 +286,16 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     fig.text(0.061, 0.262, "原视频上下文（非关键帧定位）", fontsize=7.0,
              ha="left", va="top", color=GREY)
     add_prediction(fig, cards["02"], 0.061, 0.225)
-    fig.text(0.398, 0.443, "模态 Shapley 贡献", fontsize=8.0,
+    fig.text(0.398, 0.443, "分类 Shapley 贡献", fontsize=8.0,
              fontweight="semibold", ha="left", va="bottom", color=BLACK)
     add_shapley(fig, cards["02"], [0.398, 0.224, 0.259, 0.204])
     fig.text(0.706, 0.443, "时间遮挡曲线", fontsize=8.0,
              fontweight="semibold", ha="left", va="bottom", color=BLACK)
     add_temporal(fig, cards["02"], [0.706, 0.224, 0.251, 0.204])
-    fig.text(0.061, 0.092, "分类主模态：视觉     原始视觉定位：未验证",
+    fig.add_artist(Rectangle((0.055, 0.067), 0.905, 0.05, transform=fig.transFigure,
+                             facecolor="#F7F7F5", edgecolor=LIGHT_GREY,
+                             linewidth=0.55, zorder=0))
+    fig.text(0.061, 0.092, "原始视觉位置未验证，仅展示特征槽位区间",
              fontsize=7.6, fontweight="semibold", ha="left", va="center", color=BLACK)
     return fig
 
