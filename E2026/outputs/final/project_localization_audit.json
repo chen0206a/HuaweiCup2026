@@ -1,0 +1,340 @@
+{
+  "audit_date": "2026-09-24",
+  "scope": {
+    "root": "D:/华为杯/E2026",
+    "historical_server_root": "/root/workspace/E2026",
+    "read_only": true,
+    "trained_or_rerun": false,
+    "attachment4_content_reparsed": false
+  },
+  "flags": {
+    "FIG4_DATA_COMPLETE": "NO",
+    "FIG5_DATA_COMPLETE": "NO",
+    "Q2_LOCAL_COMPLETE": "NO",
+    "Q3_LOCAL_COMPLETE": "YES",
+    "Q2_SERVER_ONLY_ITEMS": [],
+    "Q3_SERVER_ONLY_ITEMS": [],
+    "RUNTIME_REMOTE_DEPENDENCIES": [
+      "Legacy Q2 scripts retain overridable /root/workspace/E2026 defaults; no current Q3 or plotting flow requires server access."
+    ],
+    "SERVER_CAN_SHUT_DOWN": "YES"
+  },
+  "figure_data_audit": [
+    {
+      "figure": "Figure 4",
+      "required_item": "All-modality rho per-seed aggregate",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig4_all_modality_rho_per_seed.csv",
+      "exists": true,
+      "complete": true,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "scenario_count": 5,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 150,
+      "rows_expected": 150,
+      "usable_for_plot": true,
+      "notes": "Aggregated across modalities; not a modality-specific substitute."
+    },
+    {
+      "figure": "Figure 4",
+      "required_item": "Modality by missing ratio per seed",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig4_modality_by_rho_available.csv",
+      "exists": true,
+      "complete": false,
+      "seeds": {
+        "B0-WCE": [
+          42
+        ],
+        "B5-P2": [
+          42,
+          43,
+          44
+        ]
+      },
+      "scenario_count": 45,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 60,
+      "rows_expected": 90,
+      "usable_for_plot": "partial",
+      "notes": "B0 seeds 43/44 missing 30 modality-rho combinations total; no complete modality-level 3-seed SD."
+    },
+    {
+      "figure": "Figure 4",
+      "required_item": "Aggregate mean and sample SD",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig4_all_modality_rho_mean_sd.csv",
+      "exists": true,
+      "complete": true,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "scenario_count": 5,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 50,
+      "rows_expected": 50,
+      "usable_for_plot": "aggregated only",
+      "notes": "n_seeds=3; aggregated across modalities."
+    },
+    {
+      "figure": "Figure 5",
+      "required_item": "All-modality location per seed aggregate",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig5_all_modality_location_per_seed.csv",
+      "exists": true,
+      "complete": true,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "scenario_count": 3,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 90,
+      "rows_expected": 90,
+      "usable_for_plot": true,
+      "notes": "Aggregated across modalities and pair conditions."
+    },
+    {
+      "figure": "Figure 5",
+      "required_item": "Single-modality by missing position per seed",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig5_modality_by_location_available.csv",
+      "exists": true,
+      "complete": false,
+      "seeds": {
+        "B0-WCE": [
+          42
+        ],
+        "B5-P2": [
+          42,
+          43,
+          44
+        ]
+      },
+      "scenario_count": 27,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 36,
+      "rows_expected": 54,
+      "usable_for_plot": "partial",
+      "notes": "B0 seeds 43/44 missing 18 modality-location combinations total."
+    },
+    {
+      "figure": "Figure 5",
+      "required_item": "Double-modality TA/TV/AV by position",
+      "local_path": "outputs/final/q2/q2_plotting_handoff_v2/plot_data/scenario_details_available.csv",
+      "exists": true,
+      "complete": false,
+      "seeds": {
+        "B0-WCE": [
+          42
+        ],
+        "B5-P2": [
+          42,
+          43,
+          44
+        ]
+      },
+      "scenario_count": 9,
+      "metrics": [
+        "accuracy",
+        "macro_f1",
+        "mae",
+        "pearson",
+        "selection_score"
+      ],
+      "rows_present": 36,
+      "rows_expected": 54,
+      "usable_for_plot": "partial",
+      "notes": "Scenario table 220/330 total rows; B0 seeds 43/44 each lack all 55 scenarios."
+    }
+  ],
+  "q2": {
+    "local_complete": false,
+    "checkpoint_manifest": "outputs/final/q2/q2_checkpoint_manifest.json",
+    "locked_checkpoints": {
+      "required": 6,
+      "present": 6,
+      "sha256_checked": 6,
+      "sha256_match": 6
+    },
+    "attachment2": {
+      "aligned_50_path": "data/raw/aligned_50.pkl",
+      "present": true,
+      "size_bytes": 993842861,
+      "sha256": "66e867aa74bc70a844e806e5571e371c9abb4a35f9e2887ce9b4d97ff2cb8fcd",
+      "label_path": "data/raw/label.xlsx",
+      "present_label": true,
+      "split_manifest": "data/manifests/attachment2_manifest.json"
+    },
+    "benchmark": {
+      "manifest": "data/manifests/q2_missing_benchmark_manifest.json",
+      "clean_scenarios": 1,
+      "single_modality_missing": 45,
+      "double_modality_missing": 9,
+      "missing_total": 54,
+      "evaluation_code": "src/evaluation/missing_benchmark.py"
+    },
+    "scenario_detail_rows": {
+      "present": 220,
+      "expected": 330,
+      "missing": [
+        {
+          "model": "B0-WCE",
+          "seed": 43,
+          "conditions": 55
+        },
+        {
+          "model": "B0-WCE",
+          "seed": 44,
+          "conditions": 55
+        }
+      ]
+    },
+    "optional_missing_local_artifacts": [
+      {
+        "name": "b5_p2_multiseed_seed43_best_clean_score.pt",
+        "required_for_locked_final": false,
+        "remote_presence": "unknown"
+      },
+      {
+        "name": "b5_p2_multiseed_seed44_best_clean_score.pt",
+        "required_for_locked_final": false,
+        "remote_presence": "unknown"
+      }
+    ],
+    "attachment3_prediction": "not found; Attachment3 remains sealed",
+    "server_only_items": []
+  },
+  "q3": {
+    "local_complete": true,
+    "predictor": {
+      "checkpoint": "outputs/checkpoints/b5_pooling_p2_best_robust_score.pt",
+      "sha256": "cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff",
+      "present": true
+    },
+    "validation": {
+      "raw_attachment2_local": true,
+      "validation_ids": "experiments/q3/exp_001_heaf_validation/validation_ids.json",
+      "design_samples": 332,
+      "audit_samples": 396,
+      "overlapping_video_ids": 0,
+      "rho": 0.3,
+      "metrics": "outputs/q3/heaf_validation_metrics.json"
+    },
+    "attachment4": {
+      "features": 20,
+      "videos": 20,
+      "exact_id_matches": 20,
+      "missing": 0,
+      "duplicates": 0,
+      "ambiguous": 0,
+      "manifest": "data/manifests/q3/attachment4_inventory.json",
+      "file_integrity_audit": "outputs/q3/q3_grounding_audit.json",
+      "file_count_hash_audited": 40,
+      "all_hashes_match": true,
+      "local_media_outside_project_root": true
+    },
+    "required_modules": {
+      "frozen_predictor.py": true,
+      "coalitions.py": true,
+      "temporal_occlusion.py": true,
+      "faithfulness.py": true,
+      "data_adapter.py": true,
+      "text_grounding.py": true,
+      "evidence_grounding.py": true,
+      "standalone_export.py": false,
+      "export_integrated_in": "scripts/run_q3_attachment4_final.py"
+    },
+    "method_and_schema": {
+      "validation_config": "configs/final/q3_heaf_validation.yaml",
+      "final_config": "configs/final/q3_heaf.yaml",
+      "method_lock": "outputs/q3/q3_method_lock.json",
+      "schema": "outputs/q3/q3_explanation_schema.json"
+    },
+    "final_outputs": {
+      "csv": "outputs/q3/final/attachment4_predictions_explanations.csv",
+      "jsonl": "outputs/q3/final/attachment4_explanations.jsonl",
+      "summary": "outputs/q3/final/attachment4_summary.json",
+      "delivery_check": "outputs/q3/final/attachment4_delivery_check.md",
+      "coverage": "20/20"
+    },
+    "figures": {
+      "figure8_data": [
+        "outputs/final/q3/figures/data/figure8_deletion_curve.csv",
+        "outputs/final/q3/figures/data/figure8_margin_gain_summary.csv",
+        "outputs/final/q3/figures/data/figure8_primary_modality_counts.csv"
+      ],
+      "figure9_case_data_count": 4,
+      "png_pdf_svg_present": true,
+      "plot_scripts_present": true
+    },
+    "tokenizer": {
+      "repo": "bert-base-uncased",
+      "revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+      "cached": true,
+      "historical_feature_encoder_revision_exactly_pinned": false
+    },
+    "server_only_items": []
+  },
+  "runtime_remote_dependency_details": [
+    {
+      "paths": [
+        "src/training/run_b2.py",
+        "scripts/smoke_b0.py",
+        "scripts/smoke_b1.py",
+        "scripts/overfit32.py",
+        "scripts/overfit32_b1.py"
+      ],
+      "reference": "/root/workspace/E2026/data/raw/attachment2/aligned_50.pkl",
+      "type": "overridable legacy default",
+      "forces_server_for_current_final_workflow": false
+    },
+    {
+      "paths": [
+        "src/training/run_b32.py"
+      ],
+      "reference": "/root/workspace/E2026/outputs/checkpoints/...",
+      "type": "legacy checkpoint/output root",
+      "forces_server_for_current_final_workflow": false
+    }
+  ],
+  "server_shutdown_reason": "All locked artifacts are local; missing B0 seed43/44 condition-level evaluations can be recomputed locally from local checkpoints, aligned_50.pkl, frozen 54-scenario manifest, and evaluation code. No download is required.",
+  "server_download_todo_created": false,
+  "limitations": [
+    "No live server inspection was performed; server-side optional copies are unknown.",
+    "Two optional P2 seed43/44 best-clean checkpoint references are absent locally but are not the locked final checkpoints.",
+    "Historical Attachment4 BERT feature extractor revision was not pinned, although the current tokenizer and the audit revision are cached locally."
+  ]
+}
