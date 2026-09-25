@@ -50,6 +50,17 @@
 \end{equation}
 后续文本时间区间、音频帧支持区间和视觉帧支持区间均以秒表示，并相对于该样本的媒体起点。视觉特征的支持区间由相邻采样帧的真实显示时间构造。由此，不同采样频率下的特征均可在同一时间坐标中进行比较。
 
+图~\ref{fig:fig05_q1_data_statistics} 汇总附件1样本的媒体时长、情感类别、三模态有效时间窗以及文本来源和时间戳回退记录。样本时长存在差异，文本有效覆盖在样本间波动较大，而语音与视觉覆盖相对完整；文本来源统计也保留了官方文本与媒体ASR的区分。上述描述性结果说明时间掩码和来源信息需要随特征一并保存，但不构成模型性能比较。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.98\textwidth]{figures/q1/fig05_q1_data_statistics.pdf}
+    \caption{附件1原始样本及特征覆盖的描述性统计。(a) 100条视频的原始时长分布；(b) 三类情感标签样本数量；(c) 文本、语音和视觉在50个公共时间窗中的有效位置分布；(d) 文本来源及时间戳回退情况。统计均由最终Q1处理清单直接计算。}
+    \label{fig:fig05_q1_data_statistics}
+\end{figure}
+
+\FloatBarrier
+
 \subsection{三模态原生特征提取}\label{subsec:q1_native}
 每种模态先独立提取时间有序的原生向量。文本和音频以其语义或声学帧区间为时间支持，视觉向量则关联到实际采样帧及其显示时间。下文记模态 $m$ 的第 $j$ 个原生向量为 $\mathbf h_{ij}^{(m)}$，其时间支持为 $I_{ij}^{(m)}$。
 
@@ -117,13 +128,13 @@ j_{ik}^{(m)}=\arg\max_j\omega_{ijk}^{(m)},\qquad
 \end{equation}
 每个有效对齐位置还保存样本标识、统一时间窗索引、原生特征索引及源时间区间，构成从统一序列位置回溯至原始媒体的来源追踪链。
 
-图~\ref{fig:fig05_q1_temporal_alignment} 进一步展开原生时间轴与统一时间窗之间的对应关系。不同模态的特征间隔和数量可以不同；对齐依据媒体时间区间的交叠，不依据各模态序列中的相同下标。图中未获得有效映射的位置由掩码区分，避免将空缺位置解释为真实观测。
+图~\ref{fig:fig06_q1_temporal_alignment} 进一步展开原生时间轴与统一时间窗之间的对应关系。不同模态的特征间隔和数量可以不同；对齐依据媒体时间区间的交叠，不依据各模态序列中的相同下标。图中未获得有效映射的位置由掩码区分，避免将空缺位置解释为真实观测。
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[trim=100bp 0bp 130bp 0bp,clip,width=1.0\textwidth]{figures/q1/fig05_q1_temporal_alignment.pdf}
+    \includegraphics[trim=100bp 0bp 130bp 0bp,clip,width=1.0\textwidth]{figures/q1/fig06_q1_temporal_alignment.pdf}
     \caption{三模态原生时间轴到公共时间窗的映射示意。文本片段、音频帧和视觉采样帧首先关联各自的媒体时间；统一时间窗根据正时间交叠选择原生特征，并记录有效位与来源。图中热图及采样间隔只用于展示时间粒度差异，不代表本文实际特征值或采样率。}
-    \label{fig:fig05_q1_temporal_alignment}
+    \label{fig:fig06_q1_temporal_alignment}
 \end{figure}
 
 \subsection{特征构建结果与完整性检验}\label{subsec:q1_validation}
@@ -131,7 +142,7 @@ j_{ik}^{(m)}=\arg\max_j\omega_{ijk}^{(m)},\qquad
 
 \input{generated/table_q1_feature.tex}
 
-完整性检查基于完整性检验清单及来源追踪记录，覆盖样本处理状态、特征形状、有限值、有效映射比例和时间来源可回溯性。三模态输出均可由统一时间窗回溯到对应的原生特征及源媒体时间信息。附录图~\ref{fig:figA3_q1_case_timeline} 展示样本 \texttt{\detokenize{-a55Q6RWvTA__3}} 的一个具体时间窗及其原生来源。
+完整性检查基于完整性检验清单及来源追踪记录，覆盖样本处理状态、特征形状、有限值、有效映射比例和时间来源可回溯性。三模态输出均可由统一时间窗回溯到对应的原生特征及源媒体时间信息。图~\ref{fig:fig08_q1_case_source_trace} 展示样本 \texttt{\detokenize{-a55Q6RWvTA__3}} 的一个具体时间窗及其原生来源。
 
 \FloatBarrier
 \subsection{全量样本特征构建结果}\label{subsec:q1_all_samples}
@@ -146,11 +157,18 @@ j_{ik}^{(m)}=\arg\max_j\omega_{ijk}^{(m)},\qquad
 为比较不同时间映射和模态组合的情感信息保留情况，采用统一的轻量下游评价模型及重复分层五折划分。分类任务报告准确率和宏平均 F1 值；连续预测报告平均绝对误差（MAE）和皮尔逊相关系数。该评价仅用于比较不同特征构建与时间对齐方案的信息保持能力，不作为独立泛化性能或统计显著性结论。
 
 \subsubsection{时序对齐方法比较}\label{subsubsec:q1_align_ablation}
-比较最大时间重叠法、最近中心法和重叠加权平均法。表~\ref{tab:q1_alignment_ablation} 与附录图~\ref{fig:figA1_q1_alignment_ablation} 给出四项辅助评价指标在固定设置下的结果。三种方法的均值整体接近；最近中心法在部分指标上的均值略高，但在 \QOneNearestZeroOverlap 个有效文本时间窗中选择了与目标窗没有正时间交叠的特征。重叠加权平均法未在四项指标上呈现一致优势。
+比较最大时间重叠法、最近中心法和重叠加权平均法。表~\ref{tab:q1_alignment_ablation} 与图~\ref{fig:fig07_q1_alignment_method_comparison} 给出四项辅助评价指标在固定设置下的结果。三种方法的均值整体接近；最近中心法在部分指标上的均值略高，但在 \QOneNearestZeroOverlap 个有效文本时间窗中选择了与目标窗没有正时间交叠的特征。重叠加权平均法未在四项指标上呈现一致优势。因此，最大时间重叠硬对齐的选择依据是明确的时间对应与来源可追踪性，而不是声称其辅助指标绝对最优。
 
 本文采用最大时间重叠硬对齐。该方法以原生区间与公共时间窗的真实交叠确定映射，在每个有效位置保留唯一来源索引，满足时间对应与来源追踪要求。
 
 \input{generated/table_q1_alignment.tex}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.98\textwidth]{figures/q1/fig07_q1_alignment_method_comparison.pdf}
+    \caption{不同时序对齐方法的辅助评价结果。点表示重复分层五折评价均值，半透明区间表示均值上下一个样本标准差。该评价仅用于比较不同特征构建方案的信息保持情况，不作为独立泛化性能或统计显著性结论。}
+    \label{fig:fig07_q1_alignment_method_comparison}
+\end{figure}
 
 \FloatBarrier
 \subsubsection{视觉特征提取方法比较}\label{subsubsec:q1_vision_ablation}
@@ -160,13 +178,20 @@ j_{ik}^{(m)}=\arg\max_j\omega_{ijk}^{(m)},\qquad
 
 \FloatBarrier
 \subsubsection{模态贡献分析}\label{subsubsec:q1_modality_ablation}
-模态组合比较包括文本、语音、视觉三个单模态，三种双模态组合，以及三模态组合。表~\ref{tab:q1_modality_ablation} 和附录图~\ref{fig:figA2_q1_modality_ablation} 表明，文本单模态已保留较强的情感信息；文本与语音组合在分类指标上表现较好，文本与视觉组合在皮尔逊相关系数上更高。三模态简单拼接未在全部指标上同时取得最优结果。
+模态组合比较包括文本、语音、视觉三个单模态，三种双模态组合，以及三模态组合。表~\ref{tab:q1_modality_ablation} 和附录图~\ref{fig:figA1_q1_modality_combination_ablation} 表明，文本单模态已保留较强的情感信息；文本与语音组合在分类指标上表现较好，文本与视觉组合在皮尔逊相关系数上更高。三模态简单拼接未在全部指标上同时取得最优结果。
 
 在相同评价设置下，文本与语音组合的准确率和宏平均 F1 值高于文本单模态；文本与视觉组合的 MAE 更低、皮尔逊相关系数更高，但分类指标低于文本单模态。各组合的优势指标并不相同，因此需要按分类与连续预测目标分别比较其表现。
 
 \input{generated/table_q1_modality.tex}
 
 \subsection{典型样本分析与本问小结}\label{subsec:q1_case_summary}
-附录图~\ref{fig:figA3_q1_case_timeline} 中的样本时间窗对应文本原生特征索引 34、音频特征索引 542 和视觉特征索引 43；相应元数据分别保留词段时间、WAV 样本支持范围以及原始帧索引和显示时间戳。各模态来源索引可将统一位置回溯至实际媒体时间。对于官方文本与当前片段语音不一致的样本 \texttt{\detokenize{-NFrJFQijFE__2}}，最终处理流程采用该 MP4 的识别文本及其真实时间戳构造文本特征，同时在元数据中保留官方文本。
+图~\ref{fig:fig08_q1_case_source_trace} 展示样本 \texttt{\detokenize{-a55Q6RWvTA__3}} 的典型时间映射；其中第24个统一时间窗对应文本原生特征索引34、音频特征索引542和视觉特征索引43。三种模态均保留来源索引及时间信息，该案例直接用于核验赛题要求的典型样本映射。本文仅报告来源记录中的索引与时间支持，不外推未记录的原始时间或帧信息。对于官方文本与当前片段语音不一致的样本 \texttt{\detokenize{-NFrJFQijFE__2}}，最终处理流程采用该 MP4 的识别文本及其真实时间戳构造文本特征，同时在元数据中保留官方文本。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.98\textwidth]{figures/q1/fig08_q1_case_source_trace.pdf}
+    \caption{典型样本的三模态时间映射与来源追踪。以样本 \texttt{\detokenize{-a55Q6RWvTA__3}} 为例，展示视觉采样帧显示时间、语音原生特征时间区间和文本特征区间，并放大第24个公共时间窗对应的原生来源。该图用于验证统一时间位置能够回溯至实际媒体时间。}
+    \label{fig:fig08_q1_case_source_trace}
+\end{figure}
 
 综上，本文完成了附件 1 全部样本的媒体时间审计、三模态原生特征构造和公共时间轴映射。最大时间重叠硬对齐将不同采样粒度的特征统一为每个样本 50 个时间位置，并通过掩码区分有效特征与无观测位置；样本标识、时间窗、原生索引和媒体时间共同构成可核查的来源链。辅助比较显示，所选方法保持明确的时间交叠与唯一来源索引，各模态组合在不同评价指标上的表现各有侧重。
