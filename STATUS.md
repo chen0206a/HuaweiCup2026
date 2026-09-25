@@ -2,6 +2,8 @@
 
 2026-09-25：当前 E 题工作目录为 `E2026/`。以下较早条目保留其阶段历史状态。
 
+- E Q3 Attachment4 原始证据映射 PRECHECK：80/80 本地文件哈希复核通过；非零 aligned 音频/视觉槽位均可在同一样本未对齐特征中找到唯一完全相等的行（564/564、534/534）。仍缺未对齐行到原音频时间、原视频 frame/PTS 的来源映射；sample02 `[1,7)` 只能确认视觉特征行 36–41，不能生成已验证关键帧。Text=`VERIFIED`，Audio/Vision=`UNVERIFIED`。见 `E2026/outputs/q3/q3_raw_evidence_mapping_precheck.md`；未修改论文或解释结果。
+
 - E Q2 public baseline 收口：MISA regression sanity=`PASS`，未发现标签尺度、输出形状、梯度或评价实现错误；TFN/MulT/MISA 现有三 seed 结果锁定。论文 Q2 新增 clean 结果 Table 1 与 54-scenario 描述性 Table 2，均位于 `paper/main.pdf` 第3页。无进一步 baseline training 建议。完整检查见 `E2026/outputs/final/q2/public_baselines/baseline_paper_integration_check.md`。
 
 - E Q2 公开架构对比：新服务器 RTX 3090 上完成 TFN、MulT、MISA 的 Attachment2 aligned-50 train/valid 三 seed（42/43/44）重训及冻结 clean + 54 缺失场景评估，9/9 checkpoint/指标 QA 通过。robust 均值±样本SD：TFN `0.7139±0.0039`、MulT `0.7253±0.0061`、MISA `0.7168±0.0019`；历史锁定 P2 `0.7448±0.0015`。P2 历史 checkpoint 按 robust score 选择，新 baseline 按 clean score 选择，缺失分数对比存在选择口径优势，报告已注明。结果、来源和适配清单见 `E2026/outputs/final/q2/public_baselines/`、`E2026/experiments/q2/public_baselines/`；未用 Attachment2 test 或 Attachment3/4 调参。

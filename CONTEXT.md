@@ -4,6 +4,8 @@
 
 ## E Q3
 
+2026-09-25 Attachment4 原始证据映射 PRECHECK：两版各 20 pkl/20 MP4，80/80 文件哈希与清单一致。全部非零 aligned 音频/视觉行分别有 564/564、534/534 个同样本未对齐数组的唯一精确数值匹配；sample02 视觉槽位 `[1,7)` 对应未对齐视觉行 36–41，但没有未对齐行到原始 MP4 frame/PTS 的记录。文本 19/19 解释片段仍可由原文字符区间核对。TEXT=`VERIFIED`，AUDIO/VISION 原始时间=`UNVERIFIED`，sample02 原视频关键帧映射=`NO`；未抽帧或切音频。详见 `E2026/outputs/q3/q3_raw_evidence_mapping_precheck.md`。
+
 Q3-2.6 已通过 20 个 Attachment4 aligned 样本审计：公开 MMSA/Self-MM/MMSA-FET 代码都直接返回 BERT 最后层 token states；固定 `bert-base-uncased` 候选对 604 个有效文本槽的同索引 cosine argmax 为 604/604，均值 cosine `0.999999994`，RMSE `8.40e-7`，最大绝对差 `3.01e-5`。因此 `text feature row i ↔ text_bert token slot i` 判为 VERIFIED，正式 grounding API 已可用 tokenizer offsets 输出 raw-text span。历史生成未固定具体 BERT 权重 revision，作为来源限制保留。Text=VERIFIED，Audio/Vision=UNVERIFIED，总体 `PARTIAL_GROUNDING_READY`。诊断与复现见 `E2026/outputs/q3/q3_text_row_identity_report.md` 和 `E2026/experiments/q3/exp_0026_text_row_identity/`。本阶段未跑 HEAF 全量解释。
 
 Q3-2 已先锁定 HEAF 方法（`E2026/configs/final/q3_heaf.yaml`、`E2026/outputs/q3/q3_method_lock.{md,json}`），然后只审计 Attachment4 对齐版。20 pkl 与 20 MP4 的 ID 精确对应，接口合法，但音频/视频没有逐槽时间映射，仍 UNVERIFIED；不允许据视频时长均分 50 槽或照搬 Q1 窗口。早期整体 `BLOCKED_BY_GROUNDING` 记录见 `E2026/outputs/q3/q3_grounding_audit.{md,json}`，经 Q3-2.6 后当前为 `PARTIAL_GROUNDING_READY`。
