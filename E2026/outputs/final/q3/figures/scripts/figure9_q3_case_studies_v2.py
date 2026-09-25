@@ -255,7 +255,7 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     fig.text(0.088, 0.968, "文本主导典型案例（样本14）", fontsize=9.0,
              fontweight="bold", ha="left", va="top", color=BLACK)
     fig.text(0.06, 0.487, "B", fontsize=9.5, fontweight="bold", ha="left", va="top", color=BLACK)
-    fig.text(0.088, 0.487, "视觉主导边界案例（样本02）", fontsize=9.0,
+    fig.text(0.088, 0.487, "视觉特征级证据案例（样本02）", fontsize=9.0,
              fontweight="bold", ha="left", va="top", color=BLACK)
     fig.add_artist(plt.Line2D([0.06, 0.96], [0.509, 0.509], transform=fig.transFigure,
                               color=LIGHT_GREY, linewidth=0.55))
@@ -263,7 +263,7 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     # Row A. The video still is a scene illustration, independent of the
     # text feature interval and of all HEAF scores.
     add_scene(fig, [0.061, 0.718, 0.288, 0.204], frames["14"][0])
-    fig.text(0.061, 0.707, "原视频场景", fontsize=7.2, ha="left", va="top", color=GREY)
+    fig.text(0.061, 0.707, "视频上下文示意", fontsize=7.2, ha="left", va="top", color=GREY)
     add_prediction(fig, cards["14"], 0.061, 0.673)
     fig.text(0.398, 0.922, "分类 Shapley 贡献", fontsize=8.0,
              fontweight="semibold", ha="left", va="bottom", color=BLACK)
@@ -283,7 +283,7 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     # as a model-selected frame or aligned with the key feature interval.
     for i, path in enumerate(frames["02"]):
         add_scene(fig, [0.061 + i * 0.098, 0.274, 0.092, 0.140], path)
-    fig.text(0.061, 0.262, "原视频上下文（非关键帧定位）", fontsize=7.0,
+    fig.text(0.061, 0.262, "视频上下文示意", fontsize=7.0,
              ha="left", va="top", color=GREY)
     add_prediction(fig, cards["02"], 0.061, 0.225)
     fig.text(0.398, 0.443, "分类 Shapley 贡献", fontsize=8.0,
@@ -295,7 +295,7 @@ def draw(cards: dict[str, dict], frames: dict[str, list[Path]], fragment: str):
     fig.add_artist(Rectangle((0.055, 0.067), 0.905, 0.05, transform=fig.transFigure,
                              facecolor="#F7F7F5", edgecolor=LIGHT_GREY,
                              linewidth=0.55, zorder=0))
-    fig.text(0.061, 0.092, "原始视觉位置未验证，仅展示特征槽位区间",
+    fig.text(0.061, 0.092, "视觉证据：对齐槽位 1–6 → 未对齐特征行 36–41",
              fontsize=7.6, fontweight="semibold", ha="left", va="center", color=BLACK)
     return fig
 

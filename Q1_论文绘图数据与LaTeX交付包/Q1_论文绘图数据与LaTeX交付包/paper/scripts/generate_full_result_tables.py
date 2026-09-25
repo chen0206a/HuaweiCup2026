@@ -268,14 +268,24 @@ def attachment4_table() -> dict:
         assert Counter(r[field] for r in rows) == locked[summary_field]
     assert sum(r["primary_modality_agreement"] == "True" for r in rows) == 17
     modalities = {"text": "文本", "audio": "语音", "vision": "视觉"}
-    lines = [
-        r"\begin{table}[htbp]",
-        r"\centering\small\setlength{\tabcolsep}{4pt}",
-        r"\caption{附件4全部20条无标签样本的预测与解释结果；关键区间为从零开始的特征槽位$[a,b)$}",
+    prediction_lines = [
+        r"\begin{table}[H]",
+        r"\centering\small\setlength{\tabcolsep}{7pt}",
+        r"\caption{附件4全部20条无标签样本的预测结果}",
         r"\label{tab:q3_attachment4_all}",
-        r"\begin{tabular}{@{}llrrlcl@{}}",
+        r"\begin{tabular}{@{}llrr@{}}",
         r"\toprule",
-        r"样本ID & 预测类别 & 情感强度 & 置信度 & 分类主导 & 关键区间 & 证据核验\\",
+        r"样本ID & 预测类别 & 情感强度 & 分类置信度\\",
+        r"\midrule",
+    ]
+    explanation_lines = [
+        r"\begin{table}[H]",
+        r"\centering\small\setlength{\tabcolsep}{3.5pt}",
+        r"\caption{附件4全部20条样本的分类贡献与证据层级；区间为从零开始的对齐特征槽位$[a,b)$}",
+        r"\label{tab:q3_attachment4_explanations}",
+        r"\begin{tabular}{@{}lrrrlcl@{}}",
+        r"\toprule",
+        r"ID & $\phi_T$ & $\phi_A$ & $\phi_V$ & 主导模态 & 关键区间 & 证据层级\\",
         r"\midrule",
     ]
     for row in rows:
@@ -285,22 +295,29 @@ def attachment4_table() -> dict:
         assert status in {"verified", "unverified"}
         if status == "verified":
             assert modality == "text" and row["text_fragment"] not in {"", "NA"}
-            evidence = "文本已核验"
+            evidence = "原文字符级"
         else:
             assert modality == "vision" and row["video_frame_time"] in {"", "NA"}
-            evidence = "视觉槽位未核验"
+            evidence = "特征行级"
         start, end = int(row["key_start_index"]), int(row["key_end_index"])
         assert 0 <= start < end <= 50
         intensity = float(row["predicted_intensity"])
         confidence = float(row["confidence"])
         assert math.isfinite(intensity) and 0 <= confidence <= 1
-        lines.append(
+        phi = tuple(float(row[f"shapley_{name}"]) for name in ("text", "audio", "vision"))
+        assert all(math.isfinite(value) for value in phi)
+        prediction_lines.append(
             f'{tex_id(row["sample_id"])} & {CLASS_NAMES[row["predicted_class_name"]]} & '
-            f'{intensity:+.6f} & {confidence:.4f} & {modalities[modality]} & '
-            f'$[{start},{end})$ & {evidence}' + r"\\"
+            f'{intensity:+.6f} & {confidence:.4f}' + r"\\"
         )
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    write_table("table_q3_attachment4_all.tex", lines)
+        explanation_lines.append(
+            f'{tex_id(row["sample_id"])} & {phi[0]:+.4f} & {phi[1]:+.4f} & {phi[2]:+.4f} & '
+            f'{modalities[modality]} & $[{start},{end})$ & {evidence}' + r"\\"
+        )
+    prediction_lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    explanation_lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    write_table("table_q3_attachment4_all.tex", prediction_lines)
+    write_table("table_q3_attachment4_explanations.tex", explanation_lines)
     return {
         "row_count": len(rows), "unique_ids": len(ids),
         "source": [repo_path(predictions_path), repo_path(summary_path)],
