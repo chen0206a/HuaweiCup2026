@@ -1,227 +1,265 @@
 #!/usr/bin/env python
-"""Rebuild Q2 Figure 9 from locked, existing validation result tables only."""
+"""Q2 Figure 9 in the manuscript Figure 11/12 visual system.
+
+Reads existing validation result tables only; no inference or metric recomputation
+from predictions is performed here.
+"""
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
+import matplotlib as mpl
+
+mpl.use("Agg")
+mpl.rcParams.update({
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Microsoft YaHei", "Arial", "SimHei"],
+    "font.size": 8,
+    "axes.titlesize": 8,
+    "axes.labelsize": 8,
+    "xtick.labelsize": 7,
+    "ytick.labelsize": 7,
+    "legend.fontsize": 7,
+    "figure.titlesize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.linewidth": 0.6,
+    "xtick.direction": "out",
+    "ytick.direction": "out",
+    "xtick.major.width": 0.6,
+    "ytick.major.width": 0.6,
+    "legend.frameon": False,
+    "hatch.linewidth": 0.55,
+    "pdf.fonttype": 42,
+    "svg.fonttype": "none",
+    "savefig.bbox": None,
+    "savefig.dpi": 300,
+})
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.lines import Line2D
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Patch
 
 
 ROOT = Path(__file__).resolve().parents[4]
 FIG_DIR = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "outputs/final/q2/q2_plotting_handoff_v2/plot_data"
-OUT_PNG = FIG_DIR / "fig09_q2_seed_pairing_error_analysis.png"
-OUT_PDF = FIG_DIR / "fig09_q2_seed_pairing_error_analysis.pdf"
-
 ROBUST_CSV = DATA_DIR / "fig6_paired_robust_score.csv"
 CM_CSV = DATA_DIR / "fig6_clean_confusion_matrices.csv"
 ZERO_CSV = DATA_DIR / "fig6_clean_vision_all_zero.csv"
 SCENARIO_CSV = DATA_DIR / "scenario_details_complete.csv"
+BASE = FIG_DIR / "fig09_q2_seed_pairing_error_analysis"
 
 B0 = "B0-WCE"
 P2 = "B5-P2"
-COLORS = {B0: "#91A9B7", P2: "#3978A8"}
-ORANGE = "#E7A45D"
-INK = "#303A40"
-GRID = "#E4E9EC"
-BLUE_CMAP = "Blues"
+
+# Directly inherited from the Figure 11 and Figure 12 scripts.
+DARK = "#333333"
+GRID = "#D9D9D9"
+MAIN = "#4F7F95"
+ACCENT = "#F0B36D"
+PALE_BLUE = "#BFDCE6"
+PALE_YELLOW = "#EEE7B0"
+PALE_PINK = "#E9C9CC"
+BASE_COLOR = PALE_BLUE
+P2_COLOR = ACCENT
+PAIR_COLORS = {B0: MAIN, P2: ACCENT}
+BAR_COLORS = {B0: BASE_COLOR, P2: P2_COLOR}
+CMAP = LinearSegmentedColormap.from_list(
+    "figure11_blue", ["#F7FBFC", PALE_BLUE, MAIN], N=256
+)
 
 
-def style_axis(ax):
+def style_axis(ax, *, grid_axis="y"):
     ax.set_facecolor("white")
-    ax.grid(axis="y", color=GRID, linewidth=0.7, zorder=0)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    for spine in ("left", "bottom"):
-        ax.spines[spine].set_color("#89949A")
-        ax.spines[spine].set_linewidth(0.75)
-    ax.tick_params(colors=INK, labelsize=9, width=0.65, length=3)
+    ax.grid(axis=grid_axis, color=GRID, lw=0.45, zorder=0)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(DARK)
+        ax.spines[side].set_linewidth(0.6)
+    ax.tick_params(colors=DARK, length=2.5, width=0.55, pad=2)
 
 
-def summarize_scenario_categories(df):
-    """Average scenarios within each seed, then summarize across 3 seeds."""
-    miss = df[(df["rho"] > 0) & (df["location"] != "clean")].copy()
+def scenario_summary(df):
+    """Summarize conditions within each seed; seed is the replicate (n=3)."""
+    miss = df[(df.rho > 0) & (df.location != "clean")].copy()
     masks = {
-        "单模态\n缺失": miss["modalities"].isin(["text", "audio", "vision"]),
-        "双模态\n缺失": miss["modalities"].isin(["text+audio", "text+vision", "audio+vision"]),
-        "高比例缺失\nρ=0.4–0.5": miss["rho"].isin([0.4, 0.5]),
-        "位置扰动\n前/中/后段": miss["location"].isin(["early", "middle", "late"]),
+        "单模态\n缺失": miss.modalities.isin(["text", "audio", "vision"]),
+        "双模态\n缺失": miss.modalities.isin(["text+audio", "text+vision", "audio+vision"]),
+        "高比例缺失\nρ=0.4–0.5": miss.rho.isin([0.4, 0.5]),
+        "位置扰动\n前/中/后段": miss.location.isin(["early", "middle", "late"]),
     }
-    records = []
-    for category, mask in masks.items():
-        subset = miss.loc[mask]
-        counts = subset.groupby(["model", "training_seed"]).size()
-        per_seed = subset.groupby(["model", "training_seed"], as_index=False)["selection_score"].mean()
+    rows = []
+    for category, keep in masks.items():
+        subset = miss.loc[keep]
+        per_seed = subset.groupby(["model", "training_seed"]).selection_score.mean()
+        n_conditions = int(subset[subset.model == B0].groupby("training_seed").size().iloc[0])
         for model in (B0, P2):
-            vals = per_seed.loc[per_seed.model == model, "selection_score"].to_numpy()
-            n_scenarios = int(counts.loc[(model, 42)])
-            records.append({"category": category, "model": model,
-                            "mean": float(np.mean(vals)), "sd": float(np.std(vals, ddof=1)),
-                            "n_scenarios_per_seed": n_scenarios})
-    return pd.DataFrame(records)
+            values = per_seed.loc[model].sort_index().to_numpy()
+            rows.append({
+                "category": category,
+                "model": model,
+                "mean": float(values.mean()),
+                "sd": float(values.std(ddof=1)),
+                "seed_values": values,
+                "n_conditions_per_seed": n_conditions,
+            })
+    return pd.DataFrame(rows)
+
+
+def add_panel_title(ax, label, title):
+    ax.set_title(f"({label}) {title}", loc="left", fontsize=8, fontweight="bold", pad=5, color=DARK)
 
 
 def main():
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Microsoft YaHei", "Noto Sans CJK SC", "SimHei", "Arial", "DejaVu Sans"],
-        "axes.unicode_minus": False,
-        "pdf.fonttype": 42,
-        "ps.fonttype": 42,
-        "svg.fonttype": "none",
-        "font.size": 9,
-        "axes.titlesize": 10,
-        "axes.labelsize": 9,
-    })
-
-    robust = pd.read_csv(ROBUST_CSV)
-    cm = pd.read_csv(CM_CSV)
+    robust = pd.read_csv(ROBUST_CSV).sort_values("training_seed")
+    confusion = pd.read_csv(CM_CSV)
     zero = pd.read_csv(ZERO_CSV)
     scenarios = pd.read_csv(SCENARIO_CSV)
-    assert robust.training_seed.tolist() == [42, 43, 44]
-    assert set(cm.training_seed) == {42, 43, 44} and set(cm.model) == {B0, P2}
-    assert set(zero.sample_count) == {15}
-    assert len(scenarios) == 330
 
-    fig = plt.figure(figsize=(10.2, 7.1), facecolor="white")
-    gs = fig.add_gridspec(2, 2, left=0.075, right=0.98, bottom=0.09, top=0.86,
-                          wspace=0.27, hspace=0.40)
+    # Basic source integrity checks against the already-completed Q2 handoff.
+    assert robust.training_seed.tolist() == [42, 43, 44]
+    assert len(scenarios) == 330
+    assert set(confusion.training_seed) == {42, 43, 44}
+    assert set(zero.sample_count) == {15}
+
+    mm = 1 / 25.4
+    fig = plt.figure(figsize=(183 * mm, 138 * mm), facecolor="white")
+    gs = fig.add_gridspec(
+        2, 2, left=0.085, right=0.985, bottom=0.105, top=0.855,
+        width_ratios=(1.0, 1.12), wspace=0.37, hspace=0.55,
+    )
     ax_a = fig.add_subplot(gs[0, 0])
-    ax_b = gs[0, 1].subgridspec(1, 2, wspace=0.32)
-    ax_b0 = fig.add_subplot(ax_b[0, 0])
-    ax_p2 = fig.add_subplot(ax_b[0, 1], sharex=ax_b0, sharey=ax_b0)
+    gs_b = gs[0, 1].subgridspec(1, 2, wspace=0.18)
+    ax_b0 = fig.add_subplot(gs_b[0, 0])
+    ax_b2 = fig.add_subplot(gs_b[0, 1], sharex=ax_b0, sharey=ax_b0)
     ax_c = fig.add_subplot(gs[1, 0])
     ax_d = fig.add_subplot(gs[1, 1])
-    fig.suptitle("图9 最终模型的稳定性与误差分析", fontsize=14, fontweight="bold",
-                 color=INK, y=0.965)
 
-    # (a) paired robust score by initialization
+    fig.suptitle("图9 最终模型的稳定性与误差分析", y=0.972, fontsize=9,
+                 fontweight="bold", color=DARK)
+
+    # (a) Paired robust score; concise statement of the locked observed result.
     style_axis(ax_a)
-    x = np.arange(3)
-    pair = robust.sort_values("training_seed")
-    for i, row in enumerate(pair.itertuples(index=False)):
-        ax_a.plot([i - 0.075, i + 0.075], [row.B0_robust_score, row.P2_robust_score],
-                  color="#AAB4BA", lw=1.35, zorder=2)
-        ax_a.scatter(i - 0.075, row.B0_robust_score, s=42, color=COLORS[B0],
-                     edgecolor="white", linewidth=0.75, zorder=3)
-        ax_a.scatter(i + 0.075, row.P2_robust_score, s=42, color=COLORS[P2],
-                     edgecolor="white", linewidth=0.75, zorder=3)
-    ax_a.set_xticks(x, ["42", "43", "44"])
-    ax_a.set_xlabel("随机初始化种子")
-    ax_a.set_ylabel("稳健得分")
-    ax_a.set_title("(a) 三次初始化的配对结果", loc="left", pad=8, fontweight="bold")
-    low = min(pair.B0_robust_score.min(), pair.P2_robust_score.min()) - .0012
-    high = max(pair.B0_robust_score.max(), pair.P2_robust_score.max()) + .0012
-    ax_a.set_ylim(low, high)
-    delta = pair.paired_delta_P2_minus_B0
-    up_count = int((delta > 0).sum())
-    ax_a.text(0.98, 0.96, f"{up_count}/3 个种子提升\n平均配对差 = {delta.mean():+.4f} ± {delta.std(ddof=1):.4f}",
-              transform=ax_a.transAxes, ha="right", va="top", fontsize=8.4,
-              color=INK, bbox=dict(boxstyle="round,pad=0.35", fc="white", ec="#D7DEE2", lw=.7))
+    positions = np.arange(3)
+    for i, row in enumerate(robust.itertuples(index=False)):
+        left, right = i - 0.075, i + 0.075
+        ax_a.plot([left, right], [row.B0_robust_score, row.P2_robust_score],
+                  color="#A5A9AC", lw=0.8, zorder=1)
+        for x, value, model in ((left, row.B0_robust_score, B0), (right, row.P2_robust_score, P2)):
+            ax_a.scatter(x, value, s=25, color=PAIR_COLORS[model], edgecolor=DARK,
+                         linewidth=0.45, zorder=3)
+    ax_a.set_xticks(positions, ["42", "43", "44"])
+    ax_a.set_xlabel("随机种子", labelpad=2)
+    ax_a.set_ylabel("稳健得分", labelpad=3)
+    add_panel_title(ax_a, "a", "多次初始化的稳健得分")
+    ax_a.set_ylim(0.7395, 0.7475)
+    delta = robust.paired_delta_P2_minus_B0.to_numpy()
+    ax_a.text(
+        0.98, 0.97,
+        f"{int((delta > 0).sum())}/3 个种子提升\n平均增量 = {delta.mean():+.4f} ± {delta.std(ddof=1):.4f}",
+        transform=ax_a.transAxes, ha="right", va="top", fontsize=6.7, color=DARK,
+        bbox={"boxstyle": "round,pad=0.25", "fc": "white", "ec": GRID, "lw": 0.55},
+    )
 
-    # (b) valid clean confusion matrices for the primary locked seed (42)
-    matrix_data = cm[cm.training_seed == 42]
-    class_order = ["Negative", "Neutral", "Positive"]
-    class_zh = ["消极", "中性", "积极"]
-    plotted = []
-    for ax, model, label in ((ax_b0, B0, "基线模型"), (ax_p2, P2, "本文模型")):
-        sub = matrix_data[matrix_data.model == model]
-        pivot = sub.pivot(index="true_class", columns="predicted_class", values="count").reindex(index=class_order, columns=class_order)
-        raw = pivot.to_numpy(dtype=float)
-        row_pct = raw / raw.sum(axis=1, keepdims=True)
-        plotted.append(ax.imshow(row_pct, cmap=BLUE_CMAP, vmin=0, vmax=1, aspect="equal"))
-        ax.set_title(label, fontsize=9, pad=5, color=INK)
-        ax.set_xticks(range(3), class_zh, fontsize=8)
-        ax.set_yticks(range(3), class_zh, fontsize=8)
-        ax.set_xlabel("预测类别", labelpad=4, fontsize=8)
-        ax.tick_params(length=0)
+    # (b) Paired clean-validation confusion matrices, seed 42 as the locked primary.
+    cm_data = confusion[confusion.training_seed == 42]
+    order = ["Negative", "Neutral", "Positive"]
+    zh = ["消极", "中性", "积极"]
+    for ax, model, model_name in ((ax_b0, B0, "基线模型"), (ax_b2, P2, "本文模型")):
+        sub = cm_data[cm_data.model == model]
+        count = sub.pivot(index="true_class", columns="predicted_class", values="count").reindex(index=order, columns=order).to_numpy(float)
+        row_prop = count / count.sum(axis=1, keepdims=True)
+        ax.imshow(row_prop, cmap=CMAP, vmin=0, vmax=1, aspect="equal", interpolation="nearest")
+        ax.set_title(model_name, fontsize=7, pad=3, color=DARK)
+        ax.set_xticks(range(3), zh, fontsize=6.2)
+        ax.set_yticks(range(3), zh, fontsize=6.2)
+        ax.set_xlabel("预测类别", fontsize=6.5, labelpad=1)
+        ax.tick_params(length=0, pad=1)
         for i in range(3):
             for j in range(3):
-                value = row_pct[i, j]
-                color = "white" if value >= .55 else INK
-                ax.text(j, i, f"{int(raw[i,j])}\n{value:.0%}", ha="center", va="center",
-                        fontsize=7.4, color=color, linespacing=1.05)
+                color = "white" if row_prop[i, j] >= 0.56 else DARK
+                ax.text(j, i, f"{int(count[i,j])}\n{row_prop[i,j]:.0%}", ha="center", va="center",
+                        fontsize=6.1, color=color, linespacing=1.0)
         for spine in ax.spines.values():
             spine.set_visible(False)
-    ax_b0.set_ylabel("真实类别", labelpad=4, fontsize=8)
-    ax_p2.tick_params(labelleft=False)
-    ax_b0.set_title("基线模型", fontsize=9, pad=5, color=INK)
-    ax_p2.set_title("本文模型", fontsize=9, pad=5, color=INK)
-    fig.text(0.752, 0.872, "(b) 验证集混淆矩阵（种子42，n=728）", ha="center",
-             fontsize=10, fontweight="bold", color=INK)
+    ax_b0.set_ylabel("真实类别", fontsize=6.5, labelpad=4)
+    ax_b2.tick_params(labelleft=False)
+    fig.text(0.535, 0.861, "(b) 验证集混淆矩阵（种子42，n=728）",
+             ha="left", va="bottom", fontsize=8, fontweight="bold", color=DARK)
 
-    # (c) grouped comparison across scenario families; the seed is the replicate
+    # (c) Grouped, dotted bars styled after both reference scripts. Seed means are points.
     style_axis(ax_c)
-    agg = summarize_scenario_categories(scenarios)
-    cats = agg.category.drop_duplicates().tolist()
-    gx = np.arange(len(cats))
-    width = .32
+    summary = scenario_summary(scenarios)
+    categories = summary.category.drop_duplicates().tolist()
+    x = np.arange(len(categories))
+    width = 0.30
     for offset, model in ((-width / 2, B0), (width / 2, P2)):
-        s = agg[agg.model == model].set_index("category").loc[cats]
-        ax_c.bar(gx + offset, s["mean"], width=width, color=COLORS[model],
-                 edgecolor="white", linewidth=.7, zorder=2,
-                 yerr=s["sd"], capsize=2.4, error_kw={"elinewidth": .9, "ecolor": INK})
-        # Individual seed summaries remain visible; scenarios are not treated as replicates.
-        per_seed = scenarios[(scenarios.rho > 0) & (scenarios.location != "clean")]
-        masks = {
-            "单模态\n缺失": per_seed.modalities.isin(["text", "audio", "vision"]),
-            "双模态\n缺失": per_seed.modalities.isin(["text+audio", "text+vision", "audio+vision"]),
-            "高比例缺失\nρ=0.4–0.5": per_seed.rho.isin([.4, .5]),
-            "位置扰动\n前/中/后段": per_seed.location.isin(["early", "middle", "late"]),
-        }
-        for k, category in enumerate(cats):
-            ss = per_seed[(per_seed.model == model) & masks[category]].groupby("training_seed").selection_score.mean()
-            jitter = np.array([-.035, 0, .035])
-            ax_c.scatter(np.full(3, gx[k] + offset) + jitter, ss.sort_index(), s=12,
-                         color=INK, edgecolor="white", linewidth=.35, zorder=4)
-    ax_c.set_xticks(gx, cats, fontsize=8)
-    ax_c.set_ylabel("选择得分")
-    ax_c.set_ylim(0, .80)
-    ax_c.set_title("(c) 不同缺失场景类别的得分", loc="left", pad=8, fontweight="bold")
-    for k, category in enumerate(cats):
-        vals = agg[agg.category == category].set_index("model")["mean"]
-        change = vals[P2] - vals[B0]
-        ax_c.text(gx[k], .765, f"Δ {change:+.4f}", ha="center", va="bottom",
-                  color=ORANGE, fontsize=7.5, fontweight="bold")
+        part = summary[summary.model == model].set_index("category").loc[categories]
+        ax_c.bar(
+            x + offset, part["mean"], width=width,
+            color=BAR_COLORS[model], alpha=0.82, edgecolor=DARK, linewidth=0.7,
+            hatch="..", yerr=part["sd"], capsize=2.1,
+            error_kw={"elinewidth": 0.65, "ecolor": DARK}, zorder=2,
+        )
+        for i, values in enumerate(part["seed_values"]):
+            ax_c.scatter(
+                np.full(3, x[i] + offset) + np.array([-0.025, 0, 0.025]), values,
+                s=9, color=DARK, edgecolor="white", linewidth=0.25, zorder=4,
+            )
+    ax_c.set_xticks(x, categories, fontsize=6.3)
+    ax_c.set_ylabel("选择得分", labelpad=3)
+    ax_c.set_ylim(0, 0.82)
+    add_panel_title(ax_c, "c", "不同缺失场景的选择得分")
+    # The delta label makes small but real differences legible without truncating the axis.
+    for i, category in enumerate(categories):
+        means = summary[summary.category == category].set_index("model")["mean"]
+        ax_c.text(i, 0.785, f"Δ{(means[P2]-means[B0]):+.3f}", ha="center", va="bottom",
+                  fontsize=6.1, color=MAIN)
 
-    # (d) small native vision-all-zero subset; classification metrics only
+    # (d) Native vision-all-zero subset; mean ± sample SD across the three seeds.
     style_axis(ax_d)
-    metric_names = ["准确率", "宏平均 F1"]
-    metric_cols = ["accuracy", "macro_f1"]
-    xx = np.arange(2)
-    w = .31
-    for off, model in ((-w/2, B0), (w/2, P2)):
-        means, sds = [], []
-        for col in metric_cols:
-            values = zero.loc[zero.model == model].sort_values("training_seed")[col].to_numpy()
+    metrics = [("准确率", "accuracy"), ("宏平均F1", "macro_f1")]
+    mx = np.arange(len(metrics))
+    mwidth = 0.31
+    for offset, model in ((-mwidth / 2, B0), (mwidth / 2, P2)):
+        means, sds, seed_values = [], [], []
+        for _, column in metrics:
+            values = zero.loc[zero.model == model].sort_values("training_seed")[column].to_numpy()
+            seed_values.append(values)
             means.append(values.mean())
             sds.append(values.std(ddof=1))
-        ax_d.bar(xx + off, means, width=w, color=COLORS[model], edgecolor="white",
-                 linewidth=.7, yerr=sds, capsize=2.5,
-                 error_kw={"elinewidth": .9, "ecolor": INK}, zorder=2)
-        for j, col in enumerate(metric_cols):
-            values = zero.loc[zero.model == model].sort_values("training_seed")[col].to_numpy()
-            ax_d.scatter(np.full(3, xx[j] + off) + np.array([-.045, 0, .045]), values,
-                         s=14, color=INK, edgecolor="white", linewidth=.35, zorder=4)
-    ax_d.set_xticks(xx, metric_names)
-    ax_d.set_ylabel("指标值")
-    ax_d.set_ylim(0, .66)
-    ax_d.set_title("(d) 视觉全零子集表现（n=15）", loc="left", pad=8, fontweight="bold")
+        ax_d.bar(
+            mx + offset, means, width=mwidth,
+            color=BAR_COLORS[model], alpha=0.82, edgecolor=DARK, linewidth=0.7,
+            hatch="..", yerr=sds, capsize=2.1,
+            error_kw={"elinewidth": 0.65, "ecolor": DARK}, zorder=2,
+        )
+        for i, values in enumerate(seed_values):
+            ax_d.scatter(
+                np.full(3, mx[i] + offset) + np.array([-0.025, 0, 0.025]), values,
+                s=10, color=DARK, edgecolor="white", linewidth=0.25, zorder=4,
+            )
+    ax_d.set_xticks(mx, [name for name, _ in metrics], fontsize=6.7)
+    ax_d.set_ylabel("指标值", labelpad=3)
+    ax_d.set_ylim(0, 0.68)
+    add_panel_title(ax_d, "d", "视觉全零子集（n=15）")
 
-    handles = [Patch(facecolor=COLORS[B0], edgecolor="white", label="基线模型"),
-               Patch(facecolor=COLORS[P2], edgecolor="white", label="本文模型")]
-    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(.5, .915), ncol=2,
-               frameon=False, fontsize=9, handlelength=1.2, columnspacing=1.4)
-    fig.savefig(OUT_PNG, dpi=300, facecolor="white", bbox_inches="tight")
-    fig.savefig(OUT_PDF, facecolor="white", bbox_inches="tight")
-    print(f"PNG: {OUT_PNG}")
-    print(f"PDF: {OUT_PDF}")
-    print("Scenario category summaries (mean and sample SD across seed-level means):")
-    print(agg.to_string(index=False))
+    # One shared model legend, matching the compact, border-free Figure 11/12 legend.
+    legend_handles = [
+        Patch(facecolor=BAR_COLORS[B0], edgecolor=DARK, linewidth=0.7, hatch="..", label="基线模型"),
+        Patch(facecolor=BAR_COLORS[P2], edgecolor=DARK, linewidth=0.7, hatch="..", label="本文模型"),
+    ]
+    fig.legend(legend_handles, ["基线模型", "本文模型"], loc="upper center",
+               bbox_to_anchor=(0.5, 0.927), ncol=2, frameon=False,
+               fontsize=7, handlelength=1.25, columnspacing=1.8)
+
+    fig.savefig(BASE.with_suffix(".png"), dpi=300, facecolor="white", bbox_inches=None)
+    fig.savefig(BASE.with_suffix(".pdf"), facecolor="white", bbox_inches=None)
+    fig.savefig(BASE.with_suffix(".svg"), facecolor="white", bbox_inches=None)
+    print("Wrote", BASE.with_suffix(".png"))
+    print("Wrote", BASE.with_suffix(".pdf"))
+    print("Wrote", BASE.with_suffix(".svg"))
+    print(summary[["category", "model", "mean", "sd", "n_conditions_per_seed"]].to_string(index=False))
 
 
 if __name__ == "__main__":
