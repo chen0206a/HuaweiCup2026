@@ -1,0 +1,46 @@
+{
+  "model": "MISA",
+  "seed": 42,
+  "data": {
+    "file": "data/raw/aligned_50.pkl",
+    "train_split": "train",
+    "validation_split": "valid",
+    "test_used": false,
+    "normalization": "none",
+    "batch_size": 128,
+    "num_workers": 0,
+    "features": {
+      "text": [
+        50,
+        768
+      ],
+      "audio": [
+        50,
+        74
+      ],
+      "vision": [
+        50,
+        35
+      ]
+    },
+    "padding_mask": "text_bert[:,1,:]"
+  },
+  "training": {
+    "epochs": 80,
+    "patience": 12,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "classification_loss": "balanced train-only weighted cross-entropy",
+    "regression_loss": "SmoothL1",
+    "lambda_reg": 1.0,
+    "gradient_clip_norm": 5.0,
+    "auxiliary_loss": {
+      "diff": 0.3,
+      "cmd": 1.0,
+      "reconstruction": 1.0
+    }
+  },
+  "selection": "clean validation selection score",
+  "benchmark_definition_sha256": "3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff"
+}
