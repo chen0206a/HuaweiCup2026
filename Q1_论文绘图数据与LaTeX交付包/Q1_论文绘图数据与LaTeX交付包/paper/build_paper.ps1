@@ -44,6 +44,8 @@ Set-Content (Join-Path $paperDir 'q1_numbers.tex') $macroLines -Encoding UTF8
 
 & $pythonExe (Join-Path $paperDir 'scripts\generate_frozen_tables.py')
 if ($LASTEXITCODE -ne 0) { throw "Frozen table generation failed with exit code $LASTEXITCODE" }
+& $pythonExe (Join-Path $paperDir 'scripts\generate_full_result_tables.py')
+if ($LASTEXITCODE -ne 0) { throw "Full result table generation failed with exit code $LASTEXITCODE" }
 
 Push-Location $paperDir
 try {

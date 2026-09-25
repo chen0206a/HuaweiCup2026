@@ -119,7 +119,7 @@ $R$仅为本项目的验证比较指标，不是竞赛官方评分。基线参�
   \label{fig:fig09_q2_seed_error_analysis}
 \end{figure}
 
-\subsection{消融分析与本问小结}\label{subsec:q2_ablation}
+\subsection{消融分析}\label{subsec:q2_ablation}
 表~\ref{tab:q2_ablation} 压缩展示主要结构选择。更深的单模态时间编码器与训练阶段连续遮挡增强，在三次初始化的相同验证协议下均未超过基线。均值与最大值残差池化在一次初始化下有正向迹象，但缺少重复验证；低秩模态交互分支在同次初始化下降。跨模态重建的非零混合比例未在三次初始化中给出一致正收益；文本单独标准化下降，增大回归损失权重的收益很小且伴随准确率下降。可靠性加权分支有单次初始化的正向诊断，但没有同样完整的重复证据。因而本文保留参数开销较小、具有三次初始化配对结果的时间注意力残差池化方案。
 
 \begin{table}[htbp]
@@ -139,5 +139,24 @@ $R$仅为本项目的验证比较指标，不是竞赛官方评分。基线参�
 \end{tabular}
 \end{table}
 
+\FloatBarrier
+\subsection{公开多模态模型对比}\label{subsec:q2_public_baselines}
+表~\ref{tab:q2_public_baselines} 对比TFN、MulT、MISA与本文模型在附件2完整输入验证集上的三次初始化结果。三种公开模型均针对本题的aligned-50预计算特征作架构适配，并非对原论文训练流程的完全复现。公开模型按完整输入验证分数选择checkpoint，本文模型沿用固定缺失场景的综合鲁棒分数选择checkpoint，比较时须保留这一口径差异。
+
+\input{generated/table_q2_public_baselines.tex}
+
+本文模型在准确率、宏平均F1和皮尔逊相关系数上取得更高均值，MAE均值更低，参数量也较少。MISA的MAE相对较高；已有检查确认其回归标签尺度、回归头输出和评价实现未发现错误，因此表中保留实际结果。
+
+\FloatBarrier
+\subsection{附件3专项测试集最终预测}\label{subsec:q2_attachment3}
+附件3对齐版仅提供\texttt{text\_bert}、\texttt{audio}与\texttt{vision}，没有预计算的\texttt{text}特征。本文复用已验证的\texttt{text\_bert}$\rightarrow$\texttt{bert-base-uncased}$\rightarrow$\texttt{text[50,768]}接口适配：在20条同时具有原始文本特征与标记张量的已知样本上，604/604个有效行的余弦相似度最大值均位于同索引；特征最大绝对差为$3.0041\times10^{-5}$，RMSE为$8.3977\times10^{-7}$。同一锁定模型分别输入原特征与重构特征时，分类logit和回归输出的最大绝对差为$2.44\times10^{-6}$与$1.12\times10^{-6}$。模型参数未修改，也未重新训练。
+
+表~\ref{tab:q2_attachment3_all} 列出全部30条附件3样本的最终预测。分类置信度为预测类别的softmax概率；表内不使用真实标签，也不据此调整模型。
+
+\input{generated/table_q2_attachment3_all.tex}
+
+预测类别中，消极7条（23.33\%）、中性11条（36.67\%）、积极12条（40.00\%）。预测情感强度均值为0.123114，样本标准差为0.611792，范围为$[-1.642545,1.539758]$；平均分类置信度为0.624599。附件3是无标签专项测试集，上述数值仅描述预测分布，不能计算准确率、宏平均F1、MAE或皮尔逊相关系数，也不能据此判断预测正确率。
+
+\subsection{本问小结}
 本问直接利用预计算特征，依靠有效位掩码防止填充进入池化，并以固定连续缺失场景检验预测模型。轻量时间注意力残差池化在宏平均F1、MAE及相关性上取得小幅平均收益，但准确率、个别双模态缺失条件及原生视觉全零子集仍有限制。下一问据此在同一预测函数上分析模型决策依据，而不把内部归因直接等同于真实媒体的因果解释。
 \FloatBarrier

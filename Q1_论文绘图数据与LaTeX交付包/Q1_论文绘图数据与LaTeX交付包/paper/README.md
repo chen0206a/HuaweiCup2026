@@ -10,7 +10,9 @@ Q1 数量、模型和张量常量的唯一清单为：
 
 构建脚本直接从该清单生成 q1_numbers.tex。四张正文表由 scripts/generate_frozen_tables.py 从 ../outputs/q1_final_local/02_paper_tables/ 的冻结 CSV 读取并排版；脚本只格式化原始字段，不重算任何实验指标。各 CSV 的 SHA-256 记录在 generated/q1_table_sources.json。
 
-正文现包含 Q1、Q2、Q3、模型评价和结论。正文图按统一顺序编号：图1为Q1总览，图2—4为Q1三模态特征提取占位，图5为Q1时间对齐，图6—9为Q2，图10—12为Q3。Q1消融图与样本追踪图移至附录A1—A3。Q2三次初始化与误差分析图仍为占位。题目、摘要、关键词尚待最终定稿。未改写实验结果表格。
+全量结果表由 `scripts/generate_full_result_tables.py` 从Q1最终100条样本清单、Q2公开模型及附件3锁定结果、Q3附件4最终结果生成。输出为 `generated/table_q1_all_samples.tex`、`table_q2_public_baselines.tex`、`table_q2_attachment3_all.tex`、`table_q3_attachment4_all.tex`；数据源路径、SHA-256和行数记录在 `generated/full_result_table_sources.json`。该脚本只核对和排版既有结果，不运行模型。
+
+正文现包含 Q1、Q2、Q3、模型评价和结论。正文图按统一顺序编号：图1为Q1总览，图2—4为Q1三模态特征提取占位，图5为Q1时间对齐，图6—9为Q2，图10—12为Q3。Q1消融图与样本追踪图移至附录A1—A3。Q2三次初始化与误差分析图仍为占位。题目、摘要、关键词尚待最终定稿。新增的结果表使用现有冻结数据，表号自动顺延。
 
 本轮新增的 Q1 模态对齐图保留可编辑 PPTX 与排版用 PDF。图内原先标注的音视频帧率与论文实际特征抽取设置不一致，排版版改为时间粒度示意，正文图注明确说明热图与采样间隔不代表实际特征值或采样率。
 

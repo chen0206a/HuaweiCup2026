@@ -94,7 +94,7 @@ D_i(W)=g(\mathbf x_i)-g\!\left(\mathbf x_i^{\setminus W}\right),
 音频和视觉方面，附件4没有提供可验证的“特征槽位$\rightarrow$媒体秒数/视频帧”映射，也不能仅凭视频时长将50个槽位均分。故本文对音频与视觉只报告特征空间中的关键区间，原始秒级时间与帧号保持未验证。图~\ref{fig:fig12_q3_case_explanations} 中的视频截图只表示对应视频的场景背景，不是由解释算法定位出的关键视觉帧。
 
 \subsection{附件4预测解释结果}\label{subsec:q3_attachment4}
-依据前述方法对附件4的20条对齐样本生成预测与解释卡，20个标识均有对应的视频文件，输出字段、有限值及模态贡献加和关系完成一致性检查。附件4没有真实情感标签，所以表~\ref{tab:q3_attachment4} 仅汇总预测类别、主导模态和原始证据核验状态，不报告准确率、宏平均F1、MAE、相关系数或预测正确性。
+依据前述方法对附件4的20条对齐样本生成预测与解释卡，20个标识均有对应的视频文件，输出字段、有限值及模态贡献加和关系完成一致性检查。表~\ref{tab:q3_attachment4} 汇总预测类别、主导模态和原始证据核验状态，表~\ref{tab:q3_attachment4_all} 逐条给出预测及关键特征区间。附件4没有真实情感标签，故不报告准确率、宏平均F1、MAE、相关系数或预测正确性。
 
 \begin{table}[htbp]
 \centering\small
@@ -121,6 +121,9 @@ D_i(W)=g(\mathbf x_i)-g\!\left(\mathbf x_i^{\setminus W}\right),
 \bottomrule
 \end{tabular}
 \end{table}
+
+\FloatBarrier
+\input{generated/table_q3_attachment4_all.tex}
 
 分类与回归的主导模态在17条样本上相同，占85\%。原始证据核验的19条为文本主导样本；视觉主导的一条只保留特征槽位区间及未核验标记。以上计数只描述该20条无标签样本上的模型输出，不构成性能估计。
 
