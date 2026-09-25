@@ -1,4 +1,8 @@
-# E2026 Q3 Figures 8–9
+# E2026 Q3 Figures 7–9
+
+## Figure 7 v2 — Q3 framework from the Q2 architecture layout
+
+`figure7_q3_framework_zh_v2.pptx` is an editable copy of the user-provided Q2 architecture slide. Its four dashed stage containers retain the source layout, while their contents show Q3 sentiment prediction, HEAF explanation and evidence output. The left text quote, audio waveform and original video scene all come from paired Attachment4 sample 09, which differs from the video in the Q2 source slide and from the two current Figure 9 cases. The scene is not an HEAF key frame; audio/visual raw-time grounding remains unverified. See `figure7_q3_framework_zh_v2_README.md` and `figure7_q3_framework_zh_v2_sources.json` for the source hashes and extraction rule. PNG/PDF/SVG are exported from the PPTX; earlier Figure 7 files remain unchanged.
 
 These figures use the frozen Q3 results. The current Figure 8 and Figure 9 v2 are Chinese paper figures with a shared muted palette, dark bordered dotted bars, white backgrounds and restrained axes. Figure 8 uses **Attachment2 validation** results; Figure 9 retains the two fixed **Attachment4** cases (14 and 02) and original-video scene images. Attachment4 has no labels, so Figure 9 is case interpretation only and is not a performance figure. Earlier versions remain in `archive/`.
 

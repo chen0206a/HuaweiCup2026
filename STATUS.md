@@ -6,6 +6,8 @@
 
 - E Q3 Figures 8/9：两图已统一重绘为中文低饱和论文风，采用浅蓝/浅黄/浅粉模态色、黑边点纹柱体与深蓝曲线。Figure 8 保留 Attachment2 valid 三幅原始统计和真实分组 bootstrap 95% 区间；Figure 9 v2 仍仅含 Attachment4 样本14/02及原视频场景截图（不代表 HEAF 关键帧）。PNG 为 300 dpi，PDF/SVG 为矢量，旧版均归档。A/V 原始时间 grounding 仍未验证；原始指标和解释结果不变。文件、图注与 QA 见 `E2026/outputs/final/q3/figures/`。
 
+- E Q3 Figure 7 v2：基于用户提供的 Q2 架构图副本，保留四框总体布局，改为情感预测与 HEAF 方法内容；真实原文、MP4 场景和音轨波形统一取附件4样本09，避免与 Q2 原画面及 Figure 9 的14/02案例重复。视频/音频素材仅作输入示例，A/V 原始时间定位仍未验证。输出可编辑 PPTX、300 dpi PNG、PDF/SVG、来源清单与复现脚本于 `E2026/outputs/final/q3/figures/`，不修改实验结果。
+
 - E Q3-2.6：BERT 最后层重建与公开预处理代码支持 Attachment4 text 行对应 `text_bert` 同索引 token；604/604 cosine 行最大值在对角，均值 cosine 0.999999994，RMSE 8.40e-7，最大绝对差 3.01e-5。Text grounding 已接入 tokenizer offsets 并对真实样本做 API smoke test。Text=`VERIFIED`，audio/vision=`UNVERIFIED`，当前=`PARTIAL_GROUNDING_READY`。无 HEAF 推理、无训练。详见 `E2026/outputs/q3/q3_text_row_identity_report.md` 与 `E2026/experiments/q3/exp_0026_text_row_identity/`。
 
 - E Q3-2.7：公开接口与预处理资料不能把 Attachment4 的 A/V 第 i 行绑定到已验证 text/token 第 i 槽。按 gate 要求，在提取 MP4 音频、forced alignment、解码视频/PTS 之前停止。TEXT=`VERIFIED`，AUDIO/VISION=`UNVERIFIED`，overall=`PARTIAL_GROUNDING_READY`。未运行 HEAF。见 `E2026/outputs/q3/q3_av_grounding_audit.{md,json}`。

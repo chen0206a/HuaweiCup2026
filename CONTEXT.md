@@ -14,6 +14,8 @@ Q3-3 已在锁定协议下完成 Attachment4 aligned_50 的 20/20 全量 frozen 
 
 Q3 Figure 8/9 已统一重绘为低饱和中文论文风：浅雾蓝/浅米黄/浅粉模态色，黑色细边与点纹柱体，深蓝遮挡曲线和真实 grouped-bootstrap 95% 半透明置信带。Figure 8 保留 Attachment2 validation 三幅统计与全部数值；Figure 9 v2 保留 Attachment4 样本 14/02 和固定相对位置的原视频场景截图，原始文本证据仍按英文原文引用。视觉槽位→视频时间仍 UNVERIFIED，截图不表示关键帧。新旧 PNG/PDF/SVG、脚本、截图清单、图注和归档见 `E2026/outputs/final/q3/figures/`；原始预测、解释与验证结果未改变。
 
+Q3 Figure 7 v2 从用户提供的 Q2 架构图 PPTX 副本改制，保留四个虚线框的整体布局，内容改为输入、情感预测、HEAF 与解释输出。原文、音频波形与视频场景统一取自配对样本 09，避开 Figure 9 的 14/02 案例及 Q2 原图中的画面；截图和波形仅示意原始输入，不表示 HEAF 定位。可编辑 PPTX、PNG/PDF/SVG、来源清单与脚本见 `E2026/outputs/final/q3/figures/`。
+
 Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Shapley、连续窗口和忠实性验证；结果为 `E2026/outputs/q3/heaf_validation_metrics.json`、报告与 `E2026/experiments/q3/exp_001_heaf_validation/`。主模型仍为 B5-P2 seed42，checkpoint 哈希 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；valid clean 与 Q2 锁定指标最大差 `4.01e-9`。按 video_id 分成 design 332/audit 396，锁定 ρ=0.30、stride=1。Audit 同长度 top−random class-margin 均值 +0.400735，95% video-group bootstrap 区间 `[0.363538,0.437243]`；此比较因 top 由同窗口最大值选出而有选择优势，10% 删除曲线仍有失败样本。seed43/44 仅作稳定性审计。Q3-3 随后在 Attachment4 输出最终解释卡。
 
 ## E Q2
