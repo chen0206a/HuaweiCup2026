@@ -1,2 +1,52 @@
-\section{问题二：TODO}
-% TODO: 加入正式建模过程、推导、图表和真实结果。
+\section{问题二：局部模态缺失条件下的鲁棒多模态情感预测}
+
+\subsection{对比模型与实验设置}
+为检验轻量时序建模在局部连续模态缺失下的作用，本文在赛题提供的 aligned-50 预计算特征上比较三种公开方法适配模型与本文模型。三种公开方法分别为张量融合网络 TFN\cite{zadeh-etal-2017-tensor}、多模态 Transformer MulT\cite{tsai-etal-2019-multimodal}，以及模态不变与模态特异表示模型 MISA\cite{hazarika-etal-2020-misa}。数据划分沿用附件 2 的训练集与验证集，样本数分别为 3395 和 728；每种方法使用随机种子 42、43、44 独立训练，表中报告三次结果的均值及样本标准差。分类任务采用 Negative、Neutral、Positive 三类标签，回归任务预测连续情感强度。评价指标包括 Accuracy、Macro-F1、MAE 和 Pearson 相关系数。
+
+公开方法均依据其核心结构在 aligned-50 输入上重新实现并训练：TFN 保留张量外积融合思想；MulT 保留方向性成对跨模态注意力；MISA 保留 shared/private 表示分解及差异、CMD 和重构辅助目标。由于输入接口和训练流程经过适配，本实验不等同于原论文设置的完整复现。实验没有使用外部情感数据或外部任务权重。实现参考的 MulT 与 MISA 官方仓库采用 MIT 许可证；TFN 参考仓库未提供许可证文件，因此本文仅依据论文独立实现张量融合结构，未复制该仓库源码。
+
+\clearpage
+\subsection{验证集结果}
+表~\ref{tab:q2-clean-model-comparison} 给出 clean validation 的四项指标。参数量按模型全部参数统计。本文模型首次定义为轻量时间注意力残差池化模型。表中公开方法的 checkpoint 按 clean validation 选择；本文模型沿用按固定缺失场景验证表现确定的 checkpoint。因此结果用于当前适配协议下的描述性比较，不将 checkpoint 选择差异解释为受控的单因素比较。
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{统一协议下不同多模态预测模型的验证集性能比较（clean validation；均值 $\pm$ 样本标准差）}
+\label{tab:q2-clean-model-comparison}
+\begin{tabular}{l r c c c c}
+\toprule
+方法 & 参数量 & Accuracy $\uparrow$ & Macro-F1 $\uparrow$ & MAE $\downarrow$ & Pearson $\uparrow$ \\
+\midrule
+TFN & 4,840,670 & $0.6099\pm0.0076$ & $0.5872\pm0.0083$ & $0.6336\pm0.0102$ & $0.6056\pm0.0098$ \\
+MulT & 624,094 & $0.6172\pm0.0148$ & $0.5891\pm0.0236$ & $0.6221\pm0.0260$ & $0.6369\pm0.0115$ \\
+MISA & 1,118,852 & $0.6131\pm0.0083$ & $0.6010\pm0.0060$ & $0.9175\pm0.1005$ & $0.6269\pm0.0087$ \\
+本文模型 & 164,343 & $0.6419\pm0.0057$ & $0.6241\pm0.0026$ & $0.6059\pm0.0066$ & $0.6472\pm0.0025$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+在当前 aligned-50 架构适配和统一训练预算下，本文模型在 clean validation 的四项均值指标上均高于三种公开方法适配模型，且参数量较小。TFN 参数量最大，但在本实验中没有体现出相应的性能优势；MulT 的 Accuracy 与 Pearson 表现较均衡；MISA 的 Macro-F1 与 Pearson 保持在可用水平，但回归误差较高。对 MISA 三个 checkpoint 的回归路径复核表明，训练与验证使用同一原始连续标签尺度，回归输出维度及 loss 对齐正确，回归头梯度非零，独立复算的 MAE 与 Pearson 与评价流程一致。因此，本实验保留其实际结果，不通过额外调参改变结果。其表现说明预测排序关系尚可，而绝对数值校准较弱。
+
+表~\ref{tab:q2-missing-model-comparison} 汇总冻结的 54 个连续缺失场景上的平均指标。该结果是当前锁定模型与固定缺失基准下的描述性比较。公开方法按 clean validation 选择 checkpoint，本文模型按固定缺失场景验证表现选择 checkpoint，因而不能据此给出完全公平的鲁棒性排名或显著优越性结论。
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{冻结连续缺失基准上的平均验证指标（54 个场景的均值）}
+\label{tab:q2-missing-model-comparison}
+\begin{tabular}{l c c c c}
+\toprule
+方法 & Accuracy $\uparrow$ & Macro-F1 $\uparrow$ & MAE $\downarrow$ & Pearson $\uparrow$ \\
+\midrule
+TFN & 0.5767 & 0.5582 & 0.6451 & 0.5784 \\
+MulT & 0.6000 & 0.5749 & 0.6309 & 0.6232 \\
+MISA & 0.6079 & 0.5958 & 0.9247 & 0.6198 \\
+本文模型 & 0.6340 & 0.6163 & 0.6091 & 0.6414 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+上述结果仅对应本题 aligned-50 输入与既定验证协议；跨数据集泛化及统一 checkpoint 选择下的鲁棒性差异仍需进一步验证。
