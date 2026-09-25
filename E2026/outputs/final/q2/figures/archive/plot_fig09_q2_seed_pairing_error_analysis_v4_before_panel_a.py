@@ -150,11 +150,9 @@ def main():
                          linewidth=0.85, zorder=3)
         paired_delta = row.P2_robust_score - row.B0_robust_score
         midpoint = (row.P2_robust_score + row.B0_robust_score) / 2
-        label_offset = (10, 7) if i == 0 else ((0, 7) if i == 1 else (0, -10))
-        label_align = "left" if i == 0 else "center"
         ax_a.annotate(
-            f"Δ {paired_delta:+.4f}", (i, midpoint), xytext=label_offset,
-            textcoords="offset points", ha=label_align, va="bottom" if paired_delta >= 0 else "top",
+            f"Δ {paired_delta:+.4f}", (i, midpoint), xytext=(0, 7 if paired_delta >= 0 else -10),
+            textcoords="offset points", ha="center", va="bottom" if paired_delta >= 0 else "top",
             fontsize=6.0, color="#58636A",
         )
     ax_a.set_xticks(positions, ["42", "43", "44"])
