@@ -2,6 +2,8 @@
 
 2026-09-25：当前 E 题工作目录为 `E2026/`。以下较早条目保留其阶段历史状态。
 
+- E Q2 public baseline 收口：MISA regression sanity=`PASS`，未发现标签尺度、输出形状、梯度或评价实现错误；TFN/MulT/MISA 现有三 seed 结果锁定。论文 Q2 新增 clean 结果 Table 1 与 54-scenario 描述性 Table 2，均位于 `paper/main.pdf` 第3页。无进一步 baseline training 建议。完整检查见 `E2026/outputs/final/q2/public_baselines/baseline_paper_integration_check.md`。
+
 - E Q2 公开架构对比：新服务器 RTX 3090 上完成 TFN、MulT、MISA 的 Attachment2 aligned-50 train/valid 三 seed（42/43/44）重训及冻结 clean + 54 缺失场景评估，9/9 checkpoint/指标 QA 通过。robust 均值±样本SD：TFN `0.7139±0.0039`、MulT `0.7253±0.0061`、MISA `0.7168±0.0019`；历史锁定 P2 `0.7448±0.0015`。P2 历史 checkpoint 按 robust score 选择，新 baseline 按 clean score 选择，缺失分数对比存在选择口径优势，报告已注明。结果、来源和适配清单见 `E2026/outputs/final/q2/public_baselines/`、`E2026/experiments/q2/public_baselines/`；未用 Attachment2 test 或 Attachment3/4 调参。
 
 - E Q2 Attachment3：本地对齐版30个文件 SHA256 全匹配，但均缺预计算 `text`。复用 Q3 固定 `bert-base-uncased` revision 在附件4的20个已知样本复算604/604行同索引、特征RMSE `8.3977e-7`、锁定Q2模型logits/回归最大差 `2.4438e-6`/`1.1176e-6` 后，文本接口门槛 PASS。锁定checkpoint不变，30/30无标签最终推理及CSV重读/概率/ID QA通过；预测类计数 Negative/Neutral/Positive=`7/11/12`，仅为无标签分布。交付与正式记录见 `E2026/outputs/final/q2/attachment3/`、`E2026/experiments/q2/exp_015_attachment3_final_inference/`。

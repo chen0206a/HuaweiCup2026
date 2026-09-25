@@ -26,6 +26,8 @@ B0 三 seed robust `0.741677 ± 0.001458`；P2 `0.744777 ± 0.001492`；paired d
 
 公开架构对比已在新服务器使用 Attachment2 train/valid 独立重训 TFN、MulT、MISA，各 seed 42/43/44，并完成同一 54 场景缺失评估。robust 三 seed 均值±样本SD 分别为 `0.7139±0.0039`、`0.7253±0.0061`、`0.7168±0.0019`；详情和四项原始指标见 `E2026/outputs/final/q2/public_baselines/Baseline_Experiment_Report.md`。三者为 aligned-50 架构适配，不是原仓库原封运行；TFN 参考仓库无许可证，未复制源码。新 baseline 按 clean-valid score 选 checkpoint，历史 P2 按 robust score 选，缺失结果的横向差距有选择口径限制。未改锁定 Q2 模型，未用 Attachment2 test、Attachment3/4 或外部情感数据。
 
+2026-09-25 完成 MISA regression sanity：训练/验证标签均直接来自同一原始 `regression_labels` 尺度，无归一化/反变换，回归头 shape、梯度与独立 MAE/Pearson 复算通过，未发现实现错误。三 seed MISA 回归绝对误差较高但 Pearson 保持；原 baseline 表锁定，不重训。Q2 正文已加入 clean 四指标表和 54 缺失场景描述表（明确 checkpoint selection 差异），Table 1/2 均在 `paper/main.pdf` 第3页。核验报告见 `E2026/outputs/final/q2/public_baselines/baseline_paper_integration_check.md`；Q2 外的论文 TODO 未改。
+
 本地 attachment2 原始文件实际位于 `E2026/data/raw/`；历史服务器配置使用 `data/raw/attachment2/`，该差异已记录，原始大文件未移动。六个 B0/P2 主 checkpoint 均在本地并完成哈希索引。Attachment3 对齐版30文件仅提供 `text_bert/audio/vision`；Q3 固定 BERT 路径在附件4的20个已知 `text` 样本上通过604行特征及锁定 Q2 模型输出的数值回归后，本地完成30/30无标签最终推理。预测CSV与审计见 `E2026/outputs/final/q2/attachment3/`，无标签性能指标；Q2 checkpoint 与验证协议未变。Attachment2 test 没有参与模型选择或本次适配。
 
 B5-P1 只有 seed42 screening；B4′ 仍为单 seed 诊断；fusion、reconstruction、loss 调整和文本 z-score 路线均未进入最终模型。详细原因以既有实验结果和 `E2026/outputs/final/q2/q2_experiment_index.json` 为准。Q1审查见下节；Q3 的 E 题建模进度未核实，本轮没有启动 Q3。

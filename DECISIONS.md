@@ -72,3 +72,8 @@
 
 决定：附件3对齐版30文件仅含 `text_bert/audio/vision`，先复用 Q3-2.6 已验证的 `bert-base-uncased` 有效前缀、最后层逐token重构路径。固定 revision `86b5e0934494bd15c9632b12f734a8a67f723594`、权重SHA256 `68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3`；在20个同时含官方 `text` 的附件4无标签样本上先验证604/604同索引，特征最大差 `3.0041e-5`、RMSE `8.3977e-7`，锁定Q2模型logits/回归最大差 `2.4438e-6`/`1.1176e-6`，均通过预先固定容差。随后仅以该固定适配器生成附件3文本特征，完成30/30最终无标签推理。
 依据：`E2026/outputs/final/q2/attachment3/attachment3_text_interface_audit.{md,json}`、`attachment3_summary.json`、`attachment3_delivery_check.md`。Q2 checkpoint、audio、vision、padding mask及回归后处理不变；未用附件3分布调参、未读标签、未用附件2 test。历史预计算BERT的原始revision仍未独立留档，结论限于现有数值接口近似一致。影响范围：E Q2附件3最终推理接口与交付；不改变D006主模型或验证协议。日期：2026-09-25。
+
+## D013 - E Q2 public baseline results locked after MISA sanity check
+
+决定：MISA 回归分支 sanity 检查通过；标签目标尺度与其他模型一致，回归头无激活并输出 `[B]`，回归及辅助目标梯度均非零，独立评价复算一致。保留 TFN/MulT/MISA 已有三 seed baseline 指标，不因 MISA 较高 MAE 重训或调参。将 clean validation 对照和 54 场景描述性结果写入 Q2 正文；因公开方法按 clean validation 选 checkpoint 而本文模型沿用固定缺失场景验证表现确定的 checkpoint，缺失表不用于宣称公平鲁棒排名。建议停止新增公开 baseline 训练。
+依据：`E2026/outputs/final/q2/public_baselines/misa_regression_sanity_check.md`、`baseline_paper_integration_check.md`、`Baseline_Experiment_Report.md`。影响范围：E Q2 baseline 结果与论文正文；不改变 D006 主模型、冻结 benchmark、Attachment2 test 使用边界或其他题目。日期：2026-09-25。
