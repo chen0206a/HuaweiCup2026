@@ -66,7 +66,7 @@ P2_COLOR = ACCENT
 PAIR_COLORS = {B0: MAIN, P2: ACCENT}
 BAR_COLORS = {B0: BASE_COLOR, P2: P2_COLOR}
 CMAP = LinearSegmentedColormap.from_list(
-    "figure11_blue", ["#F7FBFF", "#C6DDF0", "#5B9BD5", "#084B83"], N=256
+    "figure11_blue", ["#F7FBFC", PALE_BLUE, MAIN], N=256
 )
 
 
@@ -123,11 +123,10 @@ def main():
     assert set(zero.sample_count) == {15}
 
     mm = 1 / 25.4
-    # A little more page area gives the confusion matrices larger, readable cells.
-    fig = plt.figure(figsize=(200 * mm, 154 * mm), facecolor="white")
+    fig = plt.figure(figsize=(183 * mm, 138 * mm), facecolor="white")
     gs = fig.add_gridspec(
         2, 2, left=0.085, right=0.985, bottom=0.105, top=0.855,
-        width_ratios=(1.0, 1.35), wspace=0.30, hspace=0.48,
+        width_ratios=(1.0, 1.12), wspace=0.37, hspace=0.55,
     )
     ax_a = fig.add_subplot(gs[0, 0])
     gs_b = gs[0, 1].subgridspec(1, 2, wspace=0.18)
@@ -139,34 +138,35 @@ def main():
     fig.suptitle("图9 最终模型的稳定性与误差分析", y=0.972, fontsize=9,
                  fontweight="bold", color=DARK)
 
-    # (a) Horizontal dumbbell chart for paired initialization results.
-    style_axis(ax_a, grid_axis="x")
-    y_positions = np.array([2, 1, 0])
-    ax_a.set_axisbelow(True)
-    for y, row in zip(y_positions, robust.itertuples(index=False)):
-        b0_value, p2_value = row.B0_robust_score, row.P2_robust_score
-        ax_a.plot([b0_value, p2_value], [y, y], color="#D5E2E7", lw=6.5,
-                  solid_capstyle="round", zorder=1)
-        ax_a.scatter([b0_value], [y], s=88, color=BASE_COLOR, edgecolor="white",
-                     linewidth=1.0, zorder=3)
-        ax_a.scatter([p2_value], [y], s=88, color=P2_COLOR, edgecolor="white",
-                     linewidth=1.0, zorder=4)
-        paired_delta = p2_value - b0_value
-        ax_a.text(0.98, y, f"Δ={paired_delta:+.4f}", transform=ax_a.get_yaxis_transform(),
-                  ha="right", va="center", fontsize=7.0, color=DARK)
-    ax_a.set_yticks(y_positions, ["种子42", "种子43", "种子44"])
-    ax_a.set_xlabel("稳健得分", labelpad=2)
-    ax_a.set_ylabel("")
-    add_panel_title(ax_a, "a", "不同初始化的配对稳健得分")
-    ax_a.set_xlim(0.7395, 0.7480)
-    ax_a.set_ylim(-0.55, 2.55)
-    ax_a.set_xticks([0.740, 0.742, 0.744, 0.746, 0.748])
-    ax_a.tick_params(axis="y", length=0, pad=3)
+    # (a) Paired robust score; concise statement of the locked observed result.
+    style_axis(ax_a)
+    positions = np.arange(3)
+    for i, row in enumerate(robust.itertuples(index=False)):
+        left, right = i - 0.095, i + 0.095
+        ax_a.plot([left, right], [row.B0_robust_score, row.P2_robust_score],
+                  color="#A5A9AC", lw=1.05, zorder=1)
+        for x, value, model in ((left, row.B0_robust_score, B0), (right, row.P2_robust_score, P2)):
+            ax_a.scatter(x, value, s=32, color=PAIR_COLORS[model], edgecolor="white",
+                         linewidth=0.85, zorder=3)
+        paired_delta = row.P2_robust_score - row.B0_robust_score
+        midpoint = (row.P2_robust_score + row.B0_robust_score) / 2
+        label_offset = (10, 7) if i == 0 else ((0, 7) if i == 1 else (0, -10))
+        label_align = "left" if i == 0 else "center"
+        ax_a.annotate(
+            f"Δ {paired_delta:+.4f}", (i, midpoint), xytext=label_offset,
+            textcoords="offset points", ha=label_align, va="bottom" if paired_delta >= 0 else "top",
+            fontsize=6.0, color="#58636A",
+        )
+    ax_a.set_xticks(positions, ["42", "43", "44"])
+    ax_a.set_xlabel("随机种子", labelpad=2)
+    ax_a.set_ylabel("稳健得分", labelpad=3)
+    add_panel_title(ax_a, "a", "多次初始化的稳健得分")
+    ax_a.set_ylim(0.7395, 0.7475)
     delta = robust.paired_delta_P2_minus_B0.to_numpy()
     ax_a.text(
-        0.50, 0.035,
-        f"{int((delta > 0).sum())}/3 次提高，平均 Δ={delta.mean():+.4f}±{delta.std(ddof=1):.4f}",
-        transform=ax_a.transAxes, ha="center", va="bottom", fontsize=7.0, color=MAIN,
+        0.98, 0.98,
+        f"{int((delta > 0).sum())}/3 个种子提升  ·  平均增量 {delta.mean():+.4f} ± {delta.std(ddof=1):.4f}",
+        transform=ax_a.transAxes, ha="right", va="top", fontsize=6.2, color=MAIN,
         fontweight="bold",
     )
 
@@ -179,22 +179,22 @@ def main():
         count = sub.pivot(index="true_class", columns="predicted_class", values="count").reindex(index=order, columns=order).to_numpy(float)
         row_prop = count / count.sum(axis=1, keepdims=True)
         ax.imshow(row_prop, cmap=CMAP, vmin=0, vmax=1, aspect="equal", interpolation="nearest")
-        ax.set_title(model_name, fontsize=8.2, pad=4, color=DARK, fontweight="bold")
-        ax.set_xticks(range(3), zh, fontsize=7.6)
-        ax.set_yticks(range(3), zh, fontsize=7.6)
-        ax.set_xlabel("预测类别", fontsize=7.6, labelpad=2)
-        ax.tick_params(length=0, pad=2)
+        ax.set_title(model_name, fontsize=7, pad=3, color=DARK)
+        ax.set_xticks(range(3), zh, fontsize=6.2)
+        ax.set_yticks(range(3), zh, fontsize=6.2)
+        ax.set_xlabel("预测类别", fontsize=6.5, labelpad=1)
+        ax.tick_params(length=0, pad=1)
         for i in range(3):
             for j in range(3):
-                color = "white" if row_prop[i, j] >= 0.48 else DARK
+                color = "white" if row_prop[i, j] >= 0.56 else DARK
                 ax.text(j, i, f"{int(count[i,j])}\n{row_prop[i,j]:.0%}", ha="center", va="center",
-                        fontsize=8.0, color=color, linespacing=1.1, fontweight="medium")
+                        fontsize=6.1, color=color, linespacing=1.0)
         for spine in ax.spines.values():
             spine.set_visible(False)
-    ax_b0.set_ylabel("真实类别", fontsize=7.6, labelpad=12)
+    ax_b0.set_ylabel("真实类别", fontsize=6.5, labelpad=4)
     ax_b2.tick_params(labelleft=False)
-    fig.text(0.505, 0.861, "(b) 验证集混淆矩阵（种子42，n=728）",
-             ha="left", va="bottom", fontsize=8.2, fontweight="bold", color=DARK)
+    fig.text(0.535, 0.861, "(b) 验证集混淆矩阵（种子42，n=728）",
+             ha="left", va="bottom", fontsize=8, fontweight="bold", color=DARK)
 
     # (c) Grouped, dotted bars styled after both reference scripts. Seed means are points.
     style_axis(ax_c)
