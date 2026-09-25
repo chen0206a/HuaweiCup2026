@@ -1,67 +1,58 @@
-# Figure 9 数据审计：随机初始化稳定性与误差分析
+# Q2 Figure 9 数据与版本审计
 
-## 范围与输出
+## 本版重构
 
-图文件位于 `E2026/outputs/final/q2/figures/`。本次只新增图9的 PNG/PDF、绘图脚本与本说明，没有修改论文正文、表格或任何实验结果。检查当前 Q2 图目录时未发现已有 Figure 9 占位文件，因此按请求文件名生成了可供正文引用的图文件。
+本版将图压缩为两个 panel，只保留核心结论及一个薄弱场景诊断：
 
-## 输入数据与来源
+- **(A) 初始化配对鲁棒分数**：逐种子连接 B0 与 P2，图内标示平均配对差及“2/3 次提高、1 次近乎持平”。
+- **(B) 原生视觉整段全零子集准确率**：显示每个种子的基线/本文模型配对点；菱形和误差线表示三种子均值及样本标准差。
 
-| 图面板 | 实际使用文件 | 数据含义 |
-|---|---|---|
-| (A) | `E2026/outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig6_paired_robust_score.csv` | B0-WCE 与 B5-P2 对应随机种子的验证集 robust score 及配对差 |
-| (B) | `E2026/outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig6_clean_confusion_matrices.csv` | 三个种子、两种模型在 Attachment2 clean validation 上的真实类别×预测类别计数；图中取锁定主预测器 B5-P2 seed42 |
-| (C) | `E2026/outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig6_clean_vision_all_zero.csv` | 原生 vision-all-zero 子集的逐种子 Accuracy、Macro-F1、MAE、Pearson；图中展示前三项 |
+配色、白底、panel 标题、轴线和淡网格参照用户指定的 Figure 11/12 PDF。原三联版本已复制到 `archive/`，其混淆矩阵等详细内容不进入本版正文图。没有新增附录图。
 
-CSV SHA256：
+## 数据来源
 
-- 配对鲁棒分数：`a1b05510ae6bec31178a6a137614059ad25bd255dec7c13f5d4c50ed52b870e6`
-- 混淆矩阵计数：`b3c82158b5fca47cd30f0b77c641d85b7f4ddff9717177d53abf17cef095b13c`
-- 原生视觉全零子集：`a96566aa984fcee08028a9042be89489e8e5c24b4685a2ee19e12728a18a9972`
+只读取以下既有绘图汇总文件：
 
-上述绘图数据随 Q2 plotting handoff 提供，源结果快照包括 `source_results/b5_p2_multiseed_summary.json`、`source_results/b5_p2_multiseed_metrics.json` 与 `source_results/b0_weighted_ce_score_selection_metrics.json`。模型与 checkpoint 锁定记录为 `E2026/outputs/final/q2/q2_model_lock.md` 和 `q2_checkpoint_manifest.json`。
+1. `E2026/outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig6_paired_robust_score.csv`
+2. `E2026/outputs/final/q2/q2_plotting_handoff_v2/plot_data/fig6_clean_vision_all_zero.csv`
 
-## 面板定义
+输入文件 SHA256：配对鲁棒分数 `a1b05510ae6bec31178a6a137614059ad25bd255dec7c13f5d4c50ed52b870e6`；全零子集 `a96566aa984fcee08028a9042be89489e8e5c24b4685a2ee19e12728a18a9972`。
 
-### (A) 三次随机初始化配对结果
+来源上下文为 `E2026/outputs/metrics/b5_p2_multiseed_summary.json`、`b5_p2_multiseed_metrics.json` 和锁定记录 `E2026/outputs/final/q2/q2_model_lock.md`。数据与模型定义均未改动。
 
-随机种子 42、43、44 分别配对连接 B0-WCE 与 B5-P2 的 robust score。逐种子 P2−B0 为 `+0.00559956`、`+0.00379148`、`−0.00008968`。三种子均值差为 `+0.00310045`，样本标准差（`ddof=1`）为 `0.00290689`。模型均值±样本标准差分别为 B0 `0.74167670 ± 0.00145806`、P2 `0.74477715 ± 0.00149212`。图内未使用置信区间、显著性标记或 p 值。
+## 数值核对
 
-### (B) 验证集混淆矩阵
+### (A) 三次初始化配对鲁棒分数
 
-采用锁定主预测器 B5-P2 seed42 的 clean validation 预测，验证样本数 728。类别顺序为消极、中性、积极。计数矩阵（行是真实类别，列为预测类别）为：
+| 随机种子 | B0 robust score | P2 robust score | P2−B0 |
+|---:|---:|---:|---:|
+| 42 | 0.74024793 | 0.74584749 | +0.00559956 |
+| 43 | 0.74161978 | 0.74541125 | +0.00379148 |
+| 44 | 0.74316239 | 0.74307270 | −0.00008968 |
 
-```text
-[[150, 27,  29],
- [ 34, 80,  70],
- [ 45, 51, 242]]
-```
+三种子配对差均值为 `+0.00310045`，样本标准差（`ddof=1`）为 `0.00290689`。B0 三种子均值±样本标准差为 `0.74167670 ± 0.00145806`；P2 为 `0.74477715 ± 0.00149212`。图内的“±”指样本标准差，不是置信区间。没有显著性检验或 p 值。
 
-每行归一化后与计数一同标注；行支持数分别为 206、184、338。对角线准确率与锁定 clean 验证 Accuracy `0.64835165` 一致。此面板是单个锁定主预测器的诊断矩阵，不是三种子集成结果。
+### (B) 原生视觉整段全零子集
 
-### (C) 原生视觉整段全零子集
+样本数为每个 seed 15。图中只展示 Accuracy，逐 seed 数值如下：
 
-子集样本数为 15。图中按同一随机种子并列连接 B0-WCE 与 B5-P2，只显示已有 Accuracy、Macro-F1 与 Pearson。实际数值如下：
+| 随机种子 | B0 准确率 | P2 准确率 |
+|---:|---:|---:|
+| 42 | 0.533333 | 0.466667 |
+| 43 | 0.533333 | 0.466667 |
+| 44 | 0.466667 | 0.466667 |
 
-| 种子 | 模型 | Accuracy | Macro-F1 | Pearson |
-|---:|---|---:|---:|---:|
-| 42 | B0-WCE | 0.533333 | 0.555556 | 0.337119 |
-| 42 | B5-P2 | 0.466667 | 0.497280 | 0.243761 |
-| 43 | B0-WCE | 0.533333 | 0.555556 | 0.369924 |
-| 43 | B5-P2 | 0.466667 | 0.497280 | 0.400894 |
-| 44 | B0-WCE | 0.466667 | 0.444444 | 0.290520 |
-| 44 | B5-P2 | 0.466667 | 0.444444 | 0.291885 |
+三种子均值±样本标准差：B0 `0.511111 ± 0.038490`，P2 `0.466667 ± 0.000000`。该小子集仅用于薄弱场景诊断，不代表总体性能。原始 Macro-F1、MAE、Pearson 仍保存在输入结果文件中，本版不展示。
 
-图中不呈现 MAE。该小子集只作为失效模式诊断，不外推为总体性能结论。
+## 建议图注
 
-## 数据与实验边界
+**图9 随机初始化稳定性与薄弱场景诊断。**（A）三个随机初始化下 B0 与 P2 的验证集鲁棒分数配对结果，连线表示相同初始化；平均配对差为 `+0.003100 ± 0.002907`（三种子的样本标准差），其中两次为正、一次近乎持平。（B）原生视觉整段全零子集（每个随机种子 `n=15`）上的准确率；圆点表示单个初始化，菱形及误差线表示三次初始化的均值和样本标准差。
 
-- 所有展示指标和计数均来自已保存的 Attachment2 validation 实验结果或其既有绘图汇总文件；没有重新计算模型预测。
-- 使用了三个已锁定初始化 seed 42/43/44；A、C 中点线按相同 seed 配对。B 选用锁定的 P2 seed42 主预测器。
-- 没有新训练、调参或 checkpoint 修改；没有读取 Attachment2 test，也没有使用 Attachment3/4。
-- 图中的低饱和蓝色表示基线模型，橙色表示本文模型；混淆矩阵采用浅蓝序列色。
+## 实验范围与文件 QA
 
-## 输出校验
-
-- `fig09_q2_seed_pairing_error_analysis.png`：2109×1276 像素，PNG DPI 元数据约 300×300。
-- `fig09_q2_seed_pairing_error_analysis.pdf`：单页矢量 PDF，版面约 178.6×108.0 mm。
-- `plot_fig09_q2_seed_pairing_error_analysis.py` 可从以上既有 CSV 重新生成图，不加载模型或特征。
+- 所有数值来自现有 Q2 Attachment2 validation 实验结果及既有汇总 CSV；没有重新运行推理或计算新模型指标。
+- 使用种子 42/43/44 的已有对应结果；无新训练、无调参、无 checkpoint 修改。
+- 未使用 Attachment2 test、Attachment3 或 Attachment4。
+- 当前 PNG/PDF 已按 Figure 11/12 的版式重绘；未改论文正文、表格或实验结果。
+- 原三联版 PNG/PDF、数据说明和绘图脚本保存在本目录 `archive/` 下的 `_v1` 文件中。
+- PNG 为 `2161 × 955`、约 `300 dpi`；PDF 为一页矢量图，画布约 `183 × 81 mm`。
