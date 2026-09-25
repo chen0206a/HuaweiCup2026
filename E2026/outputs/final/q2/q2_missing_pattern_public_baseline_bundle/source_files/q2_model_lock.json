@@ -1,0 +1,339 @@
+{
+  "model_status": "LOCKED",
+  "model_name": "B5-P2 Attention Residual Pooling",
+  "model_version": "q2_final_2026-09-24",
+  "generated_at_utc": "2026-09-24T04:00:28.428205+00:00",
+  "git_commit": "aa3f07cc8a43d2ffe46f81f3d150143b7fd485fe",
+  "git_commit_role": "source tree before this generated lock commit",
+  "baseline": "B0-WCE",
+  "architecture": "B0 masked mean plus per-modality scalar attention residual; frozen B0",
+  "input_dimensions": {
+    "sequence_length": 50,
+    "text": 768,
+    "audio": 74,
+    "vision": 35
+  },
+  "class_mapping": {
+    "0": "Negative",
+    "1": "Neutral",
+    "2": "Positive"
+  },
+  "loss": {
+    "classification": "balanced WeightedCE",
+    "regression": "SmoothL1",
+    "lambda_reg": 1.0
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001
+  },
+  "training_protocol": {
+    "batch_size": 128,
+    "max_epochs": 80,
+    "patience": 12,
+    "normalization": "none",
+    "augmentation": "none",
+    "P2_frozen_B0_eval_mode": true,
+    "P2_trainable": "attention scorers + 3 gamma scalars"
+  },
+  "benchmark": {
+    "sha256": "3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff",
+    "seed": 20260923,
+    "definition": {
+      "absolute_path": "D:/华为杯/E2026/outputs/metrics/b2_benchmark_definition.json",
+      "relative_path": "outputs/metrics/b2_benchmark_definition.json",
+      "exists_locally": true,
+      "size_bytes": 7318,
+      "sha256": "3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff",
+      "file_type": ".json"
+    },
+    "clean_condition_count": 1,
+    "missing_scenario_count": 54
+  },
+  "training_seeds": [
+    42,
+    43,
+    44
+  ],
+  "checkpoint_manifest": {
+    "absolute_path": "D:/华为杯/E2026/outputs/final/q2/q2_checkpoint_manifest.json",
+    "relative_path": "outputs/final/q2/q2_checkpoint_manifest.json"
+  },
+  "checkpoint_paths": {
+    "B0-WCE:42": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+      "relative_path": "outputs/checkpoints/b0_weighted_ce_best_selection_score.pt",
+      "exists_locally": true,
+      "size_bytes": 664280,
+      "sha256": "20231a1436f1908f9271f420d66d209bd9e4f5e0b4c7bb9757820fa0f7e6e80a",
+      "file_type": ".pt"
+    },
+    "B5-P2:42": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_pooling_p2_best_robust_score.pt",
+      "relative_path": "outputs/checkpoints/b5_pooling_p2_best_robust_score.pt",
+      "exists_locally": true,
+      "size_bytes": 671017,
+      "sha256": "cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff",
+      "file_type": ".pt"
+    },
+    "B0-WCE:43": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt",
+      "relative_path": "outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt",
+      "exists_locally": true,
+      "size_bytes": 664216,
+      "sha256": "cf51892f79f135faf5e38ff338363552b52aa68b5616c99ea6489ca73f52a3de",
+      "file_type": ".pt"
+    },
+    "B5-P2:43": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt",
+      "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt",
+      "exists_locally": true,
+      "size_bytes": 671725,
+      "sha256": "e4f814a5a986a37e217794a80fe5fb7e65c595b213844381076b63810b939e89",
+      "file_type": ".pt"
+    },
+    "B0-WCE:44": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt",
+      "relative_path": "outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt",
+      "exists_locally": true,
+      "size_bytes": 664216,
+      "sha256": "45d60973f3e1b0312fbc88e9f45cbe0a594b75288c59a27fbd781699aeeccc4a",
+      "file_type": ".pt"
+    },
+    "B5-P2:44": {
+      "absolute_path": "D:/华为杯/E2026/outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt",
+      "relative_path": "outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt",
+      "exists_locally": true,
+      "size_bytes": 671725,
+      "sha256": "cbd486e03a44f86311c5a61896846e529ce4d91f53b8a47d31b645fd08ea5d81",
+      "file_type": ".pt"
+    }
+  },
+  "parameter_counts": {
+    "B0_total": 163460,
+    "B0_trainable": 163460,
+    "P2_total": 164343,
+    "P2_trainable": 883
+  },
+  "validation_summary": {
+    "B0_clean": {
+      "accuracy": {
+        "mean": 0.6401098901098901,
+        "std": 0.0047583813394749845,
+        "values": [
+          0.6456043956043956,
+          0.6373626373626373,
+          0.6373626373626373
+        ]
+      },
+      "macro_f1": {
+        "mean": 0.6139303876941798,
+        "std": 0.009120742418254203,
+        "values": [
+          0.6039545367307048,
+          0.6159943192590218,
+          0.6218423070928129
+        ]
+      },
+      "mae": {
+        "mean": 0.6079476792450599,
+        "std": 0.010322510431373985,
+        "values": [
+          0.6157719938667839,
+          0.5962483981306982,
+          0.6118226457376975
+        ]
+      },
+      "pearson": {
+        "mean": 0.6409285942541115,
+        "std": 0.004319009984128296,
+        "values": [
+          0.6367858108186316,
+          0.6405954368877121,
+          0.6454045350559907
+        ]
+      },
+      "selection_score": {
+        "mean": 0.743294990430904,
+        "std": 0.0018421588206813532,
+        "values": [
+          0.741330793024988,
+          0.743569985510933,
+          0.7449841927567907
+        ]
+      }
+    },
+    "B0_mean_missing": {
+      "accuracy": {
+        "mean": 0.6348867182200516,
+        "std": 0.006242170408063446,
+        "values": [
+          0.6420940170940171,
+          0.6312067562067561,
+          0.6313593813593813
+        ]
+      },
+      "macro_f1": {
+        "mean": 0.6092439311021577,
+        "std": 0.007547019801043477,
+        "values": [
+          0.6015899164195033,
+          0.609462676769822,
+          0.6166792001171479
+        ]
+      },
+      "mae": {
+        "mean": 0.6111421129475354,
+        "std": 0.009782206527790322,
+        "values": [
+          0.6182728747877613,
+          0.5999901820054542,
+          0.6151632820493909
+        ]
+      },
+      "pearson": {
+        "mean": 0.635919993532125,
+        "std": 0.003830020264060352,
+        "values": [
+          0.6320436370179885,
+          0.6360144119472954,
+          0.6397019316310915
+        ]
+      },
+      "selection_score": {
+        "mean": 0.7400584068159205,
+        "std": 0.0011386890779047085,
+        "values": [
+          0.7391650682228051,
+          0.7396695688206625,
+          0.7413405834042941
+        ]
+      }
+    },
+    "P2_clean": {
+      "accuracy": {
+        "mean": 0.6419413919413919,
+        "std": 0.005718862635896011,
+        "values": [
+          0.6483516483516484,
+          0.6401098901098901,
+          0.6373626373626373
+        ]
+      },
+      "macro_f1": {
+        "mean": 0.624097363165142,
+        "std": 0.0026492257186657257,
+        "values": [
+          0.6234347966531252,
+          0.6270149857494879,
+          0.6218423070928129
+        ]
+      },
+      "mae": {
+        "mean": 0.6058807061804329,
+        "std": 0.006591120125110355,
+        "values": [
+          0.6082603473083249,
+          0.5984302270584382,
+          0.6109515441745356
+        ]
+      },
+      "pearson": {
+        "mean": 0.6472230885155449,
+        "std": 0.0025389570366516684,
+        "values": [
+          0.6461703697641643,
+          0.6501190766083197,
+          0.6453798191741505
+        ]
+      },
+      "selection_score": {
+        "mean": 0.7471675454168919,
+        "std": 0.001866691167738205,
+        "values": [
+          0.748373726333867,
+          0.7481115107467828,
+          0.7450173991700257
+        ]
+      }
+    },
+    "P2_mean_missing": {
+      "accuracy": {
+        "mean": 0.6340133631800299,
+        "std": 0.004920062841125847,
+        "values": [
+          0.6396774521774522,
+          0.6315628815628815,
+          0.6307997557997558
+        ]
+      },
+      "macro_f1": {
+        "mean": 0.6163421055204057,
+        "std": 0.0011903570003154581,
+        "values": [
+          0.6151938651363315,
+          0.6175705251878253,
+          0.6162619262370602
+        ]
+      },
+      "mae": {
+        "mean": 0.6091291317629691,
+        "std": 0.00601493905379249,
+        "values": [
+          0.6105075446779069,
+          0.6025446326751223,
+          0.614335217935878
+        ]
+      },
+      "pearson": {
+        "mean": 0.6414261432341324,
+        "std": 0.0024837171027192744,
+        "values": [
+          0.6403299412359205,
+          0.6442693709248781,
+          0.6396791175415986
+        ]
+      },
+      "selection_score": {
+        "mean": 0.7423867545892516,
+        "std": 0.0011320044549742371,
+        "values": [
+          0.7433212576213563,
+          0.742710996691823,
+          0.7411280094545757
+        ]
+      }
+    },
+    "B0_robust_mean": 0.7416766986234121,
+    "B0_robust_sample_std": 0.0014580622777859659,
+    "P2_robust_mean": 0.7447771500030718,
+    "P2_robust_sample_std": 0.0014921217407082457,
+    "paired_delta_mean": 0.0031004513796594932,
+    "paired_delta_sample_std": 0.002906890840329915,
+    "paired_delta_by_seed": {
+      "42": 0.005599561353715088,
+      "43": 0.003791476553505202,
+      "44": -8.968376824181057e-05
+    },
+    "interpretation": "2/3 positive; seed44 approximately tied; seed-sensitive, not universal improvement"
+  },
+  "attachment3_status": "SEALED",
+  "attachment2_test_used_for_selection_this_stage": false,
+  "source_result": {
+    "absolute_path": "D:/华为杯/E2026/outputs/metrics/b5_p2_multiseed_summary.json",
+    "relative_path": "outputs/metrics/b5_p2_multiseed_summary.json",
+    "exists_locally": true,
+    "size_bytes": 548216,
+    "sha256": "dcd2e04988bebb57f523fe9976e9f344b9c28a5786846b805bade63adb4adc90",
+    "file_type": ".json"
+  },
+  "safety_checks": {
+    "raw_files_sha256_unchanged_during_lock": true,
+    "original_split_unchanged": true,
+    "benchmark_file_sha256_unchanged_and_not_regenerated": true,
+    "six_main_checkpoint_sha256_unchanged_and_not_overwritten": true,
+    "attachment3_content_not_parsed_or_deserialized": true,
+    "attachment2_test_not_used_for_model_selection": true
+  }
+}
