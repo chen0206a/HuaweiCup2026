@@ -1,13 +1,17 @@
 \section{问题二：缺失场景下的多模态情感预测模型}\label{sec:q2}
 
 \subsection{问题分析与总体方案}\label{subsec:q2_plan}
-局部连续缺失会使部分模态在统一序列中的一段时间没有可用观测，而文本、语音和视觉原本的有效位置仍需区分。问题二直接使用附件2已经预计算并对齐的三模态数值特征。本文先建立以掩码均值池化和简单融合为核心的基线模型，再以轻量时间注意力残差池化补充序列内的信息选择能力。图~\ref{fig:q2_architecture} 概括本文模型；两个预测分支分别给出三类情感和连续强度。
+局部连续缺失会使部分模态在统一序列中的一段时间没有可用观测，而文本、语音和视觉原本的有效位置仍需区分。问题二直接使用附件2已经预计算并对齐的三模态数值特征。本文以掩码均值池化和轻量时间注意力残差池化构成预测主干，图~\ref{fig:fig06_q2_final_model} 概括其结构；两个预测分支分别输出三类情感和连续强度。
+
+模型结构由三条并行的单模态路径和一个共享预测部分构成。每条路径仅在有效时间位置聚合特征，均值表示经独立线性映射、层归一化、GELU及随机失活后，再与同一映射下的时间注意力表示作残差相加；三模态表示拼接后输入融合层，并连接分类和回归两个输出头。时间打分仅在各模态内部计算，填充位置在 softmax 前屏蔽。
+
+该设计保留均值池化对整体上下文的概括，同时允许模型依据输入内容对局部时间位置赋予不同权重。残差系数以零初始化，使新增注意力分支开始时不改变基线表示；模态内打分则避免引入额外的跨模态交互假设。因而该结构以较少新增参数考察时间池化的作用，并保持分类与连续强度预测共享同一融合表示。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.98\textwidth]{figures/q2/q2_architecture.pdf}
+  \includegraphics[width=1.0\textwidth]{figures/q2/fig06_q2_final_model.pdf}
   \caption{问题二的轻量时间注意力残差池化结构。三模态分别计算有效位置上的掩码均值与模态内时间注意力池化；共享模态映射后的残差表示经拼接融合，分别输出三类情感和连续强度。}
-  \label{fig:q2_architecture}
+  \label{fig:fig06_q2_final_model}
 \end{figure}
 
 \subsection{数据表示与预测任务}\label{subsec:q2_data}
@@ -63,21 +67,21 @@ S=\tfrac14\operatorname{Acc}+\tfrac14\operatorname{MacroF1}
 R=\tfrac12\!\left(S_{\mathrm{clean}}+\frac1{54}\sum_{j=1}^{54}S_j\right).
 \label{eq:q2_score}
 \end{equation}
-$R$仅为本项目的验证比较指标，不是竞赛官方评分。基线参数按完整输入验证分数确定，改进模型按预定的$R$确定；比较时保留这一选择口径差异。图~\ref{fig:q2_ratio} 和图~\ref{fig:q2_location} 分别用于展示比例变化与模态/位置组合。
+$R$仅为本项目的验证比较指标，不是竞赛官方评分。基线参数按完整输入验证分数确定，改进模型按预定的$R$确定；比较时保留这一选择口径差异。图~\ref{fig:fig07_q2_missing_ratio} 和图~\ref{fig:fig08_q2_missing_location} 分别用于展示比例变化与模态/位置组合。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.96\textwidth]{figures/q2/q2_missing_ratio_four_metrics.png}
+  \includegraphics[width=1.0\textwidth]{figures/q2/fig07_q2_missing_ratio_four_metrics.png}
   \caption{不同单模态连续缺失比例下的验证集性能。每个比例先对三种模态与前、中、后三种遮挡位置取平均，再绘制三次随机初始化的均值与样本标准差；阴影为样本标准差。蓝线为掩码均值池化基线，红线为时间注意力残差池化模型；MAE 越低越好，其余指标越高越好。}
-  \label{fig:q2_ratio}
+  \label{fig:fig07_q2_missing_ratio}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering
   % TODO: replace with final figure
-  \includegraphics[width=0.98\textwidth]{figures/q2/figure5_q2_missing_location_heatmap.pdf}
+  \includegraphics[width=1.0\textwidth]{figures/q2/fig08_q2_missing_location_modality_stress.pdf}
   \caption{缺失模态及位置对模型间性能差异的影响。宏平均F1、相关系数和准确率为“本文模型减基线模型”，MAE为“基线模型减本文模型”，故正值均表示本文模型较优；色块为验证集三次随机初始化均值之差。}
-  \label{fig:q2_location}
+  \label{fig:fig08_q2_missing_location}
 \end{figure}
 
 \subsection{实验结果与分析}\label{subsec:q2_results}
@@ -102,17 +106,17 @@ $R$仅为本项目的验证比较指标，不是竞赛官方评分。基线参�
 \end{table}
 
 \subsubsection{缺失比例、模态与位置}
-不同遮挡比例的分组结果如图~\ref{fig:q2_ratio} 所示。随着缺失范围扩大，两个模型的内部综合分数整体下降；在比例0.5的分组中，本文模型与基线模型的平均综合分数分别为0.7392与0.7372。图~\ref{fig:q2_location} 进一步显示，收益依赖模态和缺失位置：18个模态/位置组合中，宏平均F1有17个均值差为正，相关系数有18个为正，MAE改善有16个为正，而准确率仅6个为正。该方向计数不表示每次随机初始化或每个样本均受益。文本与语音、文本与视觉同时缺失时，综合收益接近零，说明关键模态同时失去观测后，简单池化残差的补偿能力有限。
+不同遮挡比例的分组结果如图~\ref{fig:fig07_q2_missing_ratio} 所示。随着缺失范围扩大，两个模型的内部综合分数整体下降；在比例0.5的分组中，本文模型与基线模型的平均综合分数分别为0.7392与0.7372。图~\ref{fig:fig08_q2_missing_location} 进一步显示，收益依赖模态和缺失位置：18个模态/位置组合中，宏平均F1有17个均值差为正，相关系数有18个为正，MAE改善有16个为正，而准确率仅6个为正。该方向计数不表示每次随机初始化或每个样本均受益。文本与语音、文本与视觉同时缺失时，综合收益接近零，说明关键模态同时失去观测后，简单池化残差的补偿能力有限。
 
 \subsubsection{随机初始化稳定性与误差分析}
-三次对应初始化下，本文模型相对基线模型的综合鲁棒分数差依次为$+0.005600$、$+0.003791$和$-0.000090$，平均为$+0.003100\pm0.002907$（样本标准差）。两次获得正向改进，一次基本持平，表明改进具有一定初始化敏感性；图~\ref{fig:q2_seed} 预留配对结果及错误类别分析。基线与本文模型的鲁棒分数均值分别为$0.741677\pm0.001458$和$0.744777\pm0.001492$。验证集中有15个视觉整段原生全零样本，保留该子集及原标签后观察到部分初始化下本文模型在该子集的分类表现低于基线，因此不能用总体均值掩盖这一局部风险。
+三次对应初始化下，本文模型相对基线模型的综合鲁棒分数差依次为$+0.005600$、$+0.003791$和$-0.000090$，平均为$+0.003100\pm0.002907$（样本标准差）。两次获得正向改进，一次基本持平，表明改进具有一定初始化敏感性；图~\ref{fig:fig09_q2_seed_error_analysis} 预留配对结果及错误类别分析。基线与本文模型的鲁棒分数均值分别为$0.741677\pm0.001458$和$0.744777\pm0.001492$。验证集中有15个视觉整段原生全零样本，保留该子集及原标签后观察到部分初始化下本文模型在该子集的分类表现低于基线，因此不能用总体均值掩盖这一局部风险。
 
 \begin{figure}[htbp]
   \centering
   % TODO: replace with final figure
   \fbox{\parbox[c][3.8cm][c]{0.88\textwidth}{\centering 待替换：三次初始化的配对综合鲁棒分数变化、验证集混淆矩阵及原生视觉全零子集诊断。}}
   \caption{随机初始化稳定性与误差分析。配对点对应相同初始化；标准差表示三次初始化间的离散程度，不作置信区间解释。当前为占位。}
-  \label{fig:q2_seed}
+  \label{fig:fig09_q2_seed_error_analysis}
 \end{figure}
 
 \subsection{消融分析与本问小结}\label{subsec:q2_ablation}
