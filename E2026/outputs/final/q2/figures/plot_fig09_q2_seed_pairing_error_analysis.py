@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-"""Q2 Figure 9 in the manuscript Figure 11/12 visual system.
+"""Q2 seed pairing and error analysis figure.
 
 Reads existing validation result tables only; no inference or metric recomputation
-from predictions is performed here.
+from predictions is performed here. The manuscript supplies the figure number and
+overall title through its caption.
 """
 from pathlib import Path
 
@@ -126,7 +127,7 @@ def main():
     # A little more page area gives the confusion matrices larger, readable cells.
     fig = plt.figure(figsize=(200 * mm, 154 * mm), facecolor="white")
     gs = fig.add_gridspec(
-        2, 2, left=0.085, right=0.985, bottom=0.105, top=0.855,
+        2, 2, left=0.085, right=0.985, bottom=0.105, top=0.90,
         width_ratios=(1.0, 1.35), wspace=0.30, hspace=0.48,
     )
     ax_a = fig.add_subplot(gs[0, 0])
@@ -135,9 +136,6 @@ def main():
     ax_b2 = fig.add_subplot(gs_b[0, 1], sharex=ax_b0, sharey=ax_b0)
     ax_c = fig.add_subplot(gs[1, 0])
     ax_d = fig.add_subplot(gs[1, 1])
-
-    fig.suptitle("图9 最终模型的稳定性与误差分析", y=0.972, fontsize=9,
-                 fontweight="bold", color=DARK)
 
     # (a) Horizontal dumbbell chart for paired initialization results.
     style_axis(ax_a, grid_axis="x")
@@ -193,7 +191,7 @@ def main():
             spine.set_visible(False)
     ax_b0.set_ylabel("真实类别", fontsize=7.6, labelpad=12)
     ax_b2.tick_params(labelleft=False)
-    fig.text(0.505, 0.861, "(b) 验证集混淆矩阵（种子42，n=728）",
+    fig.text(0.505, 0.906, "(b) 验证集混淆矩阵（种子42，n=728）",
              ha="left", va="bottom", fontsize=8.2, fontweight="bold", color=DARK)
 
     # (c) Grouped, dotted bars styled after both reference scripts. Seed means are points.

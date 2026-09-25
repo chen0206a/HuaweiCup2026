@@ -1,4 +1,7 @@
-"""Draw Q2 Figure 5 from the completed Attachment2 validation summaries."""
+"""Draw the Q2 missing location heatmap from Attachment2 validation summaries.
+
+Figure numbering and the overall title are supplied by the manuscript caption.
+"""
 
 from __future__ import annotations
 
@@ -163,9 +166,8 @@ def make_figure(matrices: dict[str, dict[str, np.ndarray]], values: pd.DataFrame
     norm = TwoSlopeNorm(vmin=-limit, vcenter=0.0, vmax=limit)
 
     fig = plt.figure(figsize=(183 / 25.4, 107 / 25.4), facecolor="white")
-    grid = fig.add_gridspec(2, 4, left=0.175, right=0.885, bottom=0.145, top=0.82,
+    grid = fig.add_gridspec(2, 4, left=0.175, right=0.885, bottom=0.145, top=0.90,
                            wspace=0.16, hspace=0.42)
-    fig.suptitle("图5 缺失模态与位置下的相对性能变化", x=0.51, y=0.975, fontsize=9.7, fontweight="bold", color="#2D3338")
     for row_index, (group_name, modalities) in enumerate((("single", SINGLE), ("double", DOUBLE))):
         for col_index, (metric, title) in enumerate(zip(METRICS, TITLES)):
             ax = fig.add_subplot(grid[row_index, col_index])
@@ -192,7 +194,7 @@ def make_figure(matrices: dict[str, dict[str, np.ndarray]], values: pd.DataFrame
                     ax.text(j + 0.5, i + 0.5, shown, ha="center", va="center",
                             fontsize=6.25, color="#263039")
 
-    fig.text(0.017, 0.685, "（a）\n单模态缺失", fontsize=7.6, fontweight="bold", va="center", color="#30363B")
+    fig.text(0.017, 0.745, "（a）\n单模态缺失", fontsize=7.6, fontweight="bold", va="center", color="#30363B")
     fig.text(0.017, 0.295, "（b）\n双模态缺失", fontsize=7.6, fontweight="bold", va="center", color="#30363B")
     color_axis = fig.add_axes((0.917, 0.22, 0.017, 0.54))
     strip_count = 64

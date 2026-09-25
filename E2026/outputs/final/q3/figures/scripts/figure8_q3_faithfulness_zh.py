@@ -1,7 +1,8 @@
-"""Render the final Chinese Figure 8 from locked HEAF validation metrics.
+"""Render the final Chinese Q3 faithfulness figure from locked HEAF metrics.
 
 Only language, palette, layout and drawing style change. The figure reads the
 original metrics JSON and preserves all plotted means, counts and bootstrap CIs.
+The manuscript supplies the figure number and overall title through its caption.
 """
 
 from __future__ import annotations
@@ -201,10 +202,8 @@ def draw_margin_gain(ax, metrics: dict) -> None:
 def draw(metrics: dict):
     mm = 1 / 25.4
     fig = plt.figure(figsize=(183 * mm, 110 * mm), facecolor="white")
-    fig.text(0.07, 0.966, "图8  解释有效性与主导模态统计",
-             ha="left", va="top", fontsize=9.3, fontweight="bold", color=DARK)
     gs = GridSpec(2, 2, figure=fig, width_ratios=[1.0, 1.28],
-                  left=0.105, right=0.96, top=0.835, bottom=0.135,
+                  left=0.105, right=0.96, top=0.91, bottom=0.135,
                   wspace=0.37, hspace=0.56)
     ax_a = fig.add_subplot(gs[0, 0])
     ax_b = fig.add_subplot(gs[:, 1])
