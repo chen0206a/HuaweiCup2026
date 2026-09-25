@@ -1,0 +1,137 @@
+\section{问题三：多模态情感预测的层级证据归因}\label{sec:q3}
+
+\subsection{问题分析与总体框架}\label{subsec:q3_overview}
+情感预测给出类别与强度，却不能直接说明哪种模态、哪一段有效序列以及哪项原始证据影响了输出。为此，在问题二确定的多模态情感预测模型基础上，本文构建层级式多模态证据归因框架（Hierarchical Evidence Attribution Framework，HEAF）。该框架依次计算模态级精确贡献、模态对交互、连续窗口遮挡效应、删除干预一致性，并在可核验时将特征位置映射回原始文本。总体流程见图~\ref{fig:q3_framework}。以下解释的是固定预测函数对输入干预的响应，不直接等同于情绪的现实因果来源。
+
+\begin{figure}[htbp]
+  \centering
+  % TODO: replace with final figure if the final manuscript uses a revised style
+  \includegraphics[width=0.98\textwidth]{figures/q3/figure7_q3_framework_zh.pdf}
+  \caption{多模态情感预测与层级证据归因框架。三模态联盟用于模态贡献和交互分析，连续遮挡定位特征空间关键区间；原始文本证据可核验，音频与视觉的秒数和帧号映射尚未核验。}
+  \label{fig:q3_framework}
+\end{figure}
+
+\subsection{模态级精确Shapley归因}\label{subsec:q3_shapley}
+三种模态的联盟共有$2^3=8$个，故可逐一计算所有组合，无需采样近似。令$\mathcal M=\{T,A,V\}$，$S\subseteq\mathcal M$ 表示保留的模态集合；未保留模态只在有效位置清零，填充与原生零记录不变。分类解释固定完整输入时预测的类别$c^\star$，以该类别相对其余类别的对数优势为联盟目标：
+\begin{equation}
+v_{\mathrm c}(S)
+=z_{c^\star}(S)-\log\!\sum_{k\ne c^\star}\exp z_k(S),
+\qquad
+v_{\mathrm r}(S)=\widehat y^{\mathrm r}(S).
+\label{eq:q3_value}
+\end{equation}
+空联盟对应所有有效模态均被清零后的模型输出。对分类或回归目标分别计算
+\begin{equation}
+\phi_m
+=\sum_{S\subseteq\mathcal M\setminus\{m\}}
+\frac{|S|!\,(2-|S|)!}{3!}
+\bigl[v(S\cup\{m\})-v(S)\bigr].
+\label{eq:q3_shapley}
+\end{equation}
+由此有$\sum_m\phi_m=v(\mathcal M)-v(\varnothing)$，可用作计算完整性检查。分类贡献的单位是对数优势，回归贡献的单位是连续情感强度，两者不可直接混合排序。分类主导模态取最大正贡献；若三者均不为正，则取绝对贡献最大者并标明其非正性质。回归主导模态取绝对贡献最大者；并列时按文本、语音、视觉的固定顺序处理。下述时间分析遵循分类主导模态。
+% TODO: add a verified Shapley reference to the bibliography before final submission.
+
+\subsection{模态间交互分析}\label{subsec:q3_interaction}
+单个模态贡献之外，本文对文本--语音、文本--视觉和语音--视觉分别计算二阶交互。对模态$i,j$及剩余模态$k$，令
+\begin{equation}
+\begin{aligned}
+I_{ij}=\tfrac12\{&
+v(\{i,j\})-v(\{i\})-v(\{j\})+v(\varnothing)\\
+&+v(\mathcal M)-v(\{i,k\})-v(\{j,k\})+v(\{k\})\}.
+\end{aligned}
+\label{eq:q3_interaction}
+\end{equation}
+该量平均了不含和包含第三模态两种背景下的二阶差分。正值表示联合贡献超过相应加性基准；负值表示联合贡献低于该基准，其具体含义还需结合样本与目标函数解释，不能一概称为冗余。分类和回归仍分别计算交互量。
+
+\subsection{连续窗口时间遮挡与关键区间定位}\label{subsec:q3_temporal}
+模态级归因给出重要模态，却未确定模态序列中的局部位置。对分类主导模态，在有效长度$L_i$内设窗口长度$w_i=\max(1,\operatorname{round}(0.30L_i))$，以步长1遍历所有连续窗口。记$g(\mathbf x)$为式~\eqref{eq:q3_value} 的固定类别对数优势，窗口$W$的遮挡效应为
+\begin{equation}
+D_i(W)=g(\mathbf x_i)-g\!\left(\mathbf x_i^{\setminus W}\right),
+\label{eq:q3_occlusion}
+\end{equation}
+其中仅该模态在窗口$W$内的有效特征被清零。若存在正效应，取$D_i(W)$最大的窗口；否则取绝对效应最大的窗口并标注方向。平局选择最早位置。覆盖某位置的窗口效应最大值形成50位局部曲线。图中的区间均为对齐特征槽位，不自动对应原媒体的秒数或帧号。对回归可报告有符号或绝对输出变化，不能预设遮挡使情感强度单向下降。
+
+\subsection{解释忠实性的干预一致性检验}\label{subsec:q3_faithfulness}
+时间窗口比例0.30是在附件2验证集的设计子集上确定的。按视频标识分组后，设计子集含332条片段、113个视频标识，独立的审计子集含396条片段、126个视频标识，两组视频标识无交集。审计时把所选窗口与32次随机抽取的等长窗口比较，并按时间曲线删除10\%、20\%、30\%、40\%的有效位置；区间估计采用视频分组自助采样。
+
+表~\ref{tab:q3_faithfulness} 显示，审计子集上所选窗口的平均分类对数优势下降为0.482771，随机窗口为0.082036，差值0.400735，对应分组自助采样95\%区间为$[0.3635,0.4372]$；以每条样本32次随机抽样的均值为对照，所选窗口效应更大的审计样本比例为1.0。置信度下降差为0.077718，类别logit下降差为0.239688。连续回归输出的有符号差为$-0.018095$且区间跨零，但绝对变化差为0.103545。图~\ref{fig:q3_faithfulness} 同时展示728条验证样本的主导模态分布及审计子集的删除曲线。
+
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\caption{附件2验证集审计子集的解释干预一致性结果（396条片段；按视频分组的95\%自助采样区间）}
+\label{tab:q3_faithfulness}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+输出量 & 所选窗口 & 随机等长窗口 & 平均差 & 95\%区间\\
+\midrule
+分类对数优势下降 & 0.482771 & 0.082036 & 0.400735 & $[0.3635,0.4372]$\\
+分类置信度下降 & 0.093286 & 0.015567 & 0.077718 & $[0.0712,0.0843]$\\
+分类logit下降 & 0.292982 & 0.053294 & 0.239688 & $[0.2195,0.2603]$\\
+回归有符号变化 & 0.002082 & 0.020177 & $-0.018095$ & $[-0.0526,0.0141]$\\
+回归绝对变化 & 0.202760 & 0.099215 & 0.103545 & $[0.0883,0.1203]$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  % TODO: replace with final figure if typography changes in the final manuscript
+  \includegraphics[width=0.98\textwidth]{figures/q3/figure8_q3_faithfulness.pdf}
+  \caption{验证集上的主导模态与删除干预结果。（A）728条样本的分类/回归主导模态计数；（B）审计子集上所选与随机窗口的分类边际下降及视频分组95\%区间；（C）两种删除方式的配对差。所选窗口来自同一候选集合的最大影响值，因此相对随机窗口的优势含选择效应。}
+  \label{fig:q3_faithfulness}
+\end{figure}
+
+删除10\%、20\%、30\%、40\%有效位置时，所选位置相对随机位置的平均分类边际下降差分别为0.108296、0.237758、0.418076和0.465465。但单个关键窗口原本就是从候选窗口中选出最大影响者，所选窗口对同一预测函数的平均优势带有内生选择效应。该结果应解释为模型扰动响应的一致性检验，而非独立的预测正确性或现实因果证明。对另外两次随机初始化，仅在固定审计样本上检查解释方向：分类主导模态一致率分别为0.869和0.831，回归主导模态一致率为0.778和0.783，分类贡献排序的平均Spearman相关系数分别为0.758和0.694，回归贡献排序分别为0.745和0.760，同模态关键区间平均交并比分别为0.579和0.527。这些数值说明解释存在模型初始化差异，不能称为高度稳定。
+
+\subsection{原始证据映射与可核验边界}\label{subsec:q3_grounding}
+特征槽位上的解释只有在能核实预处理来源时才能回到原始媒体。附件4的文本链路通过同一索引的BERT最后层向量重构、标记序列及分词偏移量核验：20条样本共604个有效文本槽位的完整行间余弦最大值均位于同一索引，平均同索引余弦为0.999999994，最大绝对特征差为$3.0041\times10^{-5}$，重构均方根误差为$8.3977\times10^{-7}$。因此，文本特征槽位可连接到对应标记及原始文本字符跨度；特殊标记不生成伪造文本证据。历史文本编码权重的确切版本未留存，限制了对原始生成过程的版本追溯。
+
+音频和视觉方面，附件4没有提供可验证的“特征槽位$\rightarrow$媒体秒数/视频帧”映射，也不能仅凭视频时长将50个槽位均分。故本文对音频与视觉只报告特征空间中的关键区间，原始秒级时间与帧号保持未验证。图~\ref{fig:q3_cases} 中的视频截图只表示对应视频的场景背景，不是由解释算法定位出的关键视觉帧。
+
+\subsection{附件4预测解释结果}\label{subsec:q3_attachment4}
+依据前述方法对附件4的20条对齐样本生成预测与解释卡，20个标识均有对应的视频文件，输出字段、有限值及模态贡献加和关系完成一致性检查。附件4没有真实情感标签，所以表~\ref{tab:q3_attachment4} 仅汇总预测类别、主导模态和原始证据核验状态，不报告准确率、宏平均F1、MAE、相关系数或预测正确性。
+
+\begin{table}[htbp]
+\centering\small
+\caption{附件4的无标签预测及解释摘要（共20条样本）}
+\label{tab:q3_attachment4}
+\begin{tabular}{@{}llrr@{}}
+\toprule
+统计项 & 类别或状态 & 数量 & 比例\\
+\midrule
+\multirow{3}{*}{预测情感类别} & 消极 & 7 & 35\%\\
+ & 中性 & 5 & 25\%\\
+ & 积极 & 8 & 40\%\\
+\addlinespace
+\multirow{3}{*}{分类主导模态} & 文本 & 19 & 95\%\\
+ & 语音 & 0 & 0\%\\
+ & 视觉 & 1 & 5\%\\
+\addlinespace
+\multirow{3}{*}{回归主导模态} & 文本 & 18 & 90\%\\
+ & 语音 & 0 & 0\%\\
+ & 视觉 & 2 & 10\%\\
+\addlinespace
+\multirow{2}{*}{原始证据核验状态} & 已核验 & 19 & 95\%\\
+ & 未核验 & 1 & 5\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+分类与回归的主导模态在17条样本上相同，占85\%。原始证据核验的19条为文本主导样本；视觉主导的一条只保留特征槽位区间及未核验标记。以上计数只描述该20条无标签样本上的模型输出，不构成性能估计。
+
+\subsection{典型样本分析与本问小结}\label{subsec:q3_cases}
+图~\ref{fig:q3_cases} 展示两条按既定规则选取的案例。样本14预测为中性，连续强度$+0.155$，分类置信度0.557；分类模态贡献依次为文本$+1.54$、语音$+0.05$、视觉$-1.02$。其文本主导关键特征区间为$[1,12)$，经核验可连接至原文片段“He is the co-founder of Rossen and Vet”。这些贡献解释该模型的当前决策，不代表真实情感标签已被验证。
+
+样本02预测为消极，连续强度$-0.027$，分类置信度0.390；文本、语音、视觉的分类贡献分别为$-0.20$、$+0.23$和$+0.83$。视觉为主导模态，关键区间$[1,7)$只能解释为视觉特征槽位。图中的视频帧来自原片固定相对位置，提供场景背景，不能称为对应关键区间的原始帧。两个案例共同说明，解释卡应同时呈现可计算的模态贡献和证据映射的核验状态。
+
+\begin{figure}[htbp]
+  \centering
+  % TODO: replace with final figure if case-card layout changes in final typesetting
+  \includegraphics[width=0.98\textwidth]{figures/q3/figure9_q3_case_studies_v2.pdf}
+  \caption{附件4两条典型样本的层级解释。样本14给出已核验文本片段；样本02只定位视觉特征槽位，视频帧为原视频上下文展示，不表示算法定位出的关键帧。}
+  \label{fig:q3_cases}
+\end{figure}
+
+本问实现了由八种模态联盟到连续时间窗口、再到可核验原始文本证据的逐层解释。验证集干预结果支持解释与模型输出变化之间的一致性；附件4展示了无标签样本的具体预测和解释形式。音频及视觉的原始时间映射尚未核验，解释的适用范围止于特征空间，不应外推为真实情绪形成机制。
+\FloatBarrier
