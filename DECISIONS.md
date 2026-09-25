@@ -67,3 +67,8 @@
 决定：在 D007 锁定的 HEAF 协议和 B5-P2 seed42 checkpoint 上完成 Attachment4 aligned_50 20 个样本的最终无标签解释推理。checkpoint SHA256 前后均为 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`；不修改模型、解释协议或 A/V grounding 状态。Text evidence 仅在 VERIFIED 的 slot/token/raw_text 路径上填写；Audio/Vision 保持 UNVERIFIED，媒体时间/frame 为 null。输出状态 `Q3_FINAL_INFERENCE_COMPLETE`。
 依据：`E2026/outputs/q3/final/attachment4_delivery_check.md`、`attachment4_summary.json` 及 20 条 schema-validated JSONL。20/20 输入/配对通过，Shapley efficiency 最大误差低于 `9e-16`。分类主模态 Text/Vision/Audio=`19/1/0`，回归=`18/2/0`，主模态一致 `17/20`；Grounding verified/unverified=`19/1`。无真实标签或性能指标，未使用 Attachment2 test / Attachment3，未训练或调参。
 影响范围：仅完成并记录 E Q3 Attachment4 最终推理与解释交付；不改变 Q1/Q2、P2、HEAF、rho 或 faithfulness 协议。日期：2026-09-24。
+
+## D012 - E Q2 Attachment3 text interface and final inference
+
+决定：附件3对齐版30文件仅含 `text_bert/audio/vision`，先复用 Q3-2.6 已验证的 `bert-base-uncased` 有效前缀、最后层逐token重构路径。固定 revision `86b5e0934494bd15c9632b12f734a8a67f723594`、权重SHA256 `68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3`；在20个同时含官方 `text` 的附件4无标签样本上先验证604/604同索引，特征最大差 `3.0041e-5`、RMSE `8.3977e-7`，锁定Q2模型logits/回归最大差 `2.4438e-6`/`1.1176e-6`，均通过预先固定容差。随后仅以该固定适配器生成附件3文本特征，完成30/30最终无标签推理。
+依据：`E2026/outputs/final/q2/attachment3/attachment3_text_interface_audit.{md,json}`、`attachment3_summary.json`、`attachment3_delivery_check.md`。Q2 checkpoint、audio、vision、padding mask及回归后处理不变；未用附件3分布调参、未读标签、未用附件2 test。历史预计算BERT的原始revision仍未独立留档，结论限于现有数值接口近似一致。影响范围：E Q2附件3最终推理接口与交付；不改变D006主模型或验证协议。日期：2026-09-25。

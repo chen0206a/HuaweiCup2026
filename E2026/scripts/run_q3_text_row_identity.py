@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT))
 from src.q3.data_adapter import UnlabeledAligned50Dataset
 from src.q3.evidence_grounding import ground_interval
 from src.q3.text_grounding import load_pinned_tokenizer
+from src.q3.text_feature_reconstruction import reconstruct_valid_text_rows
 
 
 MANIFEST = ROOT / "data/manifests/q3/attachment4_inventory.json"
@@ -76,16 +77,8 @@ def main() -> None:
     sample_rows: dict[str, tuple[np.ndarray, np.ndarray, list[int]]] = {}
     for record in dataset.records:
         ids = np.asarray(record["text_bert"][0, :record["valid_length"]], dtype=np.int64)
-        mask = np.asarray(record["text_bert"][1, :record["valid_length"]], dtype=np.int64)
-        types = np.asarray(record["text_bert"][2, :record["valid_length"]], dtype=np.int64)
-        if not np.all(mask == 1):
-            raise ValueError(f"{record['id']}: valid prefix has non-one attention mask")
-        # Mirror Self-MM/MMSA-FET historical extraction: unpadded token sequence,
-        # no explicit attention_mask, last-layer token states, no pooling.
-        with torch.no_grad():
-            output = model(input_ids=torch.from_numpy(ids).unsqueeze(0),
-                           token_type_ids=torch.from_numpy(types).unsqueeze(0))
-            reconstructed = output.last_hidden_state.squeeze(0).cpu().numpy().astype(np.float32)
+        reconstructed = reconstruct_valid_text_rows(
+            model, record["text_bert"], record["valid_length"])
         provided = np.asarray(record["features"]["text"][:len(ids)], dtype=np.float32)
         if provided.shape != reconstructed.shape:
             raise ValueError(f"{record['id']}: row matrix shape mismatch {provided.shape} vs {reconstructed.shape}")

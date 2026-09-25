@@ -1,0 +1,33 @@
+experiment: attachment3_final_inference
+purpose: locked Q2 model final inference after validated text interface regression
+data:
+  attachment: 3
+  version: aligned_50
+  manifest: data/manifests/attachment3_sealed_inventory.json
+  sample_count: 30
+  sample_id_source: pickle_filename_stem
+  labels_used: false
+text_adapter:
+  source: src/q3/text_feature_reconstruction.py
+  model_and_tokenizer: bert-base-uncased
+  revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+  weights_sha256: 68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3
+  numerical_gate: outputs/final/q2/attachment3/attachment3_text_interface_audit.json
+predictor:
+  architecture: B5PoolingResidual
+  mode: mean_attention
+  training_seed: 42
+  checkpoint: outputs/checkpoints/b5_pooling_p2_best_robust_score.pt
+  checkpoint_sha256: cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff
+  normalization: none
+  padding_source: text_bert[1]
+  regression_postprocessing: none
+runtime:
+  device: cpu
+  batch_size: 8
+  num_workers: 0
+  stochastic_inference: false
+outputs:
+  delivery_csv: outputs/final/q2/attachment3/attachment3_predictions.csv
+  audit_csv: outputs/final/q2/attachment3/attachment3_predictions_audit.csv
+  summary: outputs/final/q2/attachment3/attachment3_summary.json

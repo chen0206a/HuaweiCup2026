@@ -1,13 +1,13 @@
 # 附件3最终推理输入接口审计
 
-**结论：停止正式推理。** 锁定的 Q2 主模型需要预计算的 `text[1,50,768]`，而本地附件3对齐版的 30 个 pickle 均未提供 `text`。按本次任务的“不一致即停止”规则，未执行模型前向，也未生成预测 CSV。状态为 `BLOCKED_INPUT_INTERFACE_MISMATCH`。
+**阶段记录（接口适配前）：** 锁定的 Q2 主模型需要预计算的 `text[1,50,768]`，而本地附件3对齐版的 30 个 pickle 均未提供 `text`。当时按“不一致即停止”规则未执行模型前向。随后按用户新指示复用 Q3 已验证 BERT 路径，完成特征与最终模型输出的双重回归测试并通过；后续状态见 `attachment3_text_interface_audit.md` 和 `attachment3_delivery_check.md`。
 
 ## 核验范围
 
 - 数据：官方附件3 `对齐版本/附件3_01.pkl` 至 `附件3_30.pkl`，共30个文件；未使用未对齐版本。
 - 清单：`data/manifests/attachment3_sealed_inventory.json`。30/30 文件 SHA256 与既有清单匹配。
 - 锁定模型：`outputs/final/q2/q2_model_lock.json` 中的 B5-P2 seed42 最终主 checkpoint，即 `outputs/checkpoints/b5_pooling_p2_best_robust_score.pt`。推理前后 SHA256 均为 `cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff`，与锁定清单一致。
-- 本地环境：Python 3.12.3、PyTorch 2.12.0+cpu、NumPy 2.1.3、Pandas 2.2.3。30 条样本规模足以在 CPU 上推理，但输入接口检查先于模型执行。
+- 本地环境：Python 3.13.5、PyTorch 2.12.0+cpu、NumPy 2.1.3、Pandas 2.2.3。30 条样本规模足以在 CPU 上推理，但本阶段输入接口检查先于模型执行。
 
 ## 实际数据结构
 
@@ -29,4 +29,4 @@
 
 本轮没有访问附件2 test、附件4或任何潜在附件3标签，没有计算 Accuracy、F1、MAE 或 Pearson，也没有生成无依据的预测结果。逐文件哈希、字段、形状和 dtype 见 `attachment3_input_audit.json`。
 
-`ATTACHMENT3_FINAL_INFERENCE_COMPLETE = NO`
+本文件保留适配前的审计结论；最终推理状态以 `attachment3_delivery_check.md` 为准。
