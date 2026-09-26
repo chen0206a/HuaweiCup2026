@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering\small\setlength{\tabcolsep}{4pt}
+\caption{公开方法的统一接口适配概览}\label{tab:q2_public_overview}
+\begin{tabularx}{.98\textwidth}{@{}>{\raggedright\arraybackslash}p{.13\textwidth}>{\raggedright\arraybackslash}p{.17\textwidth}>{\raggedright\arraybackslash}X r@{}}
+\toprule
+方法 & 类型 & 本文适配中的核心机制 & 参数量\\
+\midrule
+TFN\cite{q2tfn} & 张量融合 & 三路表示增广后的外积融合 & 4,840,670\\
+LMF\cite{q2lmf} & 低秩融合 & 模态专属低秩因子融合 & 323,276\\
+MFN\cite{q2mfn} & 时序记忆融合 & 三路递归编码、记忆注意力与门控记忆 & 261,764\\
+MulT\cite{q2mult} & 跨模态注意力 & 六路定向跨模态注意力与模态内记忆 & 624,094\\
+MISA\cite{q2misa} & 表征解耦 & 共享/特有表示、重构与差异约束 & 1,118,852\\
+Self-MM\cite{q2selfmm} & 多任务辅助学习 & 融合预测与单模态伪目标辅助监督 & 82,119\\
+MMIM\cite{q2mmim} & 互信息约束 & 模态间及融合--单模态的InfoNCE约束 & 163,204\\
+\addlinespace
+TFR-Net\cite{q2tfr} & 缺失重构 & 连续遮挡、时序上下文与潜在表示重构 & 415,620\\
+MissModal\cite{q2missmodal} & 缺失表征对齐 & 几何对比、分布与情感语义对齐 & 163,204\\
+M3S\cite{q2m3s} & 缺失元采样 & 低秩骨干、完整支持/缺失查询的一步一阶元更新 & 323,276\\
+MMIN\cite{q2mmin} & 缺失模态推断 & 潜在表示推断、残差细化与循环约束 & 292,164\\
+\bottomrule
+\end{tabularx}
+\end{table}
