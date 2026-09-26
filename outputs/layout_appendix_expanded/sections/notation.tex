@@ -1,0 +1,29 @@
+\section{符号说明}\label{sec:notation}
+
+表~\ref{tab:global_notation}给出本文使用的主要数学符号及其含义。
+
+\begin{table}[!htbp]
+\centering\normalsize
+\caption{主要符号说明}
+\label{tab:global_notation}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}>{\raggedright\arraybackslash}X@{}}
+\toprule
+符号 & 含义\\
+\midrule
+$i$，$m$ & 样本索引和模态索引，$m\in\{T,A,V\}$分别表示文本、语音和视觉\\
+$T_i$ & 第$i$条视频的有效时长，单位为秒\\
+$\mathcal T_i$ & 第$i$条视频的媒体时间域，$\mathcal T_i=[0,T_i)$\\
+$K$，$B_{ik}$ & 公共时间窗总数及第$k$个公共时间窗，$K=50$\\
+$I_{ij}^{(m)}$，$\mathbf h_{ij}^{(m)}$ & 模态$m$第$j$个原生特征的时间支持及特征向量\\
+$\mathbf z_{ik}^{(m)}$，$M_{ik}^{(m)}$ & 对齐后的模态特征及有效标记\\
+$\mathbf X_i^{(m)}$，$L_i$ & 已对齐模态输入及有效序列长度\\
+$T$ & 问题二固定输入序列长度，$T=50$\\
+$p_{it}$ & 附件2第$t$个位置的有效位指示\\
+$y_i$，$c_i$ & 连续情感强度及情感极性类别\\
+$\rho_{\mathrm{target}}$ & 连续缺失目标比例\\
+$S$，$R$ & 单场景综合得分及完整／缺失条件综合得分\\
+$\phi_m$，$D_i(W)$ & 模态贡献及窗口$W$的遮挡效应\\
+\bottomrule
+\end{tabularx}
+\end{table}

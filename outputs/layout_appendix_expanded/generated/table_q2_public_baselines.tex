@@ -1,0 +1,25 @@
+\begin{table}[!htbp]
+\centering\zihao{-4}\setlength{\tabcolsep}{2.25pt}
+\caption{公开方法与LTARP的完整输入验证集结果（三随机种子均值$\pm$样本标准差）}
+\label{tab:q2_public_baselines}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}p{2.1cm}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+模型 & 训练方式 & 参数量 & 准确率$\uparrow$ & \shortstack{宏平均\\F1$\uparrow$} & MAE$\downarrow$ & \shortstack{相关系数\\$\uparrow$}\\
+\midrule
+TFN & \shortstack{完整输入\\训练} & 4,840,670 & \shortstack{$0.6099$\\$\pm0.0076$} & \shortstack{$0.5872$\\$\pm0.0083$} & \shortstack{$0.6336$\\$\pm0.0102$} & \shortstack{$0.6056$\\$\pm0.0098$}\\
+LMF & \shortstack{完整输入\\训练} & 323,276 & \shortstack{$0.5925$\\$\pm0.0114$} & \shortstack{$0.5719$\\$\pm0.0090$} & \shortstack{$0.6682$\\$\pm0.0196$} & \shortstack{$0.5807$\\$\pm0.0188$}\\
+MFN & \shortstack{完整输入\\训练} & 261,764 & \shortstack{$0.5966$\\$\pm0.0080$} & \shortstack{$0.5824$\\$\pm0.0062$} & \shortstack{$0.6418$\\$\pm0.0124$} & \shortstack{$0.5908$\\$\pm0.0125$}\\
+MulT & \shortstack{完整输入\\训练} & 624,094 & \shortstack{$0.6172$\\$\pm0.0148$} & \shortstack{$0.5891$\\$\pm0.0236$} & \shortstack{$0.6221$\\$\pm0.0260$} & \shortstack{$0.6369$\\$\pm0.0115$}\\
+MISA & \shortstack{完整输入\\训练} & 1,118,852 & \shortstack{$0.6131$\\$\pm0.0083$} & \shortstack{$0.6010$\\$\pm0.0060$} & \shortstack{$0.9175$\\$\pm0.1005$} & \shortstack{$0.6269$\\$\pm0.0087$}\\
+Self-MM & \shortstack{完整输入\\训练} & 82,119 & \shortstack{$0.6355$\\$\pm0.0052$} & \shortstack{$0.6107$\\$\pm0.0084$} & \shortstack{$0.6099$\\$\pm0.0066$} & \shortstack{$0.6423$\\$\pm0.0042$}\\
+MMIM & \shortstack{完整输入\\训练} & 163,204 & \shortstack{$0.6360$\\$\pm0.0048$} & \shortstack{$0.6110$\\$\pm0.0007$} & \shortstack{$0.6102$\\$\pm0.0098$} & \shortstack{$0.6375$\\$\pm0.0054$}\\
+\addlinespace\midrule
+TFR-Net & \shortstack{缺失增强\\训练} & 415,620 & \shortstack{$0.6374$\\$\pm0.0071$} & \shortstack{$0.6230$\\$\pm0.0080$} & \shortstack{$0.6145$\\$\pm0.0118$} & \shortstack{$0.6267$\\$\pm0.0142$}\\
+MissModal & \shortstack{缺失增强\\训练} & 163,204 & \shortstack{$0.6305$\\$\pm0.0071$} & \shortstack{$0.6108$\\$\pm0.0069$} & \shortstack{$0.6084$\\$\pm0.0113$} & \shortstack{$0.6431$\\$\pm0.0006$}\\
+M3S & \shortstack{缺失增强\\训练} & 323,276 & \shortstack{$0.6035$\\$\pm0.0063$} & \shortstack{$0.5775$\\$\pm0.0169$} & \shortstack{$0.6706$\\$\pm0.0173$} & \shortstack{$0.5793$\\$\pm0.0171$}\\
+MMIN & \shortstack{缺失增强\\训练} & 292,164 & \shortstack{$0.6383$\\$\pm0.0062$} & \shortstack{$0.6117$\\$\pm0.0079$} & \shortstack{$0.6279$\\$\pm0.0247$} & \shortstack{$0.6401$\\$\pm0.0027$}\\
+\addlinespace\midrule
+LTARP & \shortstack{完整输入\\训练} & 164,343 & \shortstack{$0.6415$\\$\pm0.0050$} & \shortstack{$0.6243$\\$\pm0.0026$} & \shortstack{$0.6052$\\$\pm0.0063$} & \shortstack{$0.6475$\\$\pm0.0024$}\\
+\bottomrule
+\end{tabularx}
+\end{table}

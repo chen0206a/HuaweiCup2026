@@ -1,0 +1,79 @@
+\section*{附录 B\quad 实验设置与主要文件}
+\begingroup\normalsize\songti
+\setcounter{table}{0}\renewcommand{\thetable}{B\arabic{table}}
+\begin{table}[!htbp]
+\centering\normalsize
+\caption{问题一主要运行环境}\label{tab:app_b_env}
+\begin{tabularx}{0.90\textwidth}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 项目 & 配置\\\midrule
+GPU特征计算 & PyTorch 2.14.0+cu130；Transformers 4.57.3\\
+CPU媒体准备 & Python 3.13.9；NumPy 2.3.5\\
+媒体解码与时间信息 & FFmpeg / FFprobe 8.0\\
+\bottomrule\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\normalsize
+\caption{主要计算阶段、程序及输入输出}\label{tab:app_b_flow}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 阶段 & 主要程序 & 输入与输出\\\midrule
+问题一 & \nolinkurl{q1_full_feature_run.py}、\nolinkurl{temporal.py} & 附件1媒体与转写；输出特征、掩码及来源记录\\
+问题二 & \nolinkurl{pooling_residual.py}、\nolinkurl{missing_benchmark.py} & 附件2对齐特征；输出模型、缺失评价与附件3预测\\
+问题三 & \nolinkurl{coalitions.py}、\nolinkurl{temporal_occlusion.py} & 固定模型与待解释输入；输出贡献、关键区间与附件4解释\\
+\bottomrule\end{tabularx}\end{table}
+
+\begin{table}[!htbp]
+\centering\normalsize
+\caption{问题二主要训练参数}\label{tab:app_b_train}
+\begin{tabularx}{.78\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule 参数 & 记录值\\\midrule
+优化器、学习率、权重衰减 & AdamW；$10^{-3}$；$10^{-4}$\\
+批量大小、随机失活率 & 128；0.1\\
+最大轮数、提前停止耐心轮数 & 80；12\\
+随机种子 & 42、43、44\\
+\bottomrule\end{tabularx}\end{table}
+
+\begin{table}[!htbp]
+\centering\normalsize
+\caption{问题三主要解释验证设置}\label{tab:app_b_checks}
+\begin{tabularx}{.78\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule 设置 & 取值\\\midrule
+独立验证片段数 & 396\\
+随机等长窗口 & 32个\\
+窗口比例、步长 & 0.30；1\\
+删除比例 & 10\%、20\%、30\%、40\%\\
+自助采样分组单位 & 视频ID\\
+Shapley排序稳定性 & Spearman秩相关\\
+附件4样本数 & 20\\
+\bottomrule\end{tabularx}\end{table}
+
+\begin{table}[!htbp]\centering\normalsize
+\caption{主要程序文件及用途}\label{tab:app_files_programs}
+\begin{tabularx}{\textwidth}{@{}p{5.5cm}p{1.3cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 文件 & 问题 & 用途\\\midrule
+\nolinkurl{q1_full_feature_run.py} & 一 & 三模态特征构建与对齐\\
+\nolinkurl{temporal.py} & 一 & 最大时间重叠来源选择\\
+\nolinkurl{baseline.py} & 二 & MMP与双任务输出\\
+\nolinkurl{pooling_residual.py} & 二 & LTARP残差池化\\
+\nolinkurl{missing_benchmark.py} & 二 & 连续缺失场景评价\\
+\nolinkurl{attachment3_inference.py} & 二 & 附件3预测\\
+\nolinkurl{coalitions.py} & 三 & 模态贡献与交互\\
+\nolinkurl{temporal_occlusion.py} & 三 & 遮挡与关键区间定位\\
+\bottomrule\end{tabularx}\end{table}
+
+\begin{table}[!htbp]\centering\normalsize
+\caption{主要结果文件及内容}\label{tab:app_files_results}
+\begin{tabularx}{\textwidth}{@{}p{6.6cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 文件 & 主要内容\\\midrule
+\nolinkurl{masks.npz} & 三模态有效位置掩码\\
+\nolinkurl{sample_ids.csv} & 特征行序与样本标识\\
+\nolinkurl{source_mapping_15000.csv} & 公共窗与原生来源映射\\
+\nolinkurl{q1_alignment_ablation.csv} & 对齐方案比较\\
+\nolinkurl{q2_scenario_details_complete.csv} & 连续缺失逐场景指标\\
+\nolinkurl{q2_ablation_summary.csv} & 模型组件消融结果\\
+\nolinkurl{attachment3_predictions.csv} & 附件3类别与强度预测\\
+\nolinkurl{attachment4_predictions_explanations.csv} & 附件4预测与解释\\
+\bottomrule\end{tabularx}\end{table}
+
+\FloatBarrier
+\endgroup
