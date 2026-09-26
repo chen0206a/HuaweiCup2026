@@ -1,0 +1,51 @@
+experiment: q2_ltarp_component_ablation
+description: Frozen-backbone structural ablation of LTARP pooling components
+data:
+  pkl_path: data/raw/attachment2/aligned_50.pkl
+  sha256: 66e867aa74bc70a844e806e5571e371c9abb4a35f9e2887ce9b4d97ff2cb8fcd
+  train_split: train
+  valid_split: valid
+  batch_size: 128
+  num_workers: 0
+preprocessing:
+  normalization: none
+model:
+  hidden_dim: 128
+  fusion_dim: 128
+  dropout: 0.1
+training:
+  seeds: [42, 43, 44]
+  epochs: 80
+  patience: 12
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lambda_reg: 1.0
+  optimizer: AdamW
+  class_weighting: balanced_train
+  classification_loss: weighted_cross_entropy
+  regression_loss: SmoothL1
+  augmentation: none
+  freeze_b0_parameters: true
+  frozen_b0_eval_mode: true
+  initialization_protocol: corresponding_seed_cleanselect_mmp_checkpoint
+  selection_rule: complete_input_validation_S_val
+  baseline_checkpoints:
+    "42": outputs/checkpoints/b0_weighted_ce_best_selection_score.pt
+    "43": outputs/checkpoints/b21_b0_seed_43_best_selection_score.pt
+    "44": outputs/checkpoints/b21_b0_seed_44_best_selection_score.pt
+  a4_cleanselect_checkpoints:
+    "42": outputs/checkpoints/b5_pooling_p2_best_clean_score.pt
+    "43": outputs/checkpoints/b5_p2_multiseed_seed43_best_robust_score.pt
+    "44": outputs/checkpoints/b5_p2_multiseed_seed44_best_robust_score.pt
+  a4_selected_epoch:
+    "42": 20
+    "43": 12
+    "44": 1
+benchmark:
+  definition: outputs/metrics/b2_benchmark_definition.json
+  seed: 20260923
+  sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff
+  cleanselect_reference_csv: outputs/final/q2/checkpoint_selection_fairness/q2_cleanselect_fair_comparison_seedwise.csv
+  missing_scenarios: 54
+outputs:
+  directory: outputs/final/q2/ltarp_component_ablation
