@@ -70,4 +70,6 @@ Q2六checkpoint/benchmark哈希及冻结B0张量核验通过，主要汇总数�
 
 A 题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STATUS_before_E_20260923.md`。
 
-2026-09-27：当前论文排版与附录扩充版位于 `outputs/layout_appendix_expanded/`，主文件 `paper_layout_appendix_expanded.tex/pdf`。整篇79页，附录29页（A/B/C为3/2/24页），13个真实代码块780行、12pt、天蓝色重点行；设置集中在代码之前。声明采用用户指定简短文本且仅一次。已统一小表宽度、目录编号间距和局部浮动体；封面学校、队号及成员信息在填写区域居中，保留原矢量字体和官方标识。Q1/Q2/Q3正文、公式、数据、18幅图及附录A100条记录未变；30条参考文献元数据未变；编译无溢出或未定义引用。交付包 `outputs/layout_appendix_expanded_delivery.zip`；原版 `outputs/overview_appendix_refined/` 保留。
+2026-09-27：当前论文排版与附录扩充版位于 `outputs/layout_appendix_expanded/`，主文件 `paper_layout_appendix_expanded.tex/pdf`。整篇78页，附录29页（A/B/C为3/2/24页），13个真实代码块780行、12pt、天蓝色重点行；设置集中在代码之前。声明采用用户指定简短文本且仅一次。已统一小表宽度、目录编号间距和局部浮动体；封面学校、队号及成员信息在填写区域居中，保留原矢量字体和官方标识。Q1/Q2/Q3正文、公式、数据、18幅图及附录A100条记录未变；30条参考文献元数据未变；编译无溢出或未定义引用。交付包 `outputs/layout_appendix_expanded_delivery.zip`；原版 `outputs/overview_appendix_refined/` 保留。
+
+2026-09-27 浮动页修正：图8与图10取消独立浮动页，典型样本表固定顺序并与Q1收尾同页；全文78页，附录仍29页。见 `outputs/layout_appendix_expanded/target_page_float_fix.md`，交付包同步更新。
