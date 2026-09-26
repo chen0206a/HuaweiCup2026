@@ -1,0 +1,334 @@
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage[a4paper,top=2.4cm,bottom=2.2cm,left=2.35cm,right=2.35cm]{geometry}
+\setmainfont{Times New Roman}
+\usepackage{graphicx,booktabs,array,longtable,tabularx,amsmath,amssymb,bm,mathtools}
+\usepackage{caption,subcaption,float,xcolor,placeins,needspace,setspace,enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\setlength{\parindent}{2em}
+\newcommand{\QTwoParagraph}{\par\noindent\hspace*{2em}}
+\newcounter{q2algorithm}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{2em}
+\setstretch{1.12}
+
+\captionsetup{font=small,labelfont=normalfont,labelsep=quad,justification=centering}
+\ctexset{
+  section={format=\centering\heiti\zihao{4},beforeskip=1.5ex,afterskip=1.2ex},
+  subsection={format=\heiti\zihao{-4},beforeskip=1.2ex,afterskip=.6ex},
+  subsubsection={format=\heiti\zihao{-4},beforeskip=.8ex,afterskip=.4ex}
+}
+
+\graphicspath{{figures/q2/}}
+
+\begin{document}
+\songti\zihao{-4}\pagestyle{plain}
+\setcounter{section}{1}\setcounter{figure}{7}\setcounter{table}{7}
+\section{问题二：缺失场景下的多模态情感预测模型}\label{sec:q2}
+
+\subsection{问题分析与总体方案}\label{subsec:q2_plan}
+\QTwoParagraph 附件2已经提供对齐到50个时间位置的文本、语音和视觉特征。局部连续缺失发生时，一种或多种模态会在一段时间内失去观测，其影响随模态、位置和持续长度而变化。本问据此研究情感极性分类与连续情感强度回归：完整输入能保留多少预测信息，连续缺失后性能如何变化，以及能否通过轻量的结构调整改善跨场景表现。
+
+\QTwoParagraph 先以掩码均值池化（Masked Mean Pooling，MMP）建立基线，分别聚合三模态有效槽位，再拼接融合并输出情感类别与连续情感强度。均值池化对所有有效位置赋予相同权重，难以区分剩余内容的信息量。本文在该路径上加入轻量时间注意力残差池化（Lightweight Temporal Attention Residual Pooling，LTARP），由内容打分形成补充表示，与均值表示共同参与预测，整体流程见图~\ref{fig:q2_arch}。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.94\textwidth]{{q2 架构图}.pdf}
+\caption{LTARP三模态池化与双任务预测流程。}
+\label{fig:q2_arch}\end{figure}
+
+\subsection{数据表示与预测任务}\label{subsec:q2_data}
+\QTwoParagraph 两种池化方式共用附件2的对齐输入与任务标签。对齐特征文件为\texttt{aligned-50.pkl}，训练、验证和测试划分分别含3395、728和727条样本。训练集用于学习参数，验证集用于结构选择与评价；测试划分和无标签附件3不参与选模。
+
+\QTwoParagraph 统一最大长度为$T=50$，样本$i$的三模态输入为
+\begin{equation}
+\mathbf X_i^{(T)} \in \mathbb R^{50 \times 768},\quad
+\mathbf X_i^{(A)} \in \mathbb R^{50 \times 74},\quad
+\mathbf X_i^{(V)} \in \mathbb R^{50 \times 35}.
+\label{eq:q2_tensor_dim}
+\end{equation}
+样本有效长度为$L_i$（$3\le L_i\le50$），由随附注意力掩码确定。定义有效槽位指示变量
+\begin{equation}
+p_{it} = \begin{cases}
+1, & t \in \{1, 2, \dots, L_i\},\\
+0, & t \in \{L_i+1, \dots, 50\}.
+\end{cases}
+\label{eq:q2_mask_def}
+\end{equation}
+\QTwoParagraph 缺失实验仅作用于原本有效的时间位置。附件2中已有的零值输入保持原始状态，并与后续人为构造的连续缺失分别记录。填充后缀由掩码排除，原始有效范围在遮挡前后保持一致。人工置零的位置仍位于有效前缀中，均值聚合的分母继续使用原有效长度，模型因而接收相同长度、局部内容受损的序列。
+
+\QTwoParagraph 连续情感强度标签记为$y_i\in[-3.0,+3.0]$，三类极性由其符号确定：
+\begin{equation}
+c_i = \begin{cases}
+0 \quad (\text{消极 Negative}), & y_i < 0,\\
+1 \quad (\text{中性 Neutral}), & y_i = 0,\\
+2 \quad (\text{积极 Positive}), & y_i > 0.
+\end{cases}
+\label{eq:q2_label_split}
+\end{equation}
+其中$y_i=0$对应中性类，分类与回归分别描述极性类别和连续情感强度。
+
+\QTwoParagraph 训练集与验证集均以积极样本为最多，中性样本相对较少，类别比例呈现不均衡；连续情感强度集中于零附近，两侧分布覆盖不同程度的极性。有效序列长度也有明显差异，训练与验证的中位数分别为22和23.5，小于统一长度50。因此，类别权重和有效位掩码分别进入损失计算与特征聚合（图~\ref{fig:q2_data}）。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.96\textwidth]{fig10_q2_data_statistics.pdf}
+\caption{附件2的样本、情感标签与有效序列长度分布。}
+\label{fig:q2_data}\end{figure}
+\FloatBarrier
+
+\subsection{掩码均值池化基线}\label{subsec:q2_base}
+\QTwoParagraph 为单独观察连续缺失对预测的影响，先构造不含复杂时序模块的简单基线。MMP只在有效槽位上计算均值，再完成模态映射、融合和双任务预测。均值表示将不同有效长度的序列组织为固定维度，使各样本可以进入同一融合网络；同时保留一条明确的等权聚合路径，便于后续观察内容加权的增量。对模态$m\in\{T,A,V\}$，其均值为
+\begin{equation}
+\boldsymbol\mu_i^{(m)} = \frac{\sum_{t=1}^{50} p_{it} \mathbf x_{it}^{(m)}}{\sum_{t=1}^{50} p_{it}}.
+\label{eq:q2_mean_pool}
+\end{equation}
+均值向量通过模态专属映射$P_m(\cdot)$得到128维表示：
+\begin{equation}
+\mathbf h_{i,0}^{(m)} = P_m\left(\boldsymbol\mu_i^{(m)}\right) = \operatorname{Dropout}\Big(\operatorname{GELU}\big(\operatorname{LayerNorm}(\mathbf W_m \boldsymbol\mu_i^{(m)} + \mathbf b_m)\big)\Big).
+\label{eq:q2_proj_layer}
+\end{equation}
+三路表示拼接为384维向量$\mathbf h_i^{\mathrm{concat}}=[\mathbf h_{i,0}^{(T)};\mathbf h_{i,0}^{(A)};\mathbf h_{i,0}^{(V)}]$，再经128维融合层得到
+\begin{equation}
+\mathbf z_i = \operatorname{Dropout}\Big(\operatorname{GELU}\big(\operatorname{LayerNorm}(\mathbf W_f \mathbf h_i^{\mathrm{concat}} + \mathbf b_f)\big)\Big).
+\end{equation}
+联合表征分别连接三分类与强度回归输出：
+\begin{equation}
+\hat{\mathbf p}_i = \operatorname{Softmax}(\mathbf W_c \mathbf z_i + \mathbf b_c) \in \mathbb R^3,\qquad
+\hat y_i = \mathbf W_r \mathbf z_i + b_r \in \mathbb R.
+\label{eq:q2_heads}
+\end{equation}
+预测类别取$\hat c_i=\arg\max_{k\in\{0,1,2\}}\hat p_{ik}$。
+
+\QTwoParagraph 训练集的消极、中性和积极样本数分别为967、758和1670。采用类别频数逆加权交叉熵，使三类在分类目标中获得相应权重：
+\begin{equation}
+w_c = \frac{N_{\mathrm{train}}}{3 \cdot N_c},\qquad
+\mathcal L_{\mathrm{WCE}} = -\frac{\sum_{i=1}^N w_{c_i}\log\hat p_{i c_i}}{\sum_{i=1}^N w_{c_i}}.
+\end{equation}
+其中分类损失按当前批次标签权重之和归一化，$N$为批次样本数。回归采用SmoothL1损失：
+\begin{equation}
+\mathcal L_{\mathrm{SmoothL1}} = \frac{1}{N}\sum_{i=1}^N \ell_{\mathrm{smooth}}(\hat y_i - y_i),\quad
+\ell_{\mathrm{smooth}}(u) = \begin{cases}
+0.5 u^2, & |u| < 1,\\
+|u| - 0.5, & |u| \ge 1.
+\end{cases}
+\end{equation}
+两项任务以相同权重联合优化：
+\begin{equation}
+\mathcal L = \mathcal L_{\mathrm{WCE}} + \lambda_r \mathcal L_{\mathrm{SmoothL1}},\qquad \lambda_r = 1.0.
+\label{eq:q2_loss_full}
+\end{equation}
+
+\QTwoParagraph MMP共含163460个参数，直接使用附件2的原始数值特征，不额外标准化。采用AdamW，学习率$10^{-3}$、权重衰减$10^{-4}$、批量大小128、随机失活率0.1；最多训练80轮，提前停止耐心轮数为12轮。基线在完整输入上训练。
+
+\subsection{轻量时间注意力残差池化模型}\label{subsec:q2_pool}
+\QTwoParagraph MMP结构简单、参数较少，均值聚合为比较缺失影响提供了稳定起点。但连续缺失发生后，剩余位置所含情感信息并不均等。LTARP保留均值路径，增加逐槽位内容打分器，使模型能为剩余内容形成不同权重。每个模态使用一个线性标量打分器，其打分记为
+\begin{equation}
+e_{it}^{(m)} = f_m(\mathbf x_{it}^{(m)}) = \mathbf w_m^\top\mathbf x_{it}^{(m)} + b_m.
+\end{equation}
+权重在原始有效槽位内归一化，并形成内容加权表示：
+\begin{equation}
+\alpha_{it}^{(m)} = \frac{p_{it}\exp(e_{it}^{(m)})}{\sum_{s: p_{is}=1} \exp(e_{is}^{(m)})},\qquad
+\mathbf a_i^{(m)} = \sum_{t=1}^{50} \alpha_{it}^{(m)} \mathbf x_{it}^{(m)}.
+\label{eq:q2_alpha_softmax}
+\end{equation}
+填充位的$\alpha_{it}^{(m)}$恒为0。人工遮挡后的零值仍按原有效指示参与打分与聚合，权重变化由当前输入内容决定。
+
+\QTwoParagraph 内容加权表示作为均值表示的补充，两路共享模态映射$P_m$，以可学习系数$\gamma_m$进行残差组合：
+\begin{equation}
+\mathbf h_i^{(m)} = P_m\big(\boldsymbol\mu_i^{(m)}\big) + \gamma_m \cdot P_m\big(\mathbf a_i^{(m)}\big), \quad m \in \{T, A, V\}.
+\label{eq:q2_residual_composite}
+\end{equation}
+该表示继续进入原有融合层与双任务输出，新增分支只改变模态内的聚合方式。共享映射使两路表示具有相同维度，均值路径保留整体信息，内容加权路径提供随样本变化的补充；残差系数控制补充分支进入预测的程度。
+
+\QTwoParagraph 训练首先完成MMP的模态映射、融合与双任务输出学习，再以其参数初始化LTARP。第二阶段保持这些已有参数不变，仅学习三个模态打分器及三个残差系数。令$\gamma_m$初值为0，初始模态输出为
+\begin{equation}
+\mathbf h_i^{(m)} = P_m(\boldsymbol\mu_i^{(m)}),
+\end{equation}
+与MMP保持一致。随后，内容加权分支通过残差系数逐步参与预测。新增可训练参数为883个，总参数量增至164343，从而以较小的参数增量补充时间位置的内容差异。
+
+\subsection{连续缺失场景与评价协议}\label{subsec:q2_benchmark}
+\QTwoParagraph 两种池化方式的差异需要在相同受损输入上比较。连续缺失主要由三个因素决定：缺失哪种模态、发生在哪个位置，以及持续多长。因此，评价在完整输入之外分别组合模态、比例和位置，形成固定的54种场景。单模态场景沿比例变化观察各输入的敏感程度，双模态场景在同一比例下观察信息同时受损的影响；三个位置区分起始、中央和末段缺失，连接受损范围与时间组织。
+
+\begin{itemize}[leftmargin=2.5em,itemsep=0pt,topsep=2pt]
+\item 单模态场景集$\mathcal C_1$：$m\in\{T,A,V\}$，目标缺失比例$\rho_{\mathrm{target}}\in\mathcal R=\{0.1,0.2,0.3,0.4,0.5\}$，位置$\mathcal P=\{\text{前段},\text{中段},\text{后段}\}$，共$3\times5\times3=45$种。
+\item 双模态场景集$\mathcal C_2$：模态对为$\{T,A\}$、$\{T,V\}$、$\{A,V\}$，固定$\rho_{\mathrm{target}}=0.3$，分别取三个位置，共$3\times1\times3=9$种。
+\end{itemize}
+
+\QTwoParagraph 对有效长度$L_i$，遮挡槽位数与实际比例为
+\begin{equation}
+\ell_i = \max\big(1,\, \operatorname{round}(\rho_{\mathrm{target}} \cdot L_i)\big),\qquad
+\rho_{\mathrm{actual}, i} = \frac{\ell_i}{L_i}.
+\label{eq:q2_mask_len}
+\end{equation}
+槽位数必须取整数，短序列的实际比例会偏离目标比例；验证集中，目标比例0.1的实际范围为0.0714--0.3333，目标比例0.5为0.4000--0.6667，对应均值为0.1040和0.5009。图表横轴用目标比例标识场景，实际比例逐样本记录。
+
+\QTwoParagraph 前段、中段、后段的起点$s_i$分别为$0$、$\lfloor(L_i-\ell_i)/2\rfloor$和$L_i-\ell_i$。遮挡将指定模态在$[s_i,s_i+\ell_i-1]$内的特征置零，该遮挡区间采用零起始槽位索引；其余模态和填充掩码保持原样。每个场景都在完整的728条验证样本上评价，各样本按自身有效长度计算区间。
+
+\QTwoParagraph 分类评价同时采用准确率与宏平均 F1，分别观察总体识别与类别均衡表现；回归采用MAE和皮尔逊相关系数，分别观察绝对误差与变化趋势。四项指标定义为：
+\Needspace{7\baselineskip}
+\begin{itemize}[leftmargin=2.5em,itemsep=0pt,topsep=2pt]
+  \item 准确率（Accuracy，$\uparrow$）：$\operatorname{Acc} = \frac{1}{N}\sum_{i=1}^N \mathbb I(\hat c_i = c_i)$；
+  \item 宏平均 F1（Macro-F1，$\uparrow$）：$\operatorname{MacroF1} = \frac{1}{3}\sum_{k=0}^2 \frac{2 \cdot \operatorname{Precision}_k \cdot \operatorname{Recall}_k}{\operatorname{Precision}_k + \operatorname{Recall}_k}$；
+  \item 平均绝对误差（MAE，$\downarrow$）：$\operatorname{MAE} = \frac{1}{N}\sum_{i=1}^N |\hat y_i - y_i|$；
+  \item 皮尔逊相关系数（Pearson，$r$，$\uparrow$）：$\operatorname{Pearson} = \frac{\sum_{i=1}^N (\hat y_i - \bar{\hat y})(y_i - \bar y)}{\sqrt{\sum_{i=1}^N (\hat y_i - \bar{\hat y})^2}\sqrt{\sum_{i=1}^N (y_i - \bar y)^2}}$。
+\end{itemize}
+
+\QTwoParagraph 将分类与回归表现组合为得分$S$：
+\begin{equation}
+S = \frac{1}{4}\operatorname{Acc} + \frac{1}{4}\operatorname{MacroF1} + \frac{1}{4}\left(1 - \frac{\operatorname{MAE}}{6}\right) + \frac{1}{8}(\operatorname{Pearson} + 1).
+\label{eq:q2_score_s}
+\end{equation}
+连续情感强度标签位于$[-3,3]$，跨度为6，因此以$\operatorname{MAE}/6$缩放误差量级，并通过$1-\operatorname{MAE}/6$统一为越大越好的方向。Pearson的取值范围为$[-1,1]$，$(\operatorname{Pearson}+1)/2$将其映射至$[0,1]$，故式~\eqref{eq:q2_score_s}中的最后一项等价于给该映射值赋予$1/4$权重。两项分类指标合计占$1/2$，两项回归指标合计占$1/2$，兼顾极性识别与连续情感强度预测。回归输出不作截断，6作为标签尺度使用，而非预测误差的上界。
+
+\QTwoParagraph 本文将完整输入对应的得分记为$S_{\mathrm{clean}}$，再定义跨场景综合鲁棒得分$R$：
+\begin{equation}
+R = \frac{1}{2}\left(S_{\mathrm{clean}} + \frac{1}{54}\sum_{j=1}^{54} S_j\right).
+\label{eq:q2_robust_r}
+\end{equation}
+完整输入得分占$1/2$，54种缺失场景的等权平均占$1/2$。这一组合同时考虑正常输入与受损输入下的表现，使配置选择兼顾完整输入能力和缺失后的保持程度。
+
+\QTwoParagraph 结构比较表~\ref{tab:q2_main}以及公开方法表~\ref{tab:q2_public_baselines}、\ref{tab:q2_public_missing}，均按完整输入验证得分$S_{\mathrm{clean}}$选择参数；选定后同时评价完整输入与全部54种缺失场景，保证两张公开方法结果表使用同一套参数。缺失敏感性与鲁棒诊断图~\ref{fig:q2_ratio}--\ref{fig:q2_error}则沿用按$R$选定的LTARP配置，MMP仍使用对应初始化的完整输入最优基线。前者比较统一完整输入标准下的结构表现，后者分析最终配置在固定缺失场景集合中的响应与波动；在每类实验内，每次初始化均固定一套参数，不按缺失模态、比例或位置重新选择。
+
+\QTwoParagraph 场景统计先在种子内汇总，再计算种子间均值与样本标准差。设第$s$个种子在场景$j$的指标为$M_{s,j}$，其缺失场景均值为
+\begin{equation}
+\bar M_s = \frac{1}{54}\sum_{j=1}^{54}M_{s,j}, \qquad s\in\{42,43,44\}.
+\end{equation}
+三次初始化是统计重复单位，54个场景在各自初始化内等权平均。这样，场景平均表示模型在固定受损条件集合中的总体表现，种子间标准差则描述同一训练设置的初始化波动。算法~\ref{alg:q2_benchmark}概括执行步骤。
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{p{.94\textwidth}}
+\toprule
+\refstepcounter{q2algorithm}\label{alg:q2_benchmark}\textbf{算法\arabic{q2algorithm}\quad 连续缺失场景评价}\\
+\midrule
+\textbf{输入}：验证集三模态特征、有效掩码与已选模型。\\
+\textbf{输出}：完整输入及54场景指标、$S_{\mathrm{clean}}$与$R$。\\
+1. 预测完整输入，计算四项指标及$S_{\mathrm{clean}}$。\\
+2. 遍历场景配置$(\mathcal M_{\mathrm{target}},\rho_{\mathrm{target}},\mathrm{pos})$。\\
+3. 对各样本读取$L_i$，按式~\eqref{eq:q2_mask_len}计算$\ell_i$并确定$s_i$。\\
+4. 在原输入副本中置零目标模态的连续区间，保持有效掩码。\\
+5. 预测当前场景，记录四项指标与$S_j$。\\
+6. 汇总54场景结果，按式~\eqref{eq:q2_robust_r}计算$R$。\\
+\bottomrule
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\subsection{基线与LTARP的结构比较}\label{subsec:q2_fair}
+\QTwoParagraph 在统一完整输入选模标准下，LTARP在宏平均 F1、MAE和Pearson的三种子均值上均优于MMP，准确率变化较小。对相同模型参数施加54种缺失后，三项指标的平均改善仍保留，准确率则略有下降（表~\ref{tab:q2_main}）。MAE与Pearson的改善分别对应连续情感强度绝对误差的减少和预测趋势的一致性提高。
+
+\QTwoParagraph 验证集中积极样本最多，准确率按样本汇总，受多数类别识别情况的影响较大；宏平均 F1对三类等权，能够反映整体准确率之外的类别差异。当前改善更多体现在宏平均 F1，说明评价两种池化结构时需要同时观察总体识别和类别均衡表现。中性类的混淆仍然明显，其具体错误分布在后续分析中结合混淆矩阵观察。
+
+\input{generated/table_q2_main.tex}
+
+\QTwoParagraph 以跨场景综合得分考察三次初始化，种子42和43呈正增益，种子44近乎持平；配对差$\Delta R=R_{\mathrm{LTARP}}-R_{\mathrm{MMP}}$分别为$+0.005600$、$+0.003791$和$-0.000090$，平均为$+0.003100\pm0.002907$。总体收益较小，同时存在初始化敏感性。
+\FloatBarrier
+
+\subsection{缺失类型、位置与比例分析}\label{subsec:q2_patterns}
+\QTwoParagraph 总体平均保留了改善，但不同模态的缺失影响有所差异。图~\ref{fig:q2_ratio}中，文本随遮挡比例增大退化最明显，语音和视觉变化较平缓；分类与回归对输入损失的响应程度也不同。文本遮挡由0.1增至0.5时，宏平均 F1从0.6163降至0.5933，显示语言内容在这组样本中的较强作用。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.96\textwidth]{fig11_q2_modality_missing_degradation.pdf}
+\caption{单模态缺失比例与验证集性能。阴影为三随机种子的样本标准差，虚线为完整输入均值。}
+\label{fig:q2_ratio}\end{figure}
+\FloatBarrier
+
+\QTwoParagraph 固定目标缺失比例$\rho_{\mathrm{target}}=0.3$后，缺失位置仍会改变模型表现。文本前段与后段遮挡对宏平均 F1的影响大于中段；包含文本的双模态缺失也呈相近规律，语音、视觉及语音--视觉组合的影响较小。分类与回归的位置响应并不完全一致，例如文本中段遮挡降低宏平均 F1，却使MAE略有下降（图~\ref{fig:q2_location}）。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.96\textwidth]{fig12_q2_modality_location_absolute_degradation.pdf}
+\caption{不同模态与位置相对完整输入的指标变化。各指标使用独立色标。}
+\label{fig:q2_location}\end{figure}
+\FloatBarrier
+
+\QTwoParagraph 相同模态、位置和比例下的配对差进一步体现LTARP的作用（图~\ref{fig:q2_gain}）。宏平均 F1和Pearson的改善更为一致，在语音、视觉及语音--视觉缺失条件下较明显；准确率随位置与模态组合出现正负波动。内容加权补充有助于保持部分剩余信息，其效果仍随受损输入而变化。包含文本的受损场景影响较大，而仅语音或视觉受损时仍有文本输入；配对差和相对完整输入的退化分别描述结构收益与信息损失，两者共同刻画缺失规律。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.96\textwidth]{fig13_q2_p2_minus_b0_modality_location_gain.pdf}
+\caption{LTARP相对MMP的配对改善。MAE取MMP减LTARP，其余指标取LTARP减MMP；正值表示改善。}
+\label{fig:q2_gain}\end{figure}
+\FloatBarrier
+
+\subsection{稳定性、错误分布与消融分析}\label{subsec:q2_ablation}
+\subsubsection{随机初始化稳定性与验证集错误分布}
+\QTwoParagraph 前述结果呈现了不同缺失场景的平均变化，随机初始化、类别混淆和特殊输入则反映这些变化在具体条件下的表现。三次初始化的配对收益较小，进一步结合完整输入分类错误与原生视觉全零样本，可以观察总体平均之外的差异（图~\ref{fig:q2_error}）。
+
+\begin{figure}[H]\centering
+\includegraphics[width=.96\textwidth]{fig14_q2_stability_error_analysis.pdf}
+\caption{随机初始化稳定性与误差分析。（a）配对综合分数；（b）混淆矩阵；（c）场景分组；（d）原生视觉全零子集。}
+\label{fig:q2_error}\end{figure}
+\FloatBarrier
+
+\QTwoParagraph 三次初始化中有两次提高，一次近乎持平，场景分组后的平均差也较小。完整输入下，消极与积极类的召回相对较高，中性类最低，为43.48\%；中性样本更容易被分到两侧极性类别，弱极性与类别边界仍是主要混淆位置。
+
+\QTwoParagraph 验证集另有15条原生视觉特征整段全零样本。该子集中，部分初始化的LTARP分类表现低于MMP，呈现与总体平均趋势不同的结果；样本量较少，其表现结合三次初始化单独观察。
+
+\subsubsection{候选结构与训练策略消融}
+\QTwoParagraph 为比较改善来自何种结构或训练调整，保留时间编码、训练期连续遮挡和均值--最大值残差池化三种候选，与MMP及LTARP并列（表~\ref{tab:q2_ablation}）。
+
+\input{generated/table_q2_ablation.tex}
+
+\QTwoParagraph 单模态时间编码在聚合前加入顺序建模，参数量明显增加，综合得分却低于MMP。训练期连续遮挡保持网络不变：每条样本以0.5概率保留完整输入，其余样本中75\%遮挡一个模态、25\%遮挡两个模态，比例从$\{0.1,0.2,0.3,0.4,0.5\}$选择，起点在有效范围内随机确定，掩码保持原值。这种缺失增强也未带来综合得分改善。
+
+\QTwoParagraph 均值--最大值残差池化沿用式~\eqref{eq:q2_mean_pool}的掩码均值表示，并增加有效槽位上的逐特征维最大值，再经残差组合接入原有网络。其得分接近LTARP，但仅保留一次初始化结果，主要作为结构探索参考，不与三随机种子结果作精细统计比较。LTARP的三种子综合均值在本组最高，同时只增加883个参数，在本组候选中提供了较好的综合表现。
+\FloatBarrier
+
+\subsection{公开方法适配与对比}\label{subsec:q2_public}
+\QTwoParagraph 在基线及候选结构之外，进一步观察LTARP与其他多模态建模路线的相对表现。选取11种公开方法，统一适配到附件2的aligned-50输入与分类、回归双任务接口；三模态维度、数据划分、指标和完整输入选模标准保持一致，各方法按既有适配配置训练。表~\ref{tab:q2_public_overview}概括适配中的机制与规模。
+
+\input{generated/table_q2_public_overview.tex}
+
+\QTwoParagraph 这些方法分别通过张量交互、时序记忆、表征约束或辅助任务组织多模态信息，缺失增强方法还引入重构、表征对齐、元采样及潜在表示推断。比较同时考察完整输入预测能力、连续缺失后的表现和参数规模：前两项反映同一配置在不同输入条件下的结果，参数量补充表示模型复杂度。各方法接入统一特征与双任务接口，以下结果均限定在本文统一适配与评价设置下。
+
+\QTwoParagraph 完整输入下，LTARP四项指标均处于较优水平（表~\ref{tab:q2_public_baselines}）。部分轻量方法及缺失增强方法的表现接近LTARP，而更复杂的融合结构未呈现同等的平均优势。Self-MM和MMIM借助辅助任务或信息约束，在较小规模下也保留了较强预测信息；TFR-Net的宏平均 F1接近LTARP，但回归指标有所差异。因此，分类均衡性和回归结果需要结合观察。
+
+\input{generated/table_q2_public_baselines.tex}
+
+\QTwoParagraph 54种连续缺失等权平均后，LTARP在宏平均 F1、MAE和Pearson上保持较好的综合表现，准确率与TFR-Net、MMIN接近（表~\ref{tab:q2_public_missing}）。完整输入表现与缺失后保持程度共同决定跨场景结果；缺失增强方法之间也存在差异。
+
+\input{generated/table_q2_public_missing.tex}
+\FloatBarrier
+
+\QTwoParagraph 参数规模进一步体现性能与复杂度的折中。LTARP总参数量为164343，约16.4万，明显小于TFN、MulT和MISA等结构，与MMIM和MissModal处于相近量级。在表~\ref{tab:q2_public_baselines}--\ref{tab:q2_public_missing}所列模型中，其完整输入和缺失平均宏平均 F1均保持较高水平。图~\ref{fig:q2_params}分别对照这两类输入条件；不同方法的参数规模跨越一个数量级以上，横轴采用对数尺度，使轻量结构和较大融合网络能够在同一坐标中比较。这组结果体现了LTARP在当前接口下的性能与规模平衡，结构复杂度本身不足以决定预测表现。
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.76\textwidth]{fig15_q2_parameter_macro_f1.pdf}
+\caption{公开多模态模型的参数规模与宏平均 F1比较。（a）完整输入验证集；（b）54种连续缺失场景平均。横轴为总参数量（对数尺度），误差线为三随机种子的样本标准差。}
+\label{fig:q2_params}\end{figure}
+\FloatBarrier
+
+\subsection{附件3预测}\label{subsec:q2_attachment3}
+\subsubsection{文本特征重构与核验}
+\QTwoParagraph 完成模型选择后，将LTARP用于附件3的30条无标签样本。对齐版提供\texttt{text\_bert}词元输入，以及\texttt{audio}和\texttt{vision}数值特征。单样本的\texttt{text\_bert}形状为$3\times50$，三行依次为词元编号、有效位掩码和词元类型编号，并非模型所需的$50\times768$连续文本表示。因此，使用已验证的\texttt{bert-base-uncased}接口编码有效词元前缀，取最后隐层逐词元表示，再在填充后缀补零至$50\times768$；语音、视觉特征及有效位掩码保持原样。
+
+\QTwoParagraph 已有接口检查使用附件4中20条同时包含\texttt{text\_bert}和预计算\texttt{text}的无标签样本，逐行比较全部604个有效槽位；604/604个重构行的最大余弦相似度位置均为同索引，特征最大绝对差为$3.0041\times10^{-5}$、RMSE为$8.3977\times10^{-7}$。输入同一固定参数模型后，分类logits最大绝对差为$2.44\times10^{-6}$，回归为$1.12\times10^{-6}$。该数值检查支持词元编码与既有文本特征接口的衔接，附件3随后沿此固定路径完成推理。
+
+\subsubsection{预测结果汇总}
+\QTwoParagraph 30条样本预测为消极、中性和积极的数量分别为7、11和12，对应23.33\%、36.67\%和40.00\%。连续情感强度均值为$+0.123114$、样本标准差为0.611792，范围为$[-1.642545,+1.539758]$；平均分类置信度为0.624599。类别与连续情感强度由两个输出头独立预测，推理阶段不使用回归值符号对分类结果进行二次修正。逐样本类别、连续情感强度和置信度见表~\ref{tab:q2_attachment3_all}，与独立CSV保存的同批结果对应。附件3不提供真实标签，因此本节仅报告预测结果，不计算Accuracy、Macro-F1、MAE等监督评价指标。
+
+\Needspace{36\baselineskip}
+\input{generated/table_q2_attachment3.tex}
+\FloatBarrier
+
+\subsection{本问小结}\label{subsec:q2_summary}
+\QTwoParagraph 本问从附件2的三模态对齐特征出发，以MMP建立简单的双任务基线，再通过LTARP内容加权残差分支补充不同时间位置的信息差异。第二阶段仅新增883个参数，沿用原有融合与输出路径，在相同结构下处理完整输入和连续缺失输入。
+
+\QTwoParagraph 54种缺失场景中，文本局部缺失的影响最明显，分类与回归对位置的响应有所不同。LTARP在宏平均 F1、MAE和Pearson上总体优于MMP，但提升幅度较小，不同随机初始化下仍存在一定波动；公开方法比较中保持了较好的性能--规模折中，并完成附件3全部30条样本的预测。下一问固定该预测模型，进一步分析三模态及局部输入对预测结果的作用。
+
+\clearpage
+{\small
+\begin{thebibliography}{99}
+\bibitem{q2tfn} Zadeh A, Chen M, Poria S, et al. Tensor Fusion Network for Multimodal Sentiment Analysis[C]//Proceedings of EMNLP. 2017: 1103--1114. DOI: \url{10.18653/v1/D17-1115}.
+\bibitem{q2lmf} Liu Z, Shen Y, Lakshminarasimhan V B, et al. Efficient Low-rank Multimodal Fusion With Modality-Specific Factors[C]//Proceedings of ACL, Volume 1. 2018: 2247--2256. DOI: \url{10.18653/v1/P18-1209}.
+\bibitem{q2mfn} Zadeh A, Liang P P, Mazumder N, et al. Memory Fusion Network for Multi-view Sequential Learning[C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2018, 32(1): 5634--5641. DOI: \url{10.1609/aaai.v32i1.12021}.
+\bibitem{q2mult} Tsai Y H H, Bai S, Liang P P, et al. Multimodal Transformer for Unaligned Multimodal Language Sequences[C]//Proceedings of ACL. 2019: 6558--6569. DOI: \url{10.18653/v1/P19-1656}.
+\bibitem{q2misa} Hazarika D, Zimmermann R, Poria S. MISA: Modality-Invariant and -Specific Representations for Multimodal Sentiment Analysis[C]//Proceedings of ACM Multimedia. 2020: 1122--1131. DOI: \url{10.1145/3394171.3413678}.
+\bibitem{q2selfmm} Yu W, Xu H, Yuan Z, et al. Learning Modality-Specific Representations with Self-Supervised Multi-Task Learning for Multimodal Sentiment Analysis[C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2021, 35(12): 10790--10797. DOI: \url{10.1609/aaai.v35i12.17289}.
+\bibitem{q2mmim} Han W, Chen H, Poria S. Improving Multimodal Fusion with Hierarchical Mutual Information Maximization for Multimodal Sentiment Analysis[C]//Proceedings of EMNLP. 2021: 9180--9192. DOI: \url{10.18653/v1/2021.emnlp-main.723}.
+\bibitem{q2tfr} Yuan Z, Li W, Xu H, et al. Transformer-based Feature Reconstruction Network for Robust Multimodal Sentiment Analysis[C]//Proceedings of ACM Multimedia. 2021: 4400--4407. DOI: \url{10.1145/3474085.3475585}.
+\bibitem{q2missmodal} Lin R, Hu H. MissModal: Increasing Robustness to Missing Modality in Multimodal Sentiment Analysis[J]. Transactions of the Association for Computational Linguistics. 2023, 11: 1686--1702. DOI: \url{10.1162/tacl_a_00628}.
+\bibitem{q2m3s} Chi H, Yang M, Zhu J, et al. Missing Modality meets Meta Sampling (M3S): An Efficient Universal Approach for Multimodal Sentiment Analysis with Missing Modality[C]//Proceedings of AACL-IJCNLP, Volume 1. 2022: 121--130. DOI: \url{10.18653/v1/2022.aacl-main.10}.
+\bibitem{q2mmin} Zhao J, Li R, Jin Q. Missing Modality Imagination Network for Emotion Recognition with Uncertain Missing Modalities[C]//Proceedings of ACL-IJCNLP, Volume 1. 2021: 2608--2618. DOI: \url{10.18653/v1/2021.acl-long.203}.
+\end{thebibliography}
+}
+\end{document}
