@@ -1,0 +1,36 @@
+\begin{table}[H]
+\centering
+\caption{典型样本连续三个公共时间窗的三模态时序对齐与来源追踪}
+\label{tab:q1_case_mapping}
+\begingroup\zihao{5}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\noindent\begin{tabularx}{\textwidth}{@{}>{\centering\arraybackslash}p{2.8cm} >{\centering\arraybackslash}p{0.8cm} >{\centering\arraybackslash}p{1.65cm} >{\centering\arraybackslash}p{2.7cm} >{\centering\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}X@{}}
+\toprule
+公共窗及范围/s & 模态 & 原生索引 & 时间支持/s & 交叠时长/s & 原始来源 \\
+\midrule
+\multirow{3}{2.8cm}{\centering 第24窗\par 索引23\par $[10.191,\,10.634)$} & 文本 & 31 & 10.300--10.520 & 0.220 & 词语：\texttt{best}\newline 词级时间支持 \\[0.55em]
+ & 语音 & 520 & 10.400--10.425 & 0.025 & WAV采样区间：\newline $[166400,\,166800)$ \\[0.55em]
+ & 视觉 & 42 & 10.367--10.617 & 0.250 & 源帧：315\newline 帧显示时间：10.500 s \\[0.55em]
+\midrule
+\multirow{3}{2.8cm}{\centering 第25窗\par 索引24\par $[10.634,\,11.077)$} & 文本 & 34 & 10.900--11.120 & 0.177 & 词语：\texttt{life}\newline 词级时间支持 \\[0.55em]
+ & 语音 & 542 & 10.840--10.865 & 0.025 & WAV采样区间：\newline $[173440,\,173840)$ \\[0.55em]
+ & 视觉 & 43 & 10.617--10.867 & 0.233 & 源帧：322\newline 帧显示时间：10.733 s \\[0.55em]
+\midrule
+\multirow{3}{2.8cm}{\centering 第26窗\par 索引25\par $[11.077,\,11.520)$} & 文本 & 36 & 11.320--11.700 & 0.200 & 词语：\texttt{free}\newline 词级时间支持 \\[0.55em]
+ & 语音 & 564 & 11.280--11.305 & 0.025 & WAV采样区间：\newline $[180480,\,180880)$ \\[0.55em]
+ & 视觉 & 45 & 11.117--11.367 & 0.250 & 源帧：337\newline 帧显示时间：11.233 s \\[0.55em]
+\bottomrule
+\end{tabularx}
+
+\par\vspace{0.35em}\begin{minipage}{\textwidth}\setlength{\parindent}{0pt}
+\noindent{\heiti 注：}
+（1）“第24窗”等窗序号从1开始；“索引23”等公共窗索引及原生特征索引从0开始。源帧编号沿用原始记录。
+（2）时间支持为所选原生特征的媒体时间区间，交叠时长为其与对应公共窗的交集长度；数值沿用既有结果的三位小数表示。
+（3）文本来自赛题转写，时间支持来自词级识别时间戳；WAV采样区间为左闭右开；视觉PTS为源帧显示时间，与视觉特征支持区间含义不同。\par
+\noindent 词语\texttt{best}、\texttt{life}、\texttt{free}分别为各窗选中的来源，不表示连续原文短语。
+
+\end{minipage}
+
+\endgroup
+\end{table}

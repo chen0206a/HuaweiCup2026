@@ -1,0 +1,133 @@
+
+--- q2_source_body
++++ q2_merged_body
+@@ -1,6 +1,3 @@
+-
+-\songti\zihao{-4}\pagestyle{plain}
+-\setcounter{section}{1}\setcounter{figure}{7}\setcounter{table}{7}
+ \section{问题二：缺失场景下的多模态情感预测模型}\label{sec:q2}
+ 
+ \subsection{问题分析与总体方案}\label{subsec:q2_plan}
+@@ -11,7 +8,7 @@
+ \QTwoParagraph 针对这一限制，本文在均值表示之外引入内容驱动的时间加权残差分支，构成轻量时间注意力残差池化（Lightweight Temporal Attention Residual Pooling，LTARP）。均值分支保留整体统计信息，新增分支根据当前样本内容调整时间位置权重，为突出剩余序列中更有判别力的信息提供补充。后续在固定连续缺失场景中评价这一补充的实际收益，整体结构见图~\ref{fig:q2_arch}。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.94\textwidth]{{q2 架构图}.pdf}
++\includegraphics[width=.94\textwidth]{figures/q2/q2 架构图.pdf}
+ \caption{LTARP三模态池化与双任务预测流程。}
+ \label{fig:q2_arch}\end{figure}
+ 
+@@ -49,7 +46,7 @@
+ \QTwoParagraph 训练集与验证集均以积极样本为最多，中性样本相对较少，类别比例呈现不均衡；连续情感强度集中于零附近，两侧分布覆盖不同程度的极性。有效序列长度也有明显差异，训练与验证的中位数分别为22和23.5，小于统一长度50。因此，类别权重和有效位掩码分别进入损失计算与特征聚合（图~\ref{fig:q2_data}）。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.96\textwidth]{fig10_q2_data_statistics.pdf}
++\includegraphics[width=.96\textwidth]{figures/q2/fig10_q2_data_statistics.pdf}
+ \caption{附件2的样本、情感标签与有效序列长度分布。}
+ \label{fig:q2_data}\end{figure}
+ 
+@@ -205,7 +202,7 @@
+ \QTwoParagraph 表~\ref{tab:q2_main}给出了完整输入与54种缺失场景的总体平均，但平均值不能呈现不同缺失模态、比例和位置的差异。为进一步辨别这些差异，以下分解考察最终鲁棒配置的缺失响应。图~\ref{fig:q2_ratio}中，文本随遮挡比例增大退化最明显，语音和视觉变化较平缓；分类与回归对输入损失的响应程度也不同。文本遮挡由0.1增至0.5时，宏平均 F1从0.6163降至0.5933，显示语言内容在这组样本中的较强作用。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.96\textwidth]{fig11_q2_modality_missing_degradation.pdf}
++\includegraphics[width=.96\textwidth]{figures/q2/fig11_q2_modality_missing_degradation.pdf}
+ \caption{单模态缺失比例与验证集性能。阴影为三随机种子的样本标准差，虚线为完整输入均值。}
+ \label{fig:q2_ratio}\end{figure}
+ \FloatBarrier
+@@ -213,7 +210,7 @@
+ \QTwoParagraph 固定目标缺失比例$\rho_{\mathrm{target}}=0.3$后，缺失位置仍会改变模型表现。文本前段与后段遮挡对宏平均 F1的影响大于中段；包含文本的双模态缺失也呈相近规律，语音、视觉及语音--视觉组合的影响较小。分类与回归的位置响应并不完全一致，例如文本中段遮挡降低宏平均 F1，却使MAE略有下降（图~\ref{fig:q2_location}）。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.96\textwidth]{fig12_q2_modality_location_absolute_degradation.pdf}
++\includegraphics[width=.96\textwidth]{figures/q2/fig12_q2_modality_location_absolute_degradation.pdf}
+ \caption{不同模态与位置相对完整输入的指标变化。各指标使用独立色标。}
+ \label{fig:q2_location}\end{figure}
+ \FloatBarrier
+@@ -221,7 +218,7 @@
+ \QTwoParagraph 在比例与位置规律之外，图~\ref{fig:q2_gain}进一步比较最终鲁棒配置与MMP基线在相同受损场景下的响应差异。此处LTARP采用按$R$选定的配置，分析目的在于观察最终配置的场景收益；统一完整输入选模标准下的直接结构比较仍以表~\ref{tab:q2_main}为准。宏平均 F1和Pearson的改善更为一致，在语音、视觉及语音--视觉缺失条件下较明显；准确率随位置与模态组合出现正负波动。内容加权补充有助于保持部分剩余信息，其效果仍随受损输入而变化。包含文本的受损场景影响较大，而仅语音或视觉受损时仍有文本输入；图~\ref{fig:q2_gain}描述两种固定配置在不同受损输入下的指标差异，图~\ref{fig:q2_location}则描述缺失输入相对完整输入的性能变化，两者分别用于观察配置响应和信息损失规律。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.96\textwidth]{fig13_q2_p2_minus_b0_modality_location_gain.pdf}
++\includegraphics[width=.96\textwidth]{figures/q2/fig13_q2_p2_minus_b0_modality_location_gain.pdf}
+ \caption{最终鲁棒配置与MMP基线在不同缺失场景下的指标差异。MAE取MMP减LTARP，其余指标取LTARP减MMP；正值表示LTARP对应指标更优。}
+ \label{fig:q2_gain}\end{figure}
+ \FloatBarrier
+@@ -231,7 +228,7 @@
+ \QTwoParagraph 前述分析给出了不同缺失场景的平均响应，下面进一步从随机初始化、类别混淆和特殊输入三个方面观察这些结果的保持程度。三次初始化的配对收益较小，结合完整输入分类错误与原生视觉全零样本，可以识别总体平均之外的差异（图~\ref{fig:q2_error}）。
+ 
+ \begin{figure}[H]\centering
+-\includegraphics[width=.96\textwidth]{fig14_q2_stability_error_analysis.pdf}
++\includegraphics[width=.96\textwidth]{figures/q2/fig14_q2_stability_error_analysis.pdf}
+ \caption{随机初始化稳定性与误差分析。（a）配对综合分数；（b）混淆矩阵；（c）场景分组；（d）原生视觉全零子集。}
+ \label{fig:q2_error}\end{figure}
+ \FloatBarrier
+@@ -269,7 +266,7 @@
+ \QTwoParagraph 在上述性能结果基础上，再结合参数量比较各方法的模型规模。LTARP总参数量为164343，约16.4万，明显小于TFN、MulT和MISA等结构，与MMIM和MissModal处于相近量级。在表~\ref{tab:q2_public_baselines}--\ref{tab:q2_public_missing}所列模型中，其完整输入和缺失平均宏平均 F1均保持较高水平。图~\ref{fig:q2_params}分别对照这两类输入条件；不同方法的参数规模跨越一个数量级以上，横轴采用对数尺度，使轻量结构和较大融合网络能够在同一坐标中比较。这组结果体现了LTARP在当前接口下的性能与规模平衡，结构复杂度本身不足以决定预测表现。
+ 
+ \begin{figure}[htbp]\centering
+-\includegraphics[width=.76\textwidth]{fig15_q2_parameter_macro_f1.pdf}
++\includegraphics[width=.76\textwidth]{figures/q2/fig15_q2_parameter_macro_f1.pdf}
+ \caption{公开多模态模型的参数规模与宏平均 F1比较。（a）完整输入验证集；（b）54种连续缺失场景平均。横轴为总参数量（对数尺度），误差线为三随机种子的样本标准差。}
+ \label{fig:q2_params}\end{figure}
+ \FloatBarrier
+@@ -291,4 +288,3 @@
+ \QTwoParagraph 本问以附件2已对齐的三模态特征为起点，建立MMP双任务基线，并通过LTARP内容加权残差分支补充时间位置的信息差异。在共用融合与输出路径的基础上，第二阶段仅新增883个参数，形成完整输入和连续缺失输入下可直接评价的预测模型。
+ 
+ \QTwoParagraph 围绕54种连续缺失场景的比较表明，文本局部缺失的影响最明显，分类与回归对位置的响应有所不同。LTARP在宏平均 F1、MAE和Pearson上总体优于MMP，但提升幅度较小，不同随机初始化下仍存在一定波动。与公开方法的统一适配比较进一步体现了其性能与参数规模的折中。在此基础上，本问完成附件3全部30条无标签样本的预测，并为问题三的解释分析固定预测模型。
+-
+
+--- q3_source_body
++++ q3_merged_body
+@@ -1,6 +1,3 @@
+-
+-\songti\zihao{-4}\pagestyle{plain}
+-\setcounter{section}{2}\setcounter{figure}{15}\setcounter{table}{10}
+ \section{问题三：多模态情感预测的可解释分析与证据定位}\label{sec:q3}
+ 
+ \subsection{问题分析与总体方案}\label{subsec:q3_overview}
+@@ -10,7 +7,7 @@
+ 
+ \QThreeParagraph 整体求解路线见图~\ref{fig:fig14_q3_heaf_framework}。输入为$50\times768$的文本特征、$50\times74$的语音特征和$50\times35$的视觉特征，先枚举8种模态组合计算Shapley贡献，再利用相同组合输出分析模态交互；随后对分类主导模态进行连续窗口遮挡，定位影响当前类别的特征区间。所选区间进一步通过随机等长窗口对照和删除实验检验，并结合跨种子比较观察结果稳定性，最后沿来源记录回查原文片段或未对齐特征行。预测与解释始终使用问题二的双任务模型，分类和回归分别采用各自的解释目标，使两种输出的作用方向都有明确含义。
+ 
+-\newpage % 保留图16在第二页的原有分页
++\newpage % 保留原稿方法流程图前的分页
+ \begin{figure}[H]
+   \centering
+   \includegraphics[width=1.0\textwidth]{figures/q3/fig14_q3_heaf_framework.pdf}
+@@ -257,4 +254,3 @@
+ \QThreeParagraph 本问固定问题二的预测模型，以模态组合输出计算三模态贡献与两两交互，再用连续窗口遮挡定位局部影响。随机等长窗口、删除曲线和跨种子比较分别考察局部响应、累计影响及初始化变化，使解释结果可以结合模型的实际输出评估。
+ 
+ \QThreeParagraph 附件4的20条样本均得到类别、连续强度、模态贡献和关键区间，并按已有来源记录连接到原文或未对齐特征行。逐样本的同向与反向贡献、不同主导模态及不同位置，共同呈现固定模型使用三路输入的差异，也为检查具体预测提供了可复查的记录。
+-
+
+--- table_q1_all_samples_source
++++ table_q1_all_samples_merged
+@@ -1,5 +1,5 @@
+ \begingroup
+-\captionsetup{font=small,labelfont=bf,labelsep=quad,justification=centering}
++\captionsetup{font=small,labelfont=normalfont,labelsep=quad,justification=centering}
+ \small
+ \setlength{\LTpre}{0pt}
+ \setlength{\LTpost}{0.5em}
+@@ -11,7 +11,7 @@
+ \toprule
+ 样本ID & 时长/s & 模态 & 维度(T/A/V) & 对齐粒度 & 有效窗(T/A/V) & 文本来源 & 回退\\
+ \midrule\endfirsthead
+-\multicolumn{8}{@{}l}{\footnotesize 续表2（接上页）}\\
++\multicolumn{8}{@{}l}{\footnotesize 续表~\ref{tab:q1_all_samples}（接上页）}\\
+ \toprule
+ 样本ID & 时长/s & 模态 & 维度(T/A/V) & 对齐粒度 & 有效窗(T/A/V) & 文本来源 & 回退\\
+ \midrule\endhead
+
+--- table_q2_public_overview_source
++++ table_q2_public_overview_merged
+@@ -1,7 +1,7 @@
+ \begin{table}[H]
+ \centering\small\setlength{\tabcolsep}{4pt}
+ \caption{公开方法的统一接口适配概览}\label{tab:q2_public_overview}
+-\begin{tabularx}{.98\textwidth}{@{}>{\raggedright\arraybackslash}p{.13\textwidth}>{\raggedright\arraybackslash}p{.17\textwidth}>{\raggedright\arraybackslash}X r@{}}
++\begin{tabularx}{.98\textwidth}{@{}>{\raggedright\arraybackslash}p{.15\textwidth}>{\raggedright\arraybackslash}p{.17\textwidth}>{\raggedright\arraybackslash}X r@{}}
+ \toprule
+ 方法 & 类型 & 本文适配中的核心机制 & 参数量\\
+ \midrule
