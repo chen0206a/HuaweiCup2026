@@ -26,6 +26,8 @@ Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Sha
 
 ## E Q2
 
+2026-09-27：以用户提供的 `D:/java录屏/问题二_最全文字扩写版.tex` 为唯一正文源，完成独立叙事改写 `outputs/q2_story_rewrite/`（14页；图8–14、表8–13）。保留19个核心公式、四个结果表、30条附件3预测及7个图件，48项保留/数值检查通过；未训练、未合并正式论文。页数不作为压缩目标。公式(11)打分器与线性实现、604槽位检查来源、视觉全零旧数值及四条公开方法引文存在源稿冲突，单独列于 `q2_source_issues.md`，未自动改公式或引用。
+
 2026-09-26 E Q2 expanded baseline：完成12个公开架构适配（TFN/LMF/MFN/MulT/MISA/Self-MM/MMIM/MAG-BERT/TFR-Net/MissModal/M3S/MMIN）与B0/P2共14模型、42/43/44三seed的统一CleanSelect比较。新增27次训练完成；clean与冻结54场景各42条seedwise结果、14条汇总。P2 clean四指标排名1/1/2/2，missing排名4/1/1/2（Acc/F1/MAE/Pearson）；不声称全面最优。missing-aware训练单独标记，所有模型为aligned-50机制适配。结果、来源、checkpoint清单与QA见 `E2026/outputs/final/q2/public_baselines_expanded/`；未修改论文、未用test或附件3/4选模。
 
 用户已正式锁定 **B0-WCE 为 baseline，B5-P2 attention residual pooling 为最终主模型**。不再进行 Q2 模型探索、调参或组合。冻结验证协议为 attachment2 validation clean + 54 个连续缺失场景，benchmark seed 20260923，SHA256 `3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff`。
