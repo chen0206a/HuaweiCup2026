@@ -22,6 +22,8 @@ Q3-1 HEAF 在 Attachment2 valid 完成冻结预测器复算、8 联盟 exact Sha
 
 ## E Q2
 
+2026-09-26 E Q2 expanded baseline：完成12个公开架构适配（TFN/LMF/MFN/MulT/MISA/Self-MM/MMIM/MAG-BERT/TFR-Net/MissModal/M3S/MMIN）与B0/P2共14模型、42/43/44三seed的统一CleanSelect比较。新增27次训练完成；clean与冻结54场景各42条seedwise结果、14条汇总。P2 clean四指标排名1/1/2/2，missing排名4/1/1/2（Acc/F1/MAE/Pearson）；不声称全面最优。missing-aware训练单独标记，所有模型为aligned-50机制适配。结果、来源、checkpoint清单与QA见 `E2026/outputs/final/q2/public_baselines_expanded/`；未修改论文、未用test或附件3/4选模。
+
 用户已正式锁定 **B0-WCE 为 baseline，B5-P2 attention residual pooling 为最终主模型**。不再进行 Q2 模型探索、调参或组合。冻结验证协议为 attachment2 validation clean + 54 个连续缺失场景，benchmark seed 20260923，SHA256 `3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff`。
 
 B0 三 seed robust `0.741677 ± 0.001458`；P2 `0.744777 ± 0.001492`；paired delta `+0.003100 ± 0.002907`（sample SD）。seed42/43 为正，seed44 基本持平，结果存在 seed 敏感性。依据：`E2026/outputs/metrics/b5_p2_multiseed_summary.json`。最终配置、数据与 checkpoint manifest、实验索引见 `E2026/configs/final/`、`E2026/data/manifests/`、`E2026/outputs/final/q2/`。

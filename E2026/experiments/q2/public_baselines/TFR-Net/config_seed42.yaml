@@ -1,0 +1,20 @@
+model: TFR-Net
+seed: 42
+data: data/raw/aligned_50.pkl
+train_split: train
+validation_split: valid
+train_samples: 3395
+valid_samples: 728
+normalization: none
+batch_size: 128
+max_epochs: 80
+patience: 12
+optimizer: AdamW
+learning_rate: 0.001
+weight_decay: 0.0001
+classification_loss: balanced_weighted_CE_train_counts
+regression_loss: SmoothL1
+lambda_reg: 1.0
+selection: clean_validation_selection_score
+training_regime: missing-aware training
+benchmark_definition_sha256: 3dda8bcef01bb5eba005e4ac7b729cccec5c1943177066d7c82a15ad99205bff

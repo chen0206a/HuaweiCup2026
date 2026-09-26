@@ -45,3 +45,5 @@
 - 输出：`E2026/outputs/metrics/b5_h0_head_diagnostic.{json,md}`、`b5_h0_predictions.{csv,jsonl}`；正式记录 `experiments/exp_011_b5_h0_head_diagnostic/`。
 - 未训练模型、未修改checkpoint、未索引/评估attachment2 test、未访问attachment3；不自动进入H1。
 - Q1/Q3完成情况本轮未核实；A题历史资料保留。
+
+- 2026-09-26 E Q2 expanded baseline：完成12个公开架构适配（TFN/LMF/MFN/MulT/MISA/Self-MM/MMIM/MAG-BERT/TFR-Net/MissModal/M3S/MMIN）与B0/P2共14模型、42/43/44三seed的统一CleanSelect比较。新增27次训练完成；clean与冻结54场景各42条seedwise结果、14条汇总。P2 clean四指标排名1/1/2/2，missing排名4/1/1/2（Acc/F1/MAE/Pearson）；不声称全面最优。missing-aware训练单独标记，所有模型为aligned-50机制适配。结果、来源、checkpoint清单与QA见 `E2026/outputs/final/q2/public_baselines_expanded/`；未修改论文、未用test或附件3/4选模。
