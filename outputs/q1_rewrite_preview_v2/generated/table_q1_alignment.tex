@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering
+\caption{不同时序对齐方法的定量比较}
+\label{tab:q1_alignment_ablation}
+\small
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}>{\centering\arraybackslash}p{2.6cm}*{4}{>{\centering\arraybackslash}p{3.0cm}}@{}}
+\toprule
+对齐方法 & 准确率 & 宏平均 F1 值 & \shortstack{平均绝对误差\\（MAE）} & \shortstack{皮尔逊\\相关系数} \\
+\midrule
+\shortstack{最大时间\\重叠法} & 0.6129 $\pm$ 0.0938 & 0.4816 $\pm$ 0.0850 & 0.5258 $\pm$ 0.0966 & 0.5419 $\pm$ 0.1470 \\
+\shortstack{最近中心法} & 0.6148 $\pm$ 0.0913 & 0.4832 $\pm$ 0.0849 & 0.5210 $\pm$ 0.0967 & 0.5535 $\pm$ 0.1492 \\
+\shortstack{重叠加权\\平均法} & 0.6074 $\pm$ 0.0945 & 0.4712 $\pm$ 0.0868 & 0.5237 $\pm$ 0.0977 & 0.5482 $\pm$ 0.1506 \\
+\bottomrule
+\end{tabular}
+\par\smallskip\noindent\footnotesize 注：最近中心法有 152 个有效文本时间窗选择了与目标时间窗零交叠的特征。
+\end{table}

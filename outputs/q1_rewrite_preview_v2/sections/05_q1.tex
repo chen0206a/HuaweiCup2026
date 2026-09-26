@@ -1,0 +1,261 @@
+\section{问题一：多模态特征提取与时序对齐}\label{sec:q1}
+
+\subsection{问题分析与总体方案}\label{subsec:q1_framework}
+同一段视频中的语言、声音和画面具有共同的表达对象，却以不同方式进入计算模型。文本通常以词或语句片段出现，语音编码后形成较密集的连续声学序列，视觉则由不同采样时刻的画面形成表示。三种序列的长度和时间间隔因此并不相同，相同数组下标也不代表相同媒体时刻。仅把序列截断或补齐到相同长度，不能说明三种信息已经在时间上对应。
+
+为区分编码结果与对齐结果，本文将尚未映射到公共时间轴的单模态向量序列称为{\heiti 原生特征}。每个原生向量还关联一个在原始视频中的时间区间，称为该特征的{\heiti 时间支持}。例如，一个文本向量可以关联到词语的识别时间，语音向量关联到WAV中的样本范围，视觉向量关联到采样帧附近的媒体区间。向量说明输入内容的表示，时间支持说明该表示来自何处；二者结合，才能建立可检查的跨模态对应关系。
+
+本文以附件1的100条原始视频为对象，先独立构造三模态特征，再以媒体时间为共同坐标，将每条样本自身的有效时长划分为50个公共时间窗。对每个窗口、每种模态分别选择与其正时间交叠最长的原生特征，并保留有效掩码和来源记录。掩码用于区分没有映射的位置与有效观测中的零值，来源记录用于回查词语、音频样本或视频帧。50窗是本文统一输入组织的建模选择，最大时间重叠是本文采用的对齐规则，均非赛题指定的唯一方案。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.0\textwidth]{figures/q1/fig01_q1_overview.pdf}
+\caption{三模态特征构建与公共时间轴对齐流程。各模态独立编码并关联媒体时间，再映射至公共时间窗。}
+\label{fig:fig01_q1_overview}
+\end{figure}
+
+图~\ref{fig:fig01_q1_overview}给出整体流程。以下先说明原始媒体的时间基准，再介绍三种特征的定义与提取方法，随后建立公共时间窗上的数学映射。全量样本表回应赛题对100条结果逐条汇总的要求，典型样本表则展示实际来源对应。流程说明、总体统计和真实案例分别回答“如何构造”“构造结果如何”和“能否回查原始来源”三个问题。
+
+\subsection{原始数据预处理与统一时间基准}\label{subsec:q1_timeline}
+每条样本由视频标识与片段编号共同确定。本文将附件1中的文件夹名、MP4文件名与\texttt{label-100.xlsx}中的对应记录连接，保留样本编号、赛题转写和情感标注，不替换或删除原始样本。处理记录另保存媒体路径及文件哈希，以便确认文本、语音和视觉来自同一视频片段。
+
+音频预处理使用FFmpeg提取MP4的第一音轨，转换为16 kHz单声道PCM WAV。统一采样率使音频样本编号能够直接换算成秒，单声道则为声学编码器提供一致的输入形式。视觉时间由FFprobe读取解码帧的显示时间戳（PTS）。与按帧号除以名义帧率相比，PTS能直接反映文件中帧的实际显示位置，因而更适合作为三模态共用的时间参照。
+
+本文将预处理采用的媒体时间轴终点记为$T_i$。取容器时长与“最后一帧PTS加一个名义帧间隔”中的较大者作为第$i$条样本的有效时长，其统一时间域为
+\begin{equation}
+\mathcal T_i=[0,T_i).
+\label{eq:q1_timeline}
+\end{equation}
+附件1全部100条媒体的音视频流起点、首视频帧PTS及首解码音频帧PTS均为0 s。因此，WAV样本零点与视频PTS零点可作为共同的相对时间起点，文本时间、语音样本位置换算的秒数和视觉帧时间均在这一基准下组织。
+
+视频长度不同，若统一按固定秒数分窗，各样本会得到不同数量的时间位置。本文选择$K=50$，按每条视频自身时长等比例分窗，使短视频和长视频均形成相同长度的序列，同时保留每个窗口的实际秒数边界。相同公共窗索引表示同一样本内的相对位置，不意味着不同视频具有相同绝对时间范围。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/q1/fig05_q1_data_statistics.pdf}
+\caption{附件1样本与特征覆盖统计。包括媒体时长、情感类别、有效公共窗及文本来源和时间戳回退记录。}
+\label{fig:fig05_q1_data_statistics}
+\end{figure}
+
+图~\ref{fig:fig05_q1_data_statistics}说明了保留逐样本时间信息的必要性。媒体时长决定公共窗的秒数宽度，模态覆盖差异决定哪些位置具有实际观测，文本来源和回退记录则决定时间支持的粒度。它们均与对齐结果的解释有关，不能仅由一组统一维数概括。
+
+\subsection{三模态原生特征提取}\label{subsec:q1_native}
+\subsubsection{文本特征提取}\label{subsubsec:q1_text}
+赛题转写提供语言内容，但未直接提供将每个词放回视频时间轴所需的时间戳。因此，本文主要使用赛题转写作为文本内容，并利用同一视频经Whisper large-v3-turbo识别得到的词或片段时间信息确定时间支持\cite{radford2023whisper}。最终记录中，\QOneOfficialTextCount 条样本采用赛题转写，\QOneMediaAsrCount 条采用媒体ASR，即直接使用当前视频识别出的文本与时间信息。文本内容来源和时间来源分别保存，避免把两者混为同一个字段。
+
+媒体内容与赛题转写不一致时，无法仅凭文字顺序可靠赋予时间。例如，样本\texttt{\detokenize{-NFrJFQijFE__2}}的保存记录显示，赛题转写描述仪器准备，而同一视频的识别文本描述鹰的听觉和视觉；最终采用媒体ASR构造文本特征，并保留赛题转写用于回查。该案例说明异常文本的处理需要以当前片段的实际语音为依据。文本编码读取同一样本的带时间片段清单。赛题转写中能够与识别词序建立对应的词语沿用该词的时间支持，未匹配词不进入带时间特征；不满足文本对应条件的样本采用媒体ASR。原始转写、识别词及其对应关系同时保留，便于回查内容来源。
+
+对词级时间信息，先检查区间是否有限、是否满足$0\leq s<e\leq T_i$，以及起止边界是否相对于前一个原始词区间倒退。相邻词发生交叠本身不触发回退。无效或非单调词区间只允许回退到其所属识别片段的有效时间范围；该片段仍无效时标记为未解决，不插值推断时间，也不搬用其他片段的时间戳。回退记录因此具有更粗的时间支持，后续应保留其来源标记。
+
+正式文本编码使用RoBERTa-base\cite{liu2019roberta}。提取器将同一视频片段中已带时间信息的文本单元组成预分词列表，送入快速分词器并限制最大长度为510。模型取最后一层隐藏表示；一个词拆成多个子词时，按分词器返回的词索引对相应向量求平均，形成768维原生向量。特殊词元不具有文本单元索引，因而不参与平均；超过截断长度且没有对应词元的单元不生成向量，并保留提示记录。模型以推理模式运行，不在附件1上微调。
+
+第$j$个文本原生表示及时间支持写为
+\begin{equation}
+\mathbf h_{ij}^{(T)}\in\mathbb R^{\QOneTextDim},\qquad
+I_{ij}^{(T)}=[s_{ij}^{(T)},e_{ij}^{(T)}).
+\label{eq:q1_text_feature}
+\end{equation}
+图~\ref{fig:fig02_q1_text_feature_extraction}中的分词过程说明语义编码的输入组织，词元位置并不等同于公共时间位置。后者必须由媒体时间交叠确定。
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[trim=30bp 145bp 30bp 145bp,clip,width=.94\textwidth]{figures/q1/fig02_q1_text_feature_extraction.pdf}
+\caption{文本模态特征提取示意。文本经分词与上下文编码形成语义表示，另保留对应的媒体时间支持。}
+\label{fig:fig02_q1_text_feature_extraction}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{语音特征提取}\label{subsubsec:q1_audio}
+连续语音包含随时间变化的语调、能量和节奏，声学编码得到的序列通常比文本单元更密集。本文使用WavLM-base-plus对16 kHz单声道WAV编码\cite{chen2022wavlm}，取最后一层逐位置表示，输出768维原生向量。一个公共窗可能与多个声学位置交叠，因此必须记录每个位置的时间支持，才能在后续映射中选择明确来源。
+
+语音提取器依据模型卷积核与步长计算输出位置的输入样本步距和感受范围。第$j$个位置对应WAV样本区间$[jH,\min(N,jH+R))$，其中$H$为累计步距，$R$为感受范围，$N$为WAV样本数。将样本编号除以采样率即可得到秒数，并将区间末端限制在$T_i$以内；输出位置数还与模型的长度计算函数核对。这些区间用于标识原生位置的音频来源，不应理解为人工把语音切成互不重叠小段后独立编码。
+
+语音原生表示及时间支持为
+\begin{equation}
+\mathbf h_{ij}^{(A)}\in\mathbb R^{\QOneAudioDim},\qquad
+I_{ij}^{(A)}=[s_{ij}^{(A)},e_{ij}^{(A)}).
+\label{eq:q1_audio_feature}
+\end{equation}
+图~\ref{fig:fig03_q1_audio_feature_extraction}概括连续波形到声学序列的过程。保存WAV样本范围使对齐后的语音位置能够回查原音频，而不仅保留一个向量下标。
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[trim=30bp 145bp 30bp 145bp,clip,width=.94\textwidth]{figures/q1/fig03_q1_audio_feature_extraction.pdf}
+\caption{语音模态特征提取示意。连续波形经声学编码形成有序表示，并关联WAV样本支持。}
+\label{fig:fig03_q1_audio_feature_extraction}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{视觉特征提取}\label{subsubsec:q1_vision}
+视觉表示需要同时说明画面内容和采样时刻。本文使用SigLIP2-base-patch16-224提取视觉特征\cite{tschannen2025siglip2}，以每秒4帧为目标时间网格，从真实PTS序列中选择离目标时刻最近的帧。等距时选择较早帧，相邻目标重复选中同一帧时只保留一次。该实现依据显示时间选择画面，避免简单用帧号除以名义帧率代替真实媒体时间。
+
+所选画面按源帧编号解码并交给对应图像处理器，提取器调用图像特征接口获得768维向量。以相邻已选帧PTS的中点划分时间支持，首边界为0，尾边界为$T_i$。每个视觉向量同时记录源帧编号和显示时间，因此公共窗中的视觉位置可以回查到具体画面。PTS表示帧的显示时刻，时间支持则是该向量在映射时使用的区间，两者不能互相替代。
+
+视觉原生表示为
+\begin{equation}
+\mathbf h_{ij}^{(V)}\in\mathbb R^{\QOneVisionDim},\qquad
+I_{ij}^{(V)}=[s_{ij}^{(V)},e_{ij}^{(V)}).
+\label{eq:q1_vision_feature}
+\end{equation}
+图~\ref{fig:fig04_q1_video_feature_extraction}展示采样与视觉编码的组织方式。图中的序列块用于说明流程，不代表该示例的实际向量数值。图像按模型配套处理配置缩放并归一化，处理配置与模型版本一并保存。
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[trim=30bp 145bp 30bp 145bp,clip,width=.94\textwidth]{figures/q1/fig04_q1_video_feature_extraction.pdf}
+\caption{视觉模态特征提取示意。采样画面经视觉编码形成表示，源帧及PTS用于保留时间来源。}
+\label{fig:fig04_q1_video_feature_extraction}
+\end{figure}
+进一步对全部视频解码帧进行时间一致性核验，顺序解码结果与FFprobe记录的帧显示时间一致，源帧编号与PTS因而可共同用于视觉来源回溯。
+
+\FloatBarrier
+
+\subsection{基于最大时间重叠的跨模态时序对齐}\label{subsec:q1_alignment}
+一个公共时间窗可能与同一模态的多个原生特征交叠。对多个来源求平均可以形成一个向量，但该位置会同时包含多个原生来源。为方便展示和核验实际时间关系，本文对每种模态分别选取与当前公共窗正时间交叠最长的原生特征，让统一位置直接继承该向量。这样既统一输入长度，也为每个有效位置保留确定的原生来源。
+
+将第$i$条样本的有效时长均分为$K=\QOneBins$个半开区间：
+\begin{equation}
+B_{ik}=\left[\frac{kT_i}{K},\frac{(k+1)T_i}{K}\right),\qquad k=0,1,\ldots,K-1.
+\label{eq:q1_bins}
+\end{equation}
+记$b_{ik}=kT_i/K$，模态$m\in\{T,A,V\}$的原生时间支持为
+\begin{equation}
+I_{ij}^{(m)}=[s_{ij}^{(m)},e_{ij}^{(m)}).
+\label{eq:q1_native_interval}
+\end{equation}
+其与公共窗的交叠长度为
+\begin{equation}
+\omega_{ijk}^{(m)}=\max\left(0,\min(e_{ij}^{(m)},b_{i,k+1})-\max(s_{ij}^{(m)},b_{ik})\right).
+\label{eq:q1_overlap}
+\end{equation}
+当存在正交叠时，选择
+\begin{equation}
+j_{ik}^{(m)}=\arg\max_j\omega_{ijk}^{(m)},\qquad \omega_{i,j_{ik}^{(m)},k}^{(m)}>0,
+\label{eq:q1_argmax}
+\end{equation}
+并令
+\begin{equation}
+\mathbf z_{ik}^{(m)}=\mathbf h_{i,j_{ik}^{(m)}}^{(m)},\qquad M_{ik}^{(m)}=1.
+\label{eq:q1_hard_feature}
+\end{equation}
+实际实现中，最大交叠并列时优先选取区间中心离公共窗中心更近者，仍并列则取较早原生索引。该选择路径严格要求交叠大于0，不引入用于选择的额外小量。
+
+无正交叠时，令$\mathbf z_{ik}^{(m)}=\mathbf0$、$M_{ik}^{(m)}=0$并保留空来源记录。零向量仅是无映射位置的存储形式，判断有效性必须读取掩码，不能反过来由向量是否全零推断是否观测有效。单样本及全量结果的组织形状为
+\begin{equation}
+\mathbf Z_i^{(m)}\in\mathbb R^{\QOneBins\times d_m},\qquad
+\mathcal Z^{(m)}\in\mathbb R^{\QOneSamples\times\QOneBins\times d_m},\quad d_T=d_A=d_V=768.
+\label{eq:q1_tensor_shape}
+\end{equation}
+各样本都用完整50窗覆盖自身媒体时间域；部分模态空窗属于没有有效映射，而不是序列末端填充。代码还单独保存填充标记，避免把这两类情况混用。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[trim=100bp 0bp 130bp 0bp,clip,width=1.0\textwidth]{figures/q1/fig06_q1_temporal_alignment.pdf}
+\caption{三模态原生时间轴到公共时间窗的映射示意。媒体素材用于说明时间关系，彩色矩阵用于示意特征组织。}
+\label{fig:fig06_q1_temporal_alignment}
+\end{figure}
+
+图~\ref{fig:fig06_q1_temporal_alignment}从原始画面、波形和文本出发，展示不同时间密度的原生序列怎样进入公共窗口。同一公共行的共同含义是媒体时间范围，而非三种原生序列共有的下标。图中的矩阵色值为结构示意，真实索引、支持区间和交叠结果由第\ref{subsec:q1_case_summary}节的案例表进一步给出。
+\FloatBarrier
+
+\subsection{特征构建结果与完整性检验}\label{subsec:q1_validation}
+最终特征覆盖\QOneSamples 条样本，文本、语音和视觉分别组织为$100\times50\times768$的单精度浮点数组，对应有效掩码均为$100\times50$的布尔数组。表~\ref{tab:q1_feature_scheme}区分原生向量数量与对齐后的形状：前者反映三种编码结果的时间密度，后者反映本文为后续读取建立的统一组织方式。二者不应被解释为相同数量的原始观测。
+
+\input{generated/table_q1_feature.tex}
+
+三模态平均有效窗覆盖率分别为\QOneTextCoverage、\QOneAudioCoverage 和\QOneVisionCoverage。文本覆盖较低不等价于约18\%的文本提取失败：文本是离散语言事件，部分公共窗没有与之正交叠的带时间片段，这些位置由有效掩码标明。连续声学表示更密集，语音空窗主要出现在少数位置；视觉支持区间按采样帧及媒体边界构造，覆盖全部公共窗。因此三种覆盖率的差异具有时间组织上的原因，不能用同一“缺失率”笼统解释。
+
+完整性检验覆盖样本行序、数组形状、数值有限性、掩码与来源对应。100个样本编号唯一，矩阵行序与清单一致，特征均无非有限值，无效位置均为零。文本、语音和视觉的有效位置分别为4121、4955和5000，与覆盖率一致。来源表完整保留15000个“样本—公共窗—模态”组合，有效位置均可回查原生索引与来源；文件读取方式见第\ref{subsec:q1_repro}节。
+
+\subsection{全量样本特征构建结果}\label{subsec:q1_all_samples}
+总体平均值不能指出哪些样本具有稀疏文本支持或较粗时间信息。为回应赛题的全量汇总要求，表~\ref{tab:q1_all_samples}逐条列出附件1全部100条样本的编号、时长、模态、维度、对齐粒度，并保留有效窗、文本来源和回退次数。表中时长是第\ref{subsec:q1_timeline}节定义的媒体时间轴终点；50窗表示本文对该时长的等比例划分，不是赛题强制规定的粒度。
+
+\input{generated/table_q1_all_samples.tex}
+
+逐样本记录补充了表~\ref{tab:q1_feature_scheme}的平均覆盖率。文本有效窗为13--49、语音为47--50、视觉均为50，读者可据此辨认哪些片段的语言时间支持较稀疏，哪些存在语音边界空窗。文本来源中75条采用赛题转写、25条采用媒体ASR；7条样本具有回退记录，累计21个实际回退位置。来源与回退字段使相同的有效窗数量仍能区分不同的时间信息质量，避免把所有文本位置视为同等精确。
+\FloatBarrier
+
+\subsection{方案比较与信息保持能力验证}\label{subsec:q1_analysis}
+形状一致和时间记录完整只能说明特征可以读取并定位，不能说明它们保留了多少与情感任务有关的信息。本文因此使用固定的轻量下游预测模型作为特征探针，在相同训练和评价规则下，分别改变对齐方法、视觉编码器或模态组合，观察准确率、宏平均F1、MAE和皮尔逊相关系数的变化。这些比较为问题一的特征选择提供辅助诊断，不代替对齐关系本身的核验。
+
+探针先将每模态768维输入映射为32维，再对同一公共位置的三路表示拼接，用一个小型感知机变换后，在联合有效位置上作均值池化，输出三分类与标量回归结果。探针采用40轮AdamW训练，学习率0.002、权重衰减0.001，目标为交叉熵加0.25倍平滑绝对误差；标准化参数只由当前训练折中的有效位置估计。各组比较保持探针结构、优化设置和评价划分一致。
+
+评价采用5次重复分层五折划分。分层按片段标签进行，未按视频标识分组，因此同一原始视频的不同片段可能进入不同折，存在同源信息跨折的影响。这些指标仅用于Q1内部方法诊断，不能解释为独立测试集泛化成绩；表中折间样本标准差也不构成统计显著性结论。该边界同样适用于以下三组比较。
+
+\subsubsection{时序对齐方法比较}\label{subsubsec:q1_align_ablation}
+表~\ref{tab:q1_alignment_ablation}比较最大时间重叠、最近中心和重叠加权平均，图~\ref{fig:fig07_q1_alignment_method_comparison}展示辅助评价的变化范围。三种方法的平均指标总体接近，最近中心在部分指标上略高，但保存记录中有\QOneNearestZeroOverlap 个有效文本公共窗选到了与目标窗没有正交叠的来源。因此，时间中心接近并不总能保证区间之间实际相交。
+
+\input{generated/table_q1_alignment.tex}
+
+重叠加权平均允许一个公共位置组合多个原生向量，可以保存多个来源及权重，却不再保留唯一来源。本文选择最大时间重叠，是综合考虑真实时间对应和逐位置回查的便利性，而非宣称它在四项辅助指标上均为最优。最近中心与加权平均仍是有意义的对照，揭示了预测信息与来源定位之间的不同侧重。
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/q1/fig07_q1_alignment_method_comparison.pdf}
+\caption{不同时序对齐方法的辅助评价结果。点为重复分层五折均值，半透明区域为均值上下一个样本标准差。}
+\label{fig:fig07_q1_alignment_method_comparison}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{视觉特征提取方法比较}\label{subsubsec:q1_vision_ablation}
+视觉编码器比较固定所选帧、PTS和时间映射，只替换图像表示骨干。因此差异对应当前画面在不同编码器中的表示，而不是换了一批视觉来源。DINOv3的自监督表示作为单变量对照\cite{simeoni2025dinov3}，两种方法都保留相同的源帧追踪结构。
+
+\input{generated/table_q1_visual.tex}
+
+表~\ref{tab:q1_visual_backbone}显示，在固定评价设置下，SigLIP2的四项指标均值方向均有利，单次提取用时也更短，因此作为最终视觉编码器。提取时间反映本次运行条件，不据此推广为不同设备上的固定速度差。该选择影响视觉内容表示，时间对齐规则保持不变。
+\FloatBarrier
+
+\subsubsection{模态组合比较}\label{subsubsec:q1_modality_ablation}
+表~\ref{tab:q1_modality_ablation}比较三个单模态、三种双模态组合及三模态组合在固定探针上的信息保持能力。这是输入组合的比较，不是对单次预测计算Shapley贡献，也不是现实因果归因。各组合沿用相同时间窗和有效位，使评价差异能够围绕输入信息的增减讨论。
+
+\input{generated/table_q1_modality.tex}
+
+文本单模态已保留较强的情感信息，加入语音后分类表现更好；文本与视觉组合则在连续强度预测的MAE和相关系数上更有利。两类任务对信息的需求并不完全相同，新增模态也不必然使所有指标同向改善。三模态简单拼接未同时超过最有利的两模态组合，说明统一时序组织解决了输入可比较的问题，但如何有效融合不同信息仍需要后续模型设计。
+\FloatBarrier
+
+\clearpage
+\subsection{特征文件组织与复现说明}\label{subsec:q1_repro}
+主要模型和处理设置见表~\ref{tab:q1_repro_models}。三模态独立编码后，统一采用最大时间重叠映射；模型标识与版本、样本顺序及文件校验信息保存在配套清单中。
+
+\begin{table}[H]
+\centering
+\caption{问题一主要模型与复现配置}\label{tab:q1_repro_models}
+\small
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\textwidth}{@{}p{3.0cm}X@{}}
+\toprule
+项目 & 配置 \\
+\midrule
+文本编码 & RoBERTa-base \\
+语音编码 & WavLM-base-plus \\
+视觉编码 & SigLIP2-B/16 \\
+文本时间信息 & Whisper large-v3-turbo \\
+音频输入 & 16 kHz，单声道 \\
+视觉采样 & 4帧/s目标时间网格 \\
+公共时间窗 & 每样本50窗 \\
+对齐规则 & 最大时间重叠硬对齐 \\
+最终特征 & 三模态各$100\times50\times768$，FP32 \\
+核心环境 & PyTorch 2.14.0+cu130；Transformers 4.57.3 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+最终特征采用压缩NPZ保存。\texttt{aligned\_features\_fp32.npz}中的\texttt{text}、\texttt{audio}、\texttt{vision}分别存放三模态数组；\texttt{masks.npz}中的\texttt{text\_mask}、\texttt{audio\_mask}、\texttt{vision\_mask}分别保存布尔有效位。\texttt{sample\_ids.csv}给出第一维行号与样本编号的对应关系。\texttt{source\_mapping\_15000.csv}另存逐窗来源，包含原生索引、时间支持、交叠时长及文本、WAV采样范围或源帧信息。
+
+读取时先按样本编号确定矩阵行，再读取三模态特征及掩码；需要回溯来源时，以样本编号、公共窗索引和模态查询来源表，取得对应的原生位置与媒体记录。原生向量及同名说明文件一并保存，来源索引与原生向量行号对应，因此密集矩阵和来源记录可以分别读取、联合使用。
+
+完整处理从核对附件1样本与媒体信息开始，将音频转换为单声道WAV，取得文本时间信息与视频PTS，再提取三模态原生特征并关联各自时间支持。随后按每条样本时长建立50个公共窗，执行最大时间重叠对齐，保存特征、掩码、样本编号与来源映射，最后检查样本覆盖、数组形状及来源对应关系。
+\FloatBarrier
+
+\subsection{典型样本分析与本问小结}\label{subsec:q1_case_summary}
+样本\texttt{\detokenize{-a55Q6RWvTA__3}}的有效时长为22.154 s，划分为50个公共时间窗。其保存记录可同时回查文本、WAV样本范围和视觉源帧，适合展示统一位置与各自原生来源之间的关系。表~\ref{tab:q1_case_mapping}选取第24--26窗，即零起始索引23--25；九条三模态记录均具有有效映射。
+
+\input{generated/table_q1_case_mapping.tex}
+
+以第25窗为例，公共范围为$[10.634,11.077)$ s。文本索引34支持于10.900--11.120 s，语音索引542支持于10.840--10.865 s，视觉索引43支持于10.617--10.867 s。三种区间宽度不同，也不必完全落在公共窗内部，但都与该窗具有正交叠，因此可以组织到同一公共时间位置。这说明对齐建立的是明确的时间对应，而非强行使三种原生观测具有相同宽度。
+
+连续公共窗并不要求原生索引连续。三个窗中的文本索引为31、34、36，语音为520、542、564，视觉为42、43、45；这一变化反映了各模态保留的不同时间密度。本文逐窗选择来源，未为使编号连续而插值生成向量，未被选中的原生位置也不能据此判断为无效。
+
+读者可从公共窗逐层查到原生索引、对应时间，再回到文本词语、WAV采样范围或视觉源帧。例如第25窗的视觉来源为帧322，显示时间为10.733 s；这一时刻与视觉支持区间分别回答“是哪一帧”和“该特征在映射中支持哪个区间”。案例表核验的是时序映射与来源追踪，不用于证明情感分类正确或强度预测准确。
+
+综上，本问以媒体时间连接三种不同采样尺度的表示，形成统一长度但保留独立有效位和来源的特征组织。全量表给出逐样本结果，辅助探针比较说明不同方案的信息保持特点，典型表则把抽象映射落实到真实记录。最终特征、有效掩码、样本清单与逐窗来源映射共同保存，使上述结果能够回查到对应的特征位置和原始来源。
+\FloatBarrier
