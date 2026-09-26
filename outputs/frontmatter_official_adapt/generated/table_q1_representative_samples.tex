@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering\zihao{-4}
+\caption{代表性样本的三模态特征构建与时序对齐结果}\label{tab:q1_all_samples}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.1cm}>{\centering\arraybackslash}p{1.25cm}>{\centering\arraybackslash}p{1.15cm}>{\centering\arraybackslash}p{2.25cm}>{\centering\arraybackslash}p{1.3cm}>{\centering\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{1.9cm}>{\centering\arraybackslash}p{.9cm}@{}}
+\toprule
+样本ID & 时长/s & 模态 & \shortstack{维度\\(T/A/V)} & \shortstack{对齐\\粒度} & \shortstack{有效窗\\(T/A/V)} & \shortstack{文本\\来源} & 回退\\
+\midrule
+\texttt{\detokenize{-a55Q6RWvTA__3}} & 22.154 & T/A/V & 768/768/768 & 50窗 & 48/50/50 & 赛题转写 & 0\\
+\texttt{\detokenize{-NFrJFQijFE__1}} & 5.746 & T/A/V & 768/768/768 & 50窗 & 13/50/50 & 媒体ASR & 5\\
+\texttt{\detokenize{-yRb-Jum7EQ__1}} & 29.288 & T/A/V & 768/768/768 & 50窗 & 38/50/50 & 媒体ASR & 8\\
+\texttt{\detokenize{-mJ2ud6oKI8__9}} & 7.033 & T/A/V & 768/768/768 & 50窗 & 49/50/50 & 媒体ASR & 1\\
+\texttt{\detokenize{-9y-fZ3swSY__4}} & 2.821 & T/A/V & 768/768/768 & 50窗 & 44/47/50 & 赛题转写 & 0\\
+\texttt{\detokenize{-RfYyzHpjk4__2}} & 5.516 & T/A/V & 768/768/768 & 50窗 & 42/49/50 & 赛题转写 & 1\\
+\texttt{\detokenize{-3g5yACwYnA__13}} & 5.514 & T/A/V & 768/768/768 & 50窗 & 33/49/50 & 赛题转写 & 0\\
+\texttt{\detokenize{-t217m2on-s__7}} & 17.183 & T/A/V & 768/768/768 & 50窗 & 48/50/50 & 赛题转写 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+\par\vspace{0.2em}\noindent\begin{minipage}{\textwidth}{\zihao{-4}\noindent 注：\par
+\begin{enumerate}[label=(\arabic*),leftmargin=2.4em,labelsep=.4em,itemsep=0pt,topsep=0pt,parsep=0pt]
+\item T、A、V分别表示文本、语音、视觉；“有效窗(T/A/V)”依次给出三模态的有效公共窗数。
+\item “赛题转写”为附件1 \texttt{label-100.xlsx} 的text字段；“媒体ASR”为当前视频语音识别得到的文本。
+\item “回退”为词级时间戳不可用时，实际采用所属识别片段时间区间的映射次数。
+\end{enumerate}}\end{minipage}
