@@ -1,0 +1,33 @@
+\section*{附录 C\quad 主要程序与结果文件说明}
+\begingroup\normalsize\songti
+\setcounter{table}{0}\renewcommand{\thetable}{C\arabic{table}}
+表~\ref{tab:app_c_programs}列出主要算法程序，表~\ref{tab:app_c_results}列出与正文对应的关键结果文件。同名文件按所属问题目录区分。
+
+\begin{table}[H]\centering\normalsize
+\caption{主要程序文件及用途}\label{tab:app_c_programs}
+\begin{tabularx}{\textwidth}{@{}p{5.5cm}p{1.3cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 文件 & 问题 & 用途\\\midrule
+\nolinkurl{q1_full_feature_run.py} & 一 & 三模态特征构建与对齐\\
+\nolinkurl{temporal.py} & 一 & 最大时间重叠来源选择\\
+\nolinkurl{baseline.py} & 二 & MMP与双任务输出\\
+\nolinkurl{pooling_residual.py} & 二 & LTARP残差池化\\
+\nolinkurl{missing_benchmark.py} & 二 & 连续缺失场景评价\\
+\nolinkurl{attachment3_inference.py} & 二 & 附件3预测\\
+\nolinkurl{coalitions.py} & 三 & 模态贡献与交互\\
+\nolinkurl{temporal_occlusion.py} & 三 & 遮挡与关键区间定位\\
+\bottomrule\end{tabularx}\end{table}
+
+\begin{table}[H]\centering\normalsize
+\caption{主要结果文件及内容}\label{tab:app_c_results}
+\begin{tabularx}{\textwidth}{@{}p{6.6cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 文件 & 主要内容\\\midrule
+\nolinkurl{masks.npz} & 三模态有效位置掩码\\
+\nolinkurl{sample_ids.csv} & 特征行序与样本标识\\
+\nolinkurl{source_mapping_15000.csv} & 公共窗与原生来源映射\\
+\nolinkurl{q1_alignment_ablation.csv} & 对齐方案比较\\
+\nolinkurl{q2_scenario_details_complete.csv} & 连续缺失逐场景指标\\
+\nolinkurl{q2_ablation_summary.csv} & 模型组件消融结果\\
+\nolinkurl{attachment3_predictions.csv} & 附件3类别与强度预测\\
+\nolinkurl{attachment4_predictions_explanations.csv} & 附件4预测与解释\\
+\bottomrule\end{tabularx}\end{table}
+\FloatBarrier\endgroup

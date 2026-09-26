@@ -1,0 +1,92 @@
+\section*{附录 B\quad 关键算法与实验设置}
+\begingroup
+\normalsize\songti
+\setcounter{table}{0}
+\renewcommand{\thetable}{B\arabic{table}}
+\definecolor{codebg}{RGB}{247,248,250}
+\lstset{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\fontsize{10.5pt}{13.3pt}\selectfont,columns=fullflexible,keepspaces=true,showstringspaces=false,breaklines=true,breakatwhitespace=false,numbers=none,xleftmargin=6pt,xrightmargin=6pt,frame=none,aboveskip=3pt,belowskip=5pt}
+
+\subsection*{B.1\quad 运行环境与实验设置}
+\phantomsection\addcontentsline{toc}{subsection}{B.1 运行环境与实验设置}
+问题一读取附件1原始媒体并生成对齐特征、有效掩码和来源记录；问题二使用附件2已对齐特征建立预测模型；问题三使用问题二的模型计算输入贡献并核验解释。主要环境与程序见表~\ref{tab:app_b_env}和表~\ref{tab:app_b_flow}。
+
+\begin{table}[H]
+\centering\normalsize
+\caption{问题一主要运行环境}\label{tab:app_b_env}
+\begin{tabularx}{0.90\textwidth}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 项目 & 配置\\\midrule
+GPU特征计算 & PyTorch 2.14.0+cu130；Transformers 4.57.3\\
+CPU媒体准备 & Python 3.13.9；NumPy 2.3.5\\
+媒体解码与时间信息 & FFmpeg / FFprobe 8.0\\
+\bottomrule\end{tabularx}
+\end{table}
+\begin{table}[H]
+\centering\normalsize
+\caption{主要计算阶段、程序及输入输出}\label{tab:app_b_flow}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}X@{}}
+\toprule 阶段 & 主要程序 & 输入与输出\\\midrule
+问题一 & \nolinkurl{q1_full_feature_run.py}、\nolinkurl{temporal.py} & 附件1媒体与转写；输出特征、掩码及来源记录\\
+问题二 & \nolinkurl{pooling_residual.py}、\nolinkurl{missing_benchmark.py} & 附件2对齐特征；输出模型、缺失评价与附件3预测\\
+问题三 & \nolinkurl{coalitions.py}、\nolinkurl{temporal_occlusion.py} & 固定模型与待解释输入；输出贡献、关键区间与附件4解释\\
+\bottomrule\end{tabularx}\end{table}
+
+\subsection*{B.2\quad 最大时间重叠时序对齐实现}
+\phantomsection\addcontentsline{toc}{subsection}{B.2 最大时间重叠时序对齐实现}
+代码B1给出最大时间重叠对齐的核心实现，用于将三种模态的原生特征映射到50个公共时间窗。代码保留交叠计算、来源选择及有效掩码生成，文件读取和日志部分从略。
+
+\noindent\textbf{代码 B1\quad 最大时间重叠对齐核心实现}
+\lstinputlisting{appendices/snippets/q1_alignment_core.py}
+
+\subsection*{B.3\quad LTARP与连续缺失场景实现}
+\phantomsection\addcontentsline{toc}{subsection}{B.3 LTARP与连续缺失场景实现}
+代码B2给出LTARP的模态内池化实现，包括掩码均值、内容加权表示和残差组合。分类、回归输出仅保留接口，训练循环不在此展开。
+
+\noindent\textbf{代码 B2\quad LTARP核心池化实现}
+\lstinputlisting{appendices/snippets/q2_ltarp_core.py}
+
+\begin{table}[H]
+\centering\normalsize
+\caption{问题二主要训练参数}\label{tab:app_b_train}
+\begin{tabular}{@{}ll@{}}
+\toprule 参数 & 记录值\\\midrule
+优化器、学习率、权重衰减 & AdamW；$10^{-3}$；$10^{-4}$\\
+批量大小、随机失活率 & 128；0.1\\
+最大轮数、提前停止耐心轮数 & 80；12\\
+随机种子 & 42、43、44\\
+\bottomrule\end{tabular}\end{table}
+
+代码B3给出连续缺失场景的构造过程，用于生成不同模态、比例和位置的连续遮挡输入，并保持原有效位掩码不变。特征清零由原程序的\texttt{apply\_blocks}执行。
+
+\noindent\textbf{代码 B3\quad 连续缺失场景生成}
+\lstinputlisting{appendices/snippets/q2_missing_core.py}
+
+\subsection*{B.4\quad 精确Shapley与局部遮挡实现}
+\phantomsection\addcontentsline{toc}{subsection}{B.4 精确Shapley与局部遮挡实现}
+代码B4给出三模态精确Shapley贡献与两两交互的核心计算。三种模态的8种联盟输出由固定预测模型统一获得。
+
+\noindent\textbf{代码 B4\quad 三模态精确Shapley贡献与交互}
+\lstinputlisting{appendices/snippets/q3_shapley_core.py}
+
+代码B5给出连续窗口遮挡和关键区间筛选过程。窗口仅在有效位置内滑动，并根据固定分类目标的输出变化确定高影响区间。
+
+\noindent\textbf{代码 B5\quad 连续窗口遮挡与关键区间选择}
+\lstinputlisting{appendices/snippets/q3_occlusion_core.py}
+
+\subsection*{B.5\quad 解释验证与结果核验}
+\phantomsection\addcontentsline{toc}{subsection}{B.5 解释验证与结果核验}
+独立验证子集以随机等长窗口删除作为对照，并比较不同删除比例下的预测变化。区间估计按视频ID进行分组自助采样，同一视频的片段随组共同抽取；跨种子的Shapley排序稳定性采用Spearman秩相关。主要设置见表~\ref{tab:app_b_checks}。
+
+\begin{table}[H]
+\centering\normalsize
+\caption{问题三主要解释验证设置}\label{tab:app_b_checks}
+\begin{tabular}{@{}ll@{}}
+\toprule 设置 & 取值\\\midrule
+独立验证片段数 & 396\\
+随机等长窗口 & 32个\\
+窗口比例、步长 & 0.30；1\\
+删除比例 & 10\%、20\%、30\%、40\%\\
+自助采样分组单位 & 视频ID\\
+Shapley排序稳定性 & Spearman秩相关\\
+附件4样本数 & 20\\
+\bottomrule\end{tabular}\end{table}
+\endgroup
