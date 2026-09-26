@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\small
+\caption{候选结构与训练策略消融。均值--最大值残差池化仅有一次初始化。}
+\label{tab:q2_ablation}
+\begin{tabular}{lccc}
+\toprule
+方案 & 初始化次数 & 总参数量 & 综合分数$R$\\
+\midrule
+MMP（基线） & 3 & 163460 & $0.7417\pm0.0015$\\
+单模态时间编码 & 3 & 957572 & $0.7351\pm0.0020$\\
+训练期连续遮挡 & 3 & 163460 & $0.7385\pm0.0025$\\
+均值--最大值残差池化 & 1 & 163463 & $0.7443$\\
+LTARP（本文方案） & 3 & 164343 & $0.7448\pm0.0015$\\
+\bottomrule
+\end{tabular}
+\end{table}
