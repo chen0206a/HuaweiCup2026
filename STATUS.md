@@ -1,5 +1,7 @@
 # Project Status
 
+- 2026-09-27 E Q3：独立终稿叙事优化完成，交付 `outputs/q3_story_refine/` 的TeX、12页PDF及正文/图件修改日志。移除重复流程与HEAF包装，保留4公式、7表、20条预测解释及两个典型案例；三图由原源仅修改标签重新导出，原始实验数字未变。74项核对及全页视觉检查通过；未合并正式论文。
+
 2026-09-25：当前 E 题工作目录为 `E2026/`。以下较早条目保留其阶段历史状态。
 
 - E Q3 Attachment4 原始证据映射 PRECHECK：80/80 本地文件哈希复核通过；非零 aligned 音频/视觉槽位均可在同一样本未对齐特征中找到唯一完全相等的行（564/564、534/534）。仍缺未对齐行到原音频时间、原视频 frame/PTS 的来源映射；sample02 `[1,7)` 只能确认视觉特征行 36–41，不能生成已验证关键帧。Text=`VERIFIED`，Audio/Vision=`UNVERIFIED`。见 `E2026/outputs/q3/q3_raw_evidence_mapping_precheck.md`；未修改论文或解释结果。

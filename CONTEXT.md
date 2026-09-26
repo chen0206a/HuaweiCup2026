@@ -8,6 +8,8 @@
 
 ## E Q3
 
+2026-09-27：以用户提供的 `D:/java录屏/07_q3.tex` 和 Q3 PDF 为本轮输入，完成独立终稿叙事修订 `outputs/q3_story_refine/`（12页）。精确公式、7张表和20条附件4数值保持原样；核实0.10/0.20/0.30比例选择及Spearman定义，三图仅改文字后从源重新导出，74项检查通过。未训练、未改预测/解释数据、未合并正式论文；修改记录见目录内两个change log。
+
 2026-09-25 Attachment4 原始证据映射 PRECHECK：两版各 20 pkl/20 MP4，80/80 文件哈希与清单一致。全部非零 aligned 音频/视觉行分别有 564/564、534/534 个同样本未对齐数组的唯一精确数值匹配；sample02 视觉槽位 `[1,7)` 对应未对齐视觉行 36–41，但没有未对齐行到原始 MP4 frame/PTS 的记录。文本 19/19 解释片段仍可由原文字符区间核对。TEXT=`VERIFIED`，AUDIO/VISION 原始时间=`UNVERIFIED`，sample02 原视频关键帧映射=`NO`；未抽帧或切音频。详见 `E2026/outputs/q3/q3_raw_evidence_mapping_precheck.md`。
 
 Q3-2.6 已通过 20 个 Attachment4 aligned 样本审计：公开 MMSA/Self-MM/MMSA-FET 代码都直接返回 BERT 最后层 token states；固定 `bert-base-uncased` 候选对 604 个有效文本槽的同索引 cosine argmax 为 604/604，均值 cosine `0.999999994`，RMSE `8.40e-7`，最大绝对差 `3.01e-5`。因此 `text feature row i ↔ text_bert token slot i` 判为 VERIFIED，正式 grounding API 已可用 tokenizer offsets 输出 raw-text span。历史生成未固定具体 BERT 权重 revision，作为来源限制保留。Text=VERIFIED，Audio/Vision=UNVERIFIED，总体 `PARTIAL_GROUNDING_READY`。诊断与复现见 `E2026/outputs/q3/q3_text_row_identity_report.md` 和 `E2026/experiments/q3/exp_0026_text_row_identity/`。本阶段未跑 HEAF 全量解释。
