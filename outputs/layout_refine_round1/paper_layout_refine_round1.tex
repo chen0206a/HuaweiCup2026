@@ -1,0 +1,73 @@
+\documentclass[UTF8,a4paper,12pt]{ctexart}
+\usepackage[a4paper,top=2.4cm,bottom=2.2cm,left=2.25cm,right=2.25cm]{geometry}
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Times New Roman}
+\setCJKmainfont[BoldFont=SimSun,ItalicFont=SimSun]{SimSun}
+\setCJKsansfont[BoldFont=SimSun,ItalicFont=SimSun]{SimSun}
+\setCJKmonofont[BoldFont=SimSun,ItalicFont=SimSun]{SimSun}
+\usepackage{setspace,graphicx,booktabs,array,multirow,longtable,tabularx}
+\usepackage{amsmath,amssymb,bm,mathtools,siunitx}
+\usepackage{caption,subcaption,float,xcolor,enumitem,placeins,needspace}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\input{q1_numbers.tex}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{2em}
+\setstretch{1}
+\newcommand{\QOneParagraph}{\par\noindent\hspace*{2em}}
+\newcommand{\QTwoParagraph}{\par\noindent\hspace*{2em}}
+\newcommand{\QThreeParagraph}{\par\noindent\hspace*{2em}}
+\newcounter{q2algorithm}
+\DeclareCaptionFont{compliant}{\songti\zihao{-4}}
+\captionsetup{font=compliant,labelfont=normalfont,labelsep=quad,justification=centering}
+\ctexset{
+ section={format=\centering\heiti\zihao{4},beforeskip=1.5ex,afterskip=1.2ex},
+ subsection={format=\songti\zihao{-4},beforeskip=1.2ex,afterskip=.6ex},
+ subsubsection={format=\songti\zihao{-4},beforeskip=.8ex,afterskip=.4ex}}
+\renewcommand{\refname}{参考文献}
+\graphicspath{{figures/q1/}{figures/q2/}{figures/q3/}}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\ctexset{contentsname={目录}}
+\begin{document}
+\songti\zihao{-4}\pagestyle{plain}
+\hypersetup{pageanchor=false}
+\AddToHookNext{shipout/background}{\put(0,-\paperheight){\includegraphics[width=\paperwidth,height=\paperheight]{frontmatter/official_cover.pdf}}}
+\null\thispagestyle{empty}\clearpage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+\phantomsection\label{front:abstract}
+\addcontentsline{toc}{section}{摘要}
+\begin{center}
+{\heiti\zihao{3}复杂场景下多模态情感识别的数学建模与算法设计\par}
+\vspace{0.8\baselineskip}
+{\heiti\zihao{4}摘\quad 要\par}
+\end{center}
+\input{frontmatter/abstract_final_point_refine.tex}
+\clearpage
+\tableofcontents
+\clearpage
+\setcounter{section}{2}
+\input{sections/q1.tex}
+\FloatBarrier
+\input{sections/q2.tex}
+\FloatBarrier
+\addtocontents{toc}{\protect\newpage}
+\input{sections/q3.tex}
+\FloatBarrier
+\clearpage
+\phantomsection\label{front:references}
+\addcontentsline{toc}{section}{参考文献}
+\input{references_working.tex}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{附录A 附件1完整特征构建结果}
+\section*{附录A\quad 附件1完整特征构建结果}
+\begingroup
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+\input{generated/table_q1_all_samples_appendix.tex}
+\endgroup
+\end{document}
