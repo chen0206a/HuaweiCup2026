@@ -1,0 +1,141 @@
+\documentclass[UTF8,a4paper,12pt]{ctexart}
+\usepackage[paperwidth=595.32bp,paperheight=841.92bp,left=63.84bp,right=63.84bp,top=85.10bp,bottom=51.60bp,includefoot,headheight=0pt,headsep=0pt,footskip=21bp]{geometry}
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Consolas}
+\setCJKmainfont[FontIndex=0,BoldFont=simsun.ttc,BoldFeatures={FontIndex=0,FakeBold=2.2},ItalicFont=simsun.ttc,ItalicFeatures={FontIndex=0}]{simsun.ttc}
+\setCJKsansfont[BoldFont=SimHei]{SimHei}
+\setCJKmonofont{SimSun}
+\setCJKfamilyfont{zhsong}[FontIndex=0,BoldFont=simsun.ttc,BoldFeatures={FontIndex=0,FakeBold=2.2}]{simsun.ttc}
+\renewcommand{\songti}{\CJKfamily{zhsong}}
+\usepackage{setspace,graphicx,booktabs,array,multirow,longtable,tabularx}
+\usepackage{amsmath,amssymb,bm,mathtools,siunitx}
+\usepackage{caption,subcaption,float,xcolor,enumitem,placeins,needspace}
+\usepackage{listings,lstlinebgrd}
+\usepackage{fancyhdr}
+\usepackage[hidelinks,bookmarksnumbered=true]{hyperref}
+\urlstyle{same}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\input{q1_numbers.tex}
+\renewcommand{\baselinestretch}{1}
+\renewcommand{\normalsize}{%
+  \fontsize{12pt}{15.6pt}\selectfont
+  \setlength{\abovedisplayskip}{7.8pt}
+  \setlength{\belowdisplayskip}{7.8pt}
+  \setlength{\abovedisplayshortskip}{3.9pt}
+  \setlength{\belowdisplayshortskip}{7.8pt}}
+\normalsize
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+\clubpenalty=10000
+\widowpenalty=10000
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\normalfont\fontsize{9pt}{9pt}\selectfont\thepage}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+\newcommand{\QOneParagraph}{\par\noindent\hspace*{2em}}
+\newcommand{\QTwoParagraph}{\par\noindent\hspace*{2em}}
+\newcommand{\QThreeParagraph}{\par\noindent\hspace*{2em}}
+\newcounter{q2algorithm}
+\DeclareCaptionFont{compliant}{\normalfont\songti\fontsize{12pt}{15.6pt}\selectfont}
+\captionsetup{font=compliant,labelfont=normalfont,labelsep=quad,justification=centering,skip=6bp}
+\captionsetup[figure]{position=bottom}
+\captionsetup[table]{position=top}
+\setlength{\textfloatsep}{16bp}
+\setlength{\intextsep}{14bp}
+\setlength{\floatsep}{16bp}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{2}
+\renewcommand{\topfraction}{0.72}
+\renewcommand{\bottomfraction}{0.45}
+\renewcommand{\textfraction}{0.28}
+\renewcommand{\floatpagefraction}{0.68}
+\ctexset{
+ section={name={,、},number=\chinese{section},format=\centering\normalfont\heiti\fontsize{14pt}{18.2pt}\selectfont,aftername={},indent=0pt,break={},beforeskip=0pt,afterskip=7bp,afterindent=true},
+ subsection={name={},number=\arabic{section}.\arabic{subsection},format=\raggedright\normalfont\songti\bfseries\normalsize,aftername=\hspace{6bp},indent=0pt,beforeskip=7.8bp,afterskip=0pt,afterindent=true},
+ subsubsection={name={},number=\arabic{section}.\arabic{subsection}.\arabic{subsubsection},format=\raggedright\normalfont\songti\bfseries\normalsize,aftername=\hspace{6bp},indent=0pt,beforeskip=3.9bp,afterskip=0pt,afterindent=true}}
+\makeatletter
+\renewcommand{\@dotsep}{0.8}
+\renewcommand{\@pnumwidth}{2em}
+\renewcommand{\@tocrmarg}{3em}
+\renewcommand{\l@section}{\@dottedtocline{1}{0pt}{22pt}}
+\renewcommand{\l@subsection}{\@dottedtocline{2}{21pt}{33pt}}
+\renewcommand{\l@subsubsection}{\@dottedtocline{3}{42pt}{43pt}}
+\makeatother
+\renewcommand{\refname}{参考文献}
+\graphicspath{{figures/q1/}{figures/q2/}{figures/q3/}}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\ctexset{contentsname={目录}}
+\begin{document}
+\songti\normalsize\pagestyle{plain}
+\typeout{FINAL_FORMAT_BASELINESKIP=\the\baselineskip}
+\hypersetup{pageanchor=false}
+\AddToHookNext{shipout/background}{\put(0,-\paperheight){\includegraphics[width=\paperwidth,height=\paperheight]{frontmatter/official_cover.pdf}}}
+\null\thispagestyle{empty}\clearpage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+\phantomsection\label{front:abstract}
+\addcontentsline{toc}{section}{摘要}
+\vspace*{8.475bp}
+\noindent\includegraphics[width=\textwidth]{frontmatter/abstract-header.pdf}\par
+\vspace{38.316bp}
+\noindent\hbox to\textwidth{%
+  \rlap{{\lishu\fontsize{18pt}{23.4pt}\selectfont 题\hspace{9bp}目：}}%
+  \hfil
+  \parbox[t]{\dimexpr\textwidth-140bp\relax}{\centering{\heiti\fontsize{16pt}{24pt}\selectfont 复杂场景下多模态情感识别的数学建模与算法设计\par}}%
+  \hfil}
+\par\vspace{46.8bp}
+\begin{center}{\lishu\fontsize{18pt}{23.4pt}\selectfont 摘\hspace{9bp}要：\par}\end{center}
+\vspace{8bp}
+\input{frontmatter/abstract_final_point_refine.tex}
+\clearpage
+{\songti\fontsize{10.5pt}{15.6pt}\selectfont\tableofcontents}
+\clearpage
+\input{sections/problem_restatement.tex}
+\input{sections/problem_analysis.tex}
+\input{sections/model_assumptions.tex}
+\input{sections/notation.tex}
+\FloatBarrier
+\clearpage
+\input{sections/q1.tex}
+\FloatBarrier
+\clearpage
+\input{sections/q2.tex}
+\FloatBarrier
+\clearpage
+\input{sections/q3.tex}
+\FloatBarrier
+\clearpage
+\input{sections/model_evaluation.tex}
+\FloatBarrier
+\clearpage
+\phantomsection\label{front:references}
+\addcontentsline{toc}{section}{参考文献}
+\input{references_complete.tex}
+\clearpage
+\section*{附录}
+\begingroup
+\songti\fontsize{12pt}{15.6pt}\selectfont
+\setlength{\parindent}{2em}
+\begin{center}\textbf{人工智能工具使用声明}\end{center}
+\indent 本文在论文整理与实现过程中使用 OpenAI 公司提供的 ChatGPT 与 Codex 工具，其中涉及 GPT-5.6 Sol（2026年7月9日发布）、GPT-6 Astra（2026年9月3日发布）和 GPT-6 Sol（2026年9月22日在 Codex 等产品中上线）。相关工具主要用于论文语言润色、LaTeX 排版检查、图表绘制辅助以及代码阅读与编写辅助。论文中的模型设计、实验方案、数据处理、程序运行、结果分析及最终结论均以参赛队实际程序和实验输出为依据；所有经人工智能工具辅助生成或修改的内容均由参赛队员核验，并由参赛队最终审核确认。
+\par\endgroup
+\par\medskip
+\phantomsection
+\addcontentsline{toc}{section}{附录 A 附件1完整特征构建结果}
+\section*{附录 A\quad 附件1完整特征构建结果}
+\begingroup
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+\input{generated/table_q1_all_samples_appendix.tex}
+\endgroup
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{附录 B 实验设置与主要文件}
+\input{appendices/appendix_B.tex}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{附录 C 关键算法代码}
+\input{appendices/appendix_C.tex}
+\end{document}

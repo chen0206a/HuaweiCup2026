@@ -1,0 +1,30 @@
+\begin{table}[!htbp]
+\centering\zihao{-4}\setlength{\tabcolsep}{2.25pt}
+\caption{公开方法与LTARP的54种连续缺失场景平均结果（三随机种子均值$\pm$样本标准差）}
+\label{tab:q2_public_missing}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}p{2.1cm}*{4}{>{\centering\arraybackslash}X}@{}}
+\toprule
+模型 & 训练方式 & 参数量 & 准确率$\uparrow$ & \shortstack{宏平均\\F1$\uparrow$} & MAE$\downarrow$ & \shortstack{相关系数\\$\uparrow$}\\
+\midrule
+TFN & \shortstack{完整输入\\训练} & 4,840,670 & \shortstack{$0.5767$\\$\pm0.0197$} & \shortstack{$0.5582$\\$\pm0.0127$} & \shortstack{$0.6451$\\$\pm0.0101$} & \shortstack{$0.5784$\\$\pm0.0070$}\\
+LMF & \shortstack{完整输入\\训练} & 323,276 & \shortstack{$0.5616$\\$\pm0.0054$} & \shortstack{$0.5392$\\$\pm0.0066$} & \shortstack{$0.6630$\\$\pm0.0123$} & \shortstack{$0.5539$\\$\pm0.0185$}\\
+MFN & \shortstack{完整输入\\训练} & 261,764 & \shortstack{$0.5657$\\$\pm0.0070$} & \shortstack{$0.5532$\\$\pm0.0081$} & \shortstack{$0.6559$\\$\pm0.0097$} & \shortstack{$0.5540$\\$\pm0.0092$}\\
+MulT & \shortstack{完整输入\\训练} & 624,094 & \shortstack{$0.6000$\\$\pm0.0209$} & \shortstack{$0.5749$\\$\pm0.0230$} & \shortstack{$0.6309$\\$\pm0.0189$} & \shortstack{$0.6232$\\$\pm0.0057$}\\
+MISA & \shortstack{完整输入\\训练} & 1,118,852 & \shortstack{$0.6079$\\$\pm0.0095$} & \shortstack{$0.5958$\\$\pm0.0080$} & \shortstack{$0.9247$\\$\pm0.1025$} & \shortstack{$0.6198$\\$\pm0.0077$}\\
+Self-MM & \shortstack{完整输入\\训练} & 82,119 & \shortstack{$0.6302$\\$\pm0.0016$} & \shortstack{$0.6053$\\$\pm0.0042$} & \shortstack{$0.6131$\\$\pm0.0068$} & \shortstack{$0.6371$\\$\pm0.0040$}\\
+MMIM & \shortstack{完整输入\\训练} & 163,204 & \shortstack{$0.6302$\\$\pm0.0041$} & \shortstack{$0.6059$\\$\pm0.0004$} & \shortstack{$0.6135$\\$\pm0.0101$} & \shortstack{$0.6332$\\$\pm0.0051$}\\
+\addlinespace\midrule
+TFR-Net & \shortstack{缺失增强\\训练} & 415,620 & \shortstack{$0.6336$\\$\pm0.0099$} & \shortstack{$0.6154$\\$\pm0.0098$} & \shortstack{$0.6232$\\$\pm0.0146$} & \shortstack{$0.6220$\\$\pm0.0143$}\\
+MissModal & \shortstack{缺失增强\\训练} & 163,204 & \shortstack{$0.6260$\\$\pm0.0096$} & \shortstack{$0.6068$\\$\pm0.0048$} & \shortstack{$0.6111$\\$\pm0.0112$} & \shortstack{$0.6381$\\$\pm0.0013$}\\
+M3S & \shortstack{缺失增强\\训练} & 323,276 & \shortstack{$0.5733$\\$\pm0.0056$} & \shortstack{$0.5493$\\$\pm0.0102$} & \shortstack{$0.6620$\\$\pm0.0071$} & \shortstack{$0.5581$\\$\pm0.0192$}\\
+MMIN & \shortstack{缺失增强\\训练} & 292,164 & \shortstack{$0.6341$\\$\pm0.0049$} & \shortstack{$0.6072$\\$\pm0.0039$} & \shortstack{$0.6318$\\$\pm0.0259$} & \shortstack{$0.6346$\\$\pm0.0037$}\\
+\addlinespace\midrule
+LTARP & \shortstack{完整输入\\训练} & 164,343 & \shortstack{$0.6334$\\$\pm0.0038$} & \shortstack{$0.6163$\\$\pm0.0013$} & \shortstack{$0.6086$\\$\pm0.0059$} & \shortstack{$0.6417$\\$\pm0.0024$}\\
+\bottomrule
+\end{tabularx}
+\par\vspace{10bp}\begin{minipage}{\textwidth}\songti\normalsize\setlength{\parindent}{2em}
+\QTwoParagraph 在本文统一适配与评价设置下，54种连续缺失等权平均后，LTARP的宏平均 F1和Pearson在表~\ref{tab:q2_public_missing}中最高，MAE最低，准确率与TFR-Net、MMIN接近。完整输入表现与缺失后保持程度共同决定跨场景结果；缺失增强方法之间也存在差异。
+
+\QTwoParagraph 在上述性能结果基础上，再结合参数量比较各方法的模型规模。LTARP总参数量为164343，约16.4万，明显小于TFN、MulT和MISA等结构，与MMIM和MissModal处于相近量级。在表~\ref{tab:q2_public_baselines}--\ref{tab:q2_public_missing}所列模型中，其完整输入和缺失平均宏平均 F1均保持较高水平。图~\ref{fig:q2_params}分别对照这两类输入条件；不同方法的参数规模跨越一个数量级以上，横轴采用对数尺度，使轻量结构和较大融合网络能够在同一坐标中比较。这组结果体现了LTARP在当前接口下的性能与规模平衡，结构复杂度本身不足以决定预测表现。
+\end{minipage}
+\end{table}

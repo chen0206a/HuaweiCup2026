@@ -1,0 +1,36 @@
+\begin{table}[!htbp]
+\centering\zihao{-4}\setlength{\tabcolsep}{7pt}
+\caption{附件4全部20条无标签样本的预测结果}
+\label{tab:q3_attachment4_all}
+\begin{tabularx}{.86\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{.13\textwidth}>{\centering\arraybackslash}p{.13\textwidth}@{}}
+\toprule
+样本ID & 预测类别 & 情感强度 & 分类置信度\\
+\midrule
+\texttt{\detokenize{01}} & 中性 & +0.177915 & 0.5359\\
+\texttt{\detokenize{02}} & 消极 & -0.027301 & 0.3898\\
+\texttt{\detokenize{03}} & 中性 & -0.064430 & 0.5441\\
+\texttt{\detokenize{04}} & 消极 & -0.398096 & 0.6741\\
+\texttt{\detokenize{05}} & 积极 & +0.886586 & 0.7131\\
+\texttt{\detokenize{06}} & 积极 & +0.759221 & 0.7287\\
+\texttt{\detokenize{07}} & 积极 & +0.799232 & 0.7699\\
+\texttt{\detokenize{08}} & 积极 & +0.678992 & 0.7512\\
+\texttt{\detokenize{09}} & 消极 & -1.987819 & 0.9671\\
+\texttt{\detokenize{10}} & 消极 & -1.556107 & 0.9453\\
+\texttt{\detokenize{11}} & 消极 & -0.965641 & 0.8577\\
+\texttt{\detokenize{12}} & 消极 & -0.981858 & 0.8488\\
+\texttt{\detokenize{13}} & 中性 & +0.173788 & 0.5675\\
+\texttt{\detokenize{14}} & 中性 & +0.154869 & 0.5568\\
+\texttt{\detokenize{15}} & 积极 & +1.267568 & 0.8941\\
+\texttt{\detokenize{16}} & 消极 & -2.030377 & 0.9670\\
+\texttt{\detokenize{17}} & 积极 & +1.656759 & 0.9493\\
+\texttt{\detokenize{18}} & 中性 & -0.158624 & 0.5781\\
+\texttt{\detokenize{19}} & 积极 & +0.276115 & 0.3840\\
+\texttt{\detokenize{20}} & 积极 & +0.875848 & 0.8013\\
+\bottomrule
+\end{tabularx}
+\par\vspace{10bp}\begin{minipage}{\textwidth}\songti\normalsize\setlength{\parindent}{2em}
+\QThreeParagraph 同一类别内部的输出也有明显差异。样本02与样本09均被预测为消极，连续强度却分别为$-0.027301$和$-1.987819$，分类置信度分别为0.3898和0.9671。类别、强度和置信度描述不同方面，逐样本结果将它们分别保留，避免用一个类别标签替代连续输出。
+
+\QThreeParagraph 样本02预测为消极，连续强度为$-0.027301$。其贡献为$\phi_T=-0.197115$、$\phi_A=+0.227718$、$\phi_V=+0.829375$，视觉支持最大，语音同向但较小，文本产生反向作用。视觉关键特征区间$[1,7)$包含对齐槽位1--6，可逐行对应到未对齐视觉特征行36--41。因此，视觉主导样本的关键位置可以进一步对应到已有的未对齐视觉特征记录。图中的场景画面提供观看上下文。
+\end{minipage}
+\end{table}

@@ -73,3 +73,5 @@ A 题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STA
 2026-09-27：当前论文排版与附录扩充版位于 `outputs/layout_appendix_expanded/`，主文件 `paper_layout_appendix_expanded.tex/pdf`。整篇78页，附录29页（A/B/C为3/2/24页），13个真实代码块780行、12pt、天蓝色重点行；设置集中在代码之前。声明采用用户指定简短文本且仅一次。已统一小表宽度、目录编号间距和局部浮动体；封面学校、队号及成员信息在填写区域居中，保留原矢量字体和官方标识。Q1/Q2/Q3正文、公式、数据、18幅图及附录A100条记录未变；30条参考文献元数据未变；编译无溢出或未定义引用。交付包 `outputs/layout_appendix_expanded_delivery.zip`；原版 `outputs/overview_appendix_refined/` 保留。
 
 2026-09-27 浮动页修正：图8与图10取消独立浮动页，典型样本表固定顺序并与Q1收尾同页；全文78页，附录仍29页。见 `outputs/layout_appendix_expanded/target_page_float_fix.md`，交付包同步更新。
+
+2026-09-27：最新页面视觉均衡版独立位于 outputs/layout_balance_optimized/，主文件 paper_layout_balance_optimized.tex/pdf，77页、附录29页。图1裁白边；Q1案例、Q2图14/15与附件3表、Q3图18与汇总表均与既有分析组合，附件3以左右15条展示且30条数据不变。136段Q1/Q2/Q3正文、公式、18图、表格数据、摘要及30条参考文献均未变。按用户追加要求将AI声明改为居中12pt宋体加粗标题与12pt/15.6pt缩进正文，无目录项，无GPT/OpenAI文献或占位符。页面审查见 layout_balance_audit.md；可移交包 outputs/layout_balance_optimized_delivery.zip。旧版保留。

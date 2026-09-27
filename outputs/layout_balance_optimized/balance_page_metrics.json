@@ -1,0 +1,618 @@
+[
+  {
+    "physical_page": 1,
+    "printed_page": 0,
+    "bottom": 738.2,
+    "bottom_blank_fraction": 0.044,
+    "first_text": " \n \n \n   \n \n   \n \n中国研究生创新实践系列大赛 \n “华为杯”第二十三届中国研究生 \n数学建模竞赛 \n \n学    校 \n \n参赛队号 \n \n队员姓名 \n \n \n \n \n \n \n \n ",
+    "last_text": "三届中国研究生 \n数学建模竞赛 \n \n学    校 \n \n参赛队号 \n \n队员姓名 \n \n \n \n \n \n \n \n \n \n武汉轻工大学\n26104960057 \n1. 路晨\n2. 宋文杰\n3. 徐丽\n"
+  },
+  {
+    "physical_page": 2,
+    "printed_page": 1,
+    "bottom": 772.2,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "中国研究生创新实践系列大赛 \n “华为杯”第二十三届中国研究生 \n数学建模竞赛 \n题目：复杂场景下多模态情感识别的数学建模与算法\n设计\n摘要：\n多模态情感识别需要同时利用文本、语音和视觉信息，但三种模",
+    "last_text": "景，比较完整输入与遮\n挡输入下的分类和回归结果。场景覆盖单模态及双模态缺失，分别考察连续信息损失发生\n在前段、中段或后段时的影响。评价同时采用宏平均F1、平均绝对误差MAE 及Pearson 相\n1\n"
+  },
+  {
+    "physical_page": 3,
+    "printed_page": 2,
+    "bottom": 575.9,
+    "bottom_blank_fraction": 0.281,
+    "first_text": "关系数，分别反映类别识别、连续强度误差和预测变化的一致程度。完整输入下，LTARP\n的宏平均F1、MAE 和Pearson 分别为0.6243、0.6052 和0.6475；54 种缺失场景平均下分别",
+    "last_text": "入作用分析，并保留了可供逐样本核对的来源信息，为复杂场景下多模态情感识别提供了\n具体方法及可复现结果。\n关键词：多模态情感识别；时序对齐；局部连续缺失；情感预测；Shapley 值；可解释\n分析\n2\n"
+  },
+  {
+    "physical_page": 4,
+    "printed_page": 3,
+    "bottom": 759.3,
+    "bottom_blank_fraction": 0.013,
+    "first_text": "目录\n摘要...............................................................................................",
+    "last_text": "\n33\n7.2.2\n解释目标与主导模态...........................................................................\n34\n3\n"
+  },
+  {
+    "physical_page": 5,
+    "printed_page": 4,
+    "bottom": 348.2,
+    "bottom_blank_fraction": 0.615,
+    "first_text": "7.3\n模态交互分析..........................................................................................",
+    "last_text": "..............................................................................................\n53\n4\n"
+  },
+  {
+    "physical_page": 6,
+    "printed_page": 5,
+    "bottom": 769.2,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "一、问题重述\n多模态情感识别利用文本、语音和视觉观测判断多模态视频片段的情感状态[1, 2]。三\n类观测的来源与时间粒度不同，最终又需要同时给出类别、连续强度及预测依据。本题依\n次提供原始视频、已对齐",
+    "last_text": "合，再细化到局部位置；局部索引还需联系实际输入记录，明\n确可追溯的范围。\n其中，附件1 用于特征构建与来源回查，附件2 用于预测模型的训练与评价，附件3\n和附件4 分别用于无标签预测及预测解释。\n5\n"
+  },
+  {
+    "physical_page": 7,
+    "printed_page": 6,
+    "bottom": 744.0,
+    "bottom_blank_fraction": 0.035,
+    "first_text": "研究框架\n复杂场景下多模态情感识别的数学建模与算法设计\n问题一\n问题二\n问题三\n原生三模态→公共时间窗→可追溯特征\n附件1\n100条原始视频\nMP4 · 转写· 标签\nT\n文本· RoBERTa-ba",
+    "last_text": "正确区分真实有效位置与填充位置，原有效范\n围内出现的零向量仍视为数据本身的有效输入。\n假设4\n局部连续信息中断可用有效范围内连续特征置零进行近似，遮挡过程中保持\n原有效序列长度和有效位掩码不变。\n6\n"
+  },
+  {
+    "physical_page": 8,
+    "printed_page": 7,
+    "bottom": 426.4,
+    "bottom_blank_fraction": 0.5,
+    "first_text": "四、符号说明\n表1给出本文使用的主要数学符号及其含义。\n表1\n主要符号说明\n符号\n含义\ni，m\n样本索引和模态索引，m ∈{T, A, V } 分别表示文本、语音和视觉\nTi\n第i 条视频的有效时长，",
+    "last_text": "第t 个位置的有效位指示\nyi，ci\n连续情感强度及情感极性类别\nρtarget\n连续缺失目标比例\nS，R\n单场景综合得分及完整／缺失条件综合得分\nϕm，Di(W)\n模态贡献及窗口W 的遮挡效应\n7\n"
+  },
+  {
+    "physical_page": 9,
+    "printed_page": 8,
+    "bottom": 744.2,
+    "bottom_blank_fraction": 0.035,
+    "first_text": "五、问题一：多模态特征提取与时序对齐\n5.1 问题分析与总体方案\n附件1 给出了100 条包含文本、语音和画面信息的视频样本。三种模态经过各自编码\n后，文本以词语或片段形成表示，语音形成较密集的声学序",
+    "last_text": "。\n音频由FFmpeg 提取MP4 的第一音轨，转换为16 kHz 单声道PCM WAV；视频帧的显\n示时间戳（PTS）由FFprobe 读取。对全部100 条媒体核验后，音视频流起点、首视频帧\n8\n"
+  },
+  {
+    "physical_page": 10,
+    "printed_page": 9,
+    "bottom": 686.9,
+    "bottom_blank_fraction": 0.119,
+    "first_text": "PTS 和首解码音频帧PTS 均为0 s，因而WAV 样本零点与视频PTS 零点共同构成相对时间\n起点。\n以容器时长和最后一帧PTS 加一个名义帧间隔中的较大者作为有效时长Ti，第i 条样\n本的媒体时",
+    "last_text": "态有效时间窗\n回退 2\n媒体ASR\n回退 5\n0\n20\n40\n60\n80\n样本数\n73\n20\n(d) 文本来源与时间戳回退\n无回退记录\n有回退记录\n赛题转写\n图3\n附件1 样本与三模态特征统计。\n9\n"
+  },
+  {
+    "physical_page": 11,
+    "printed_page": 10,
+    "bottom": 761.1,
+    "bottom_blank_fraction": 0.01,
+    "first_text": "5.3 三模态原生特征提取\n有了共同的媒体时间坐标，就可以分别为词语、声学位置和采样画面建立时间支持。三\n种模态各自编码，原生序列保留自身采样密度，每一行向量与对应时间区间及原始来源一\n起保存。\n5.",
+    "last_text": "(A)\nij\n= [s(A)\nij , e(A)\nij ).\n(3)\n声学位置较密集，同一个公共窗内可能覆盖多个原生区间，后续通过时间交叠确定该\n窗的语音来源。原始波形到声学表示的处理见图5。\n10\n"
+  },
+  {
+    "physical_page": 12,
+    "printed_page": 11,
+    "bottom": 734.7,
+    "bottom_blank_fraction": 0.049,
+    "first_text": "原始音频输入\n滑动窗口分帧 \n音频编码器\n上下文帧表示\n音频特征\na1\na3\na2\na4\naN\n…\n…\nx1\nx2\nxN\n…\n音频\n编码\n器\n图5\n语音模态特征提取流程。色块为表示结构示意。\n5.3.",
+    "last_text": "确定的原生来源。\n将第i 条样本的有效时长均分为K = 50 个半开区间：\nBik =\n\u0014kTi\nK , (k + 1)Ti\nK\n\u0013\n,\nk = 0, 1, . . . , K −1.\n(5)\n11\n"
+  },
+  {
+    "physical_page": 13,
+    "printed_page": 12,
+    "bottom": 737.7,
+    "bottom_blank_fraction": 0.044,
+    "first_text": "记bik = kTi/K，模态m ∈{T, A, V } 的原生时间支持为\nI(m)\nij\n= [s(m)\nij , e(m)\nij ).\n(6)\n其与公共窗的交叠长度为\nω(m)\nijk = max",
+    "last_text": "有效交叠\n对齐文本特征\n50 × 768\n对齐语音特征\n50 × 768\n对齐视觉特征\n50 × 768\n无有效交叠，mask=0\n图7\n三模态原生序列到公共时间窗的映射。矩阵色值为结构示意。\n12\n"
+  },
+  {
+    "physical_page": 14,
+    "printed_page": 13,
+    "bottom": 750.1,
+    "bottom_blank_fraction": 0.026,
+    "first_text": "5.5 特征构建结果与完整性检验\n对全部100 条样本完成映射后，文本、语音和视觉各形成100 × 50 × 768 的单精度浮点\n数组，有效掩码各为100 × 50 的布尔数组。三种模态的原生向量总",
+    "last_text": "赛题转写”为附件1 label‐100.xlsx 的text 字段；“媒体ASR”为当前视频语音\n识别得到的文本。\n(3)“回退”为词级时间戳不可用时，实际采用所属识别片段时间区间的映射次数。\n13\n"
+  },
+  {
+    "physical_page": 15,
+    "printed_page": 14,
+    "bottom": 741.4,
+    "bottom_blank_fraction": 0.039,
+    "first_text": "文本有效窗数为13–49，语音为47–50，视觉均为50，文本时间支持呈现出最明显的\n样本间差异。75 条采用赛题转写，25 条采用媒体ASR；7 条样本包含时间戳回退，累计21\n个实际回退位置。逐样",
+    "last_text": "形成的表示效果。\n5.7.3 模态组合比较\n在所选对齐方法与视觉编码器下，再比较三个单模态、三种双模态及三模态组合，结\n果见表6。各组合沿用相同公共窗与有效位，通过增减输入观察任务信息的变化。\n14\n"
+  },
+  {
+    "physical_page": 16,
+    "printed_page": 15,
+    "bottom": 734.5,
+    "bottom_blank_fraction": 0.049,
+    "first_text": "表5\n不同视觉特征提取方法的比较\n视觉编码器\n准确率\n宏平均\nF1\nMAE\n皮尔逊r\n提取时长\n（秒）\nSigLIP2\n0.6129\n± 0.0938\n0.4816\n± 0.0850\n0.5258\n±",
+    "last_text": "以样本编号确定矩阵行，再按模态取得特征与有效掩码。媒体来源可按样本编\n号、公共窗索引及模态连接来源表，得到原生行号、时间区间与文本、WAV 或源帧记录；\n原生向量和同名说明文件随结果一并保存。\n15\n"
+  },
+  {
+    "physical_page": 17,
+    "printed_page": 16,
+    "bottom": 597.2,
+    "bottom_blank_fraction": 0.25,
+    "first_text": "表6\n不同模态组合的定量比较\n模态组合\n准确率\n宏平均F1 值\n平均绝对误差\n（MAE）\n皮尔逊\n相关系数\n文本\n0.6519\n± 0.0772\n0.5202\n± 0.0935\n0.5516\n± 0.",
+    "last_text": "\n5.9 典型样本分析与本问小结\n样本‐a55Q6RWvTA__3 的有效时长为22.154 s，划分为50 个公共窗。表8列出第24–26\n窗，即零起始索引23–25 的九条三模态映射记录。\n16\n"
+  },
+  {
+    "physical_page": 18,
+    "printed_page": 17,
+    "bottom": 749.2,
+    "bottom_blank_fraction": 0.028,
+    "first_text": "表8\n典型样本连续三个公共时间窗的三模态时序对齐与来源追踪\n公共窗及范围/s\n模态\n原生\n索引\n时间支持/s\n交叠时长\n/s\n原始来源\n第24 窗\n索引23\n[10.191, 10.634)\n文本\n3",
+    "last_text": "大时间重叠形成统一的50 位序列，\n最终得到100 条样本的特征、有效掩码和来源记录。辅助比较支持所采用的对齐与视觉编\n码方案，真实样本呈现了统一时间位置与文本、语音和画面来源之间的对应关系。\n17\n"
+  },
+  {
+    "physical_page": 19,
+    "printed_page": 18,
+    "bottom": 763.2,
+    "bottom_blank_fraction": 0.007,
+    "first_text": "六、问题二：缺失场景下的多模态情感预测模型\n6.1 问题分析与总体方案\n针对问题二，由于附件2 已经给出了统一到50 个时间位置的文本、语音和视觉特征，\n本文直接以对齐后的三模态序列为输入，同时开展情",
+    "last_text": "分和无标签附件3 不参与选模。\n统一最大长度为T = 50，样本i 的三模态输入为\nX(T)\ni\n∈R50×768,\nX(A)\ni\n∈R50×74,\nX(V )\ni\n∈R50×35.\n(11)\n18\n"
+  },
+  {
+    "physical_page": 20,
+    "printed_page": 19,
+    "bottom": 740.1,
+    "bottom_blank_fraction": 0.041,
+    "first_text": "样本有效长度为Li（3 ≤Li ≤50），由随附注意力掩码确定。定义有效槽位指示变量\npit =\n(\n1,\nt ∈{1, 2, . . . , Li},\n0,\nt ∈{Li + 1, . . . , ",
+    "last_text": "别频数逆加权交\n叉熵，使三类在分类目标中获得相应权重：\nwc = Ntrain\n3 · Nc\n,\nLWCE = −\nPN\ni=1 wci log ˆpici\nPN\ni=1 wci\n.\n(18)\n19\n"
+  },
+  {
+    "physical_page": 21,
+    "printed_page": 20,
+    "bottom": 756.7,
+    "bottom_blank_fraction": 0.017,
+    "first_text": "(a) 数据划分规模\n0\n500\n1000\n1500\n2000\n2500\n3000\n3500\n样本数\n3395\n训练\n728\n验证\n727\n测试\n(b) 三分类标签分布\n0\n250\n500\n750\n1",
+    "last_text": "\n6.4 轻量时间注意力残差池化模型\n当局部连续缺失移除一段信息后，剩余有效位置所包含的情感信息并不均等。MMP\n仍采用等权聚合，难以突出更有判别力的位置。为使聚合权重能够随当前样本内容变化，\n20\n"
+  },
+  {
+    "physical_page": 22,
+    "printed_page": 21,
+    "bottom": 734.5,
+    "bottom_blank_fraction": 0.049,
+    "first_text": "LTARP 在均值分支之外增加逐槽位内容打分，并将加权表示作为残差补充。每个模态使用\n一个线性标量打分器，其打分记为\ne(m)\nit\n= fm(x(m)\nit ) = w⊤\nmx(m)\nit\n+ bm",
+    "last_text": "标比例0.1 的实际范\n围为0.0714–0.3333，目标比例0.5 为0.4000–0.6667，对应均值为0.1040 和0.5009。图表横\n轴用目标比例标识场景，实际比例逐样本记录。\n21\n"
+  },
+  {
+    "physical_page": 23,
+    "printed_page": 22,
+    "bottom": 742.6,
+    "bottom_blank_fraction": 0.037,
+    "first_text": "前段、中段、后段的起点si 分别为0、⌊(Li −ℓi)/2⌋和Li −ℓi。遮挡将指定模态在\n[si, si + ℓi −1] 内的特征置零，该遮挡区间采用零起始槽位索引；其余模态和填充掩码保持\n原",
+    "last_text": "始化的完\n整输入最优基线。前者比较统一完整输入标准下的结构表现，后者分析最终配置在固定缺\n失场景集合中的响应与波动；在每类实验内，每次初始化均固定一套参数，不按缺失模态、\n比例或位置重新选择。\n22\n"
+  },
+  {
+    "physical_page": 24,
+    "printed_page": 23,
+    "bottom": 729.4,
+    "bottom_blank_fraction": 0.056,
+    "first_text": "场景统计先在种子内汇总，再计算种子间均值与样本标准差。设第s 个种子在场景j\n的指标为Ms,j，其缺失场景均值为\n¯\nMs = 1\n54\n54\nX\nj=1\nMs,j,\ns ∈{42, 43, 44}.",
+    "last_text": "±0.0098\n0.6359\n±0.0038\n54 场景平均\nLTARP\n0.6334\n±0.0038\n0.6163\n±0.0013\n0.6086\n±0.0059\n0.6417\n±0.0024\n23\n"
+  },
+  {
+    "physical_page": 25,
+    "printed_page": 24,
+    "bottom": 765.5,
+    "bottom_blank_fraction": 0.004,
+    "first_text": "为观察随机初始化对跨场景表现的影响，进一步比较三个随机种子的综合得分。种子\n42 和43 呈正增益，种子44 近乎持平；配对差∆R = RLTARP −RMMP 分别为+0.005600、\n+0.00",
+    "last_text": "后段信息损失更敏感；Pearson 变化约为−0.024、−0.009 和−0.009，其损失主要\n集中在前段。文本中段遮挡虽使宏平均F1 下降，MAE 却出现约+0.003 的轻微改善；这里\n24\n"
+  },
+  {
+    "physical_page": 26,
+    "printed_page": 25,
+    "bottom": 734.4,
+    "bottom_blank_fraction": 0.049,
+    "first_text": "MAE 变化按完整输入误差减缺失输入误差计，正值表示误差减小。分类与回归对缺失位置\n的响应不同，因此不能仅依据一项指标判断哪个位置的损失最大。\n双模态缺失的变化模式进一步体现了这一差异。文本–语音与文",
+    "last_text": "口径不同，不能据此将最终配置的全部收益归因于池\n化结构。图13描述两种固定配置在不同受损输入下的指标差异，图12则描述缺失输入相对\n完整输入的性能变化，两者分别用于观察配置响应和信息损失规律。\n25\n"
+  },
+  {
+    "physical_page": 27,
+    "printed_page": 26,
+    "bottom": 715.3,
+    "bottom_blank_fraction": 0.077,
+    "first_text": "前段\n中段\n后段\n文本\n语音\n视觉\n+0.007 +0.001 +0.005\n+0.010 +0.009 +0.011\n+0.009 +0.008 +0.008\n前段\n中段\n后段\n+0.002 +0.",
+    "last_text": "训练期连续遮挡\n3\n163460\n0.7385 ± 0.0025\n均值–最大值残差池化\n1\n163463\n0.7443\nLTARP（本文方案）\n3\n164343\n0.7448 ± 0.0015\n26\n"
+  },
+  {
+    "physical_page": 28,
+    "printed_page": 27,
+    "bottom": 667.5,
+    "bottom_blank_fraction": 0.147,
+    "first_text": "0.740\n0.742\n0.744\n0.746\n稳健得分\n种子42\n种子43\n种子44\nΔ=+0.0056\nΔ=+0.0038\nΔ=-0.0001\n2/3 次提高，平均 Δ=+0.0031±0.002",
+    "last_text": "ARP，但仅保留一次初始化结果，主要作\n为结构探索参考，不与三随机种子结果作精细统计比较。LTARP 的三种子综合均值在本组\n最高，同时只增加883 个参数，在本组候选中提供了较好的综合表现。\n27\n"
+  },
+  {
+    "physical_page": 29,
+    "printed_page": 28,
+    "bottom": 612.1,
+    "bottom_blank_fraction": 0.228,
+    "first_text": "6.9 公开方法适配与对比\n完成MMP 与LTARP 的内部比较及候选结构分析后，为考察LTARP 与其他多模态建\n模路线的相对表现，本文进一步选取11 种公开方法进行统一适配比较。各方法使用附件2\n",
+    "last_text": "\n163,204\nM3S[21]\n缺失元采样\n低秩骨干、完整支持/缺失查询的一步一阶元\n更新\n323,276\nMMIN[22]\n缺失模态推\n断\n潜在表示推断、残差细化与循环约束\n292,164\n28\n"
+  },
+  {
+    "physical_page": 30,
+    "printed_page": 29,
+    "bottom": 722.3,
+    "bottom_blank_fraction": 0.067,
+    "first_text": "这些方法分别通过张量交互、时序记忆、表征约束或辅助任务组织多模态信息，缺失\n增强方法还引入重构、表征对齐、元采样及潜在表示推断。比较同时考察完整输入预测能\n力、连续缺失后的表现和参数规模：前两项反映同",
+    "last_text": "lf-MM 和MMIM 借助辅助任务或信息约束，在较小规模下也保\n留了较强预测信息；TFR-Net 的宏平均F1 接近LTARP，但回归指标有所差异。因此，分类\n均衡性和回归结果需要结合观察。\n29\n"
+  },
+  {
+    "physical_page": 31,
+    "printed_page": 30,
+    "bottom": 719.0,
+    "bottom_blank_fraction": 0.072,
+    "first_text": "表13\n公开方法与LTARP 的54 种连续缺失场景平均结果（三随机种子均值± 样本标准\n差）\n模型\n训练方式\n参数量\n准确率↑\n宏平均\nF1↑\nMAE↓\n相关系数\n↑\nTFN\n完整输入\n训练\n4,8",
+    "last_text": "方法的参数规模跨越一个数量级以上，横轴采用对数\n尺度，使轻量结构和较大融合网络能够在同一坐标中比较。这组结果体现了LTARP 在当前\n接口下的性能与规模平衡，结构复杂度本身不足以决定预测表现。\n30\n"
+  },
+  {
+    "physical_page": 32,
+    "printed_page": 31,
+    "bottom": 688.8,
+    "bottom_blank_fraction": 0.116,
+    "first_text": "0.52\n0.54\n0.56\n0.58\n0.60\n0.62\n0.64\n宏平均 F1\n(a) 完整输入下的性能比较\n常规融合模型\n缺失增强模型\nLTARP\n帕累托边界\nSelf-MM\nMMIM\nMiss",
+    "last_text": "入同一固定参数模型后，分\n类logits 最大绝对差为2.44 × 10−6，回归为1.12 × 10−6。该数值检查支持词元编码与既有\n文本特征接口的衔接，附件3 随后沿此固定路径完成推理。\n31\n"
+  },
+  {
+    "physical_page": 33,
+    "printed_page": 32,
+    "bottom": 647.2,
+    "bottom_blank_fraction": 0.177,
+    "first_text": "6.10.2 预测结果汇总\n30 条样本预测为消极、中性和积极的数量分别为7、11 和12，对应23.33%、\n36.67% 和40.00%。连续情感强度均值为+0.123114、样本标准差为0.61",
+    "last_text": "小，不同随机初始化下仍存在一定波动。与公开方法的统一适配比较进一步体现了其性能\n与参数规模的折中。在此基础上，本问完成附件3 全部30 条无标签样本的预测，并为问题\n三的解释分析固定预测模型。\n32\n"
+  },
+  {
+    "physical_page": 34,
+    "printed_page": 33,
+    "bottom": 752.5,
+    "bottom_blank_fraction": 0.023,
+    "first_text": "七、问题三：多模态情感预测的可解释分析与证据定位\n7.1 问题分析与总体方案\n问题二已经完成三模态情感类别与连续强度预测。针对问题三，本问不再调整预测模\n型，而是固定问题二得到的模型参数，进一步分析不",
+    "last_text": "模态都存在时\n的作用。一个模态的边际变化还可能取决于其他输入是否参与：单独有效的信息在联合输\n入中可能被替代，也可能在另一模态提供的条件下发挥更大作用。因此，需要把不同组合\n中的变化一起考虑。\n33\n"
+  },
+  {
+    "physical_page": 35,
+    "printed_page": 34,
+    "bottom": 730.0,
+    "bottom_blank_fraction": 0.056,
+    "first_text": "Shapley 贡献将一个模态加入不同组合时的边际变化加权平均[23, 24]。令M =\n{T, A, V } 分别表示文本、语音和视觉，S ⊆M 为保留的模态集合，v(S) 为相应组合的解\n释目标。",
+    "last_text": "分配给各模态，其中已经包含联合输入\n的影响。模态交互另行回答：两种模态共同输入后，相对于各自作用的简单相加，多出了\n什么变化。贡献较大的模态与其他模态仍可能呈现正或负交互，二者描述的方面不同。\n34\n"
+  },
+  {
+    "physical_page": 36,
+    "printed_page": 35,
+    "bottom": 750.6,
+    "bottom_blank_fraction": 0.025,
+    "first_text": "本文考察文本–语音、文本–视觉和语音–视觉三对关系。对模态i, j 及剩余模态k，分\n别计算第三模态缺席和在场时的二阶差，再取平均：\nIij = 1\n2{v({i, j}) −v({i}) −v({j",
+    "last_text": "前类\n别起反向作用。\n若存在正效应窗口，选择Di(W) 最大的窗口；若所有窗口均无正效应，则选择绝对效\n应最大的窗口并标注方向。平局时取最早位置。结果使用从零开始的对齐索引[a, b) 表示，\n35\n"
+  },
+  {
+    "physical_page": 37,
+    "printed_page": 36,
+    "bottom": 760.5,
+    "bottom_blank_fraction": 0.011,
+    "first_text": "包含a 至b −1 位置。对每个有效槽位，将覆盖该位置的窗口效应最大值记为局部曲线；这\n条曲线描述连续遮挡下的响应，窗口之间可以重叠。\n窗口比例通过附件2 验证集的设计子集确定。既有实验比较{0.10",
+    "last_text": "数优势平均下降差为0.400735，95% 区间为[0.3635, 0.4372]；置信度和当前类别logit\n也呈同向差异。这说明固定模型对所选位置更敏感。由于所选窗口本身依据遮挡效应确定，\n36\n"
+  },
+  {
+    "physical_page": 38,
+    "printed_page": 37,
+    "bottom": 770.1,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "该比较主要用于观察这些位置对固定模型输出的敏感程度。上述干预结果描述输入变化与\n固定模型输出之间的关系，不用于推断现实情感形成的因果机制。\n表17\n附件2 独立验证子集的解释干预一致性结果（396 条",
+    "last_text": "口边界更敏感。主导模态只在三路输入之\n间比较，窗口却要从多个重叠候选中选出最大效应位置；若相邻窗口作用接近，初始化导\n致的小幅输出变化就可能改变边界。局部区间因此宜结合模态贡献和连续曲线阅读。\n37\n"
+  },
+  {
+    "physical_page": 39,
+    "printed_page": 38,
+    "bottom": 619.4,
+    "bottom_blank_fraction": 0.218,
+    "first_text": "文本\n视觉\n语音\n模态\n0\n200\n400\n600\n800\n样本数\n656\n65\n7\n620\n104\n4\n（A）主导模态分布\n分类主导模态\n回归主导模态\n10%\n20%\n30%\n40%\n删除比例\n0.",
+    "last_text": "元回到原文字符\n区间。特殊词元本身不产生原文片段，窗口内的文本以真实字符跨度读取。这一处理使结\n果既保留模型中的槽位索引，也给出可直接阅读的文字；两种坐标描述的是同一输入在不\n同表示中的位置。\n38\n"
+  },
+  {
+    "physical_page": 40,
+    "printed_page": 39,
+    "bottom": 672.8,
+    "bottom_blank_fraction": 0.139,
+    "first_text": "语音和视觉通过逐行特征匹配回到未对齐数组。附件4 的564/564 个非零语音对齐行、\n534/534 个非零视觉对齐行，都能在对应样本的未对齐特征中找到唯一且逐元素相等的行。\n这种对应依赖实际特征值",
+    "last_text": "为18、2、0。\n分类主导模态与回归主导模态在17 条样本上一致，占85%，其余3 条样本的两类主导模态\n不同。表中ϕT, ϕA, ϕV 均对应分类对数优势，保留符号以显示同向支持和反向作用。\n39\n"
+  },
+  {
+    "physical_page": 41,
+    "printed_page": 40,
+    "bottom": 708.4,
+    "bottom_blank_fraction": 0.087,
+    "first_text": "7.8 典型样本分析与本问小结\n附件4 多数样本由文本主导，但也存在视觉主导的个例。为比较不同模态主导时的贡\n献和来源回溯结果，图18选取文本主导的样本14 和视觉主导的样本02 进行分析。\n−2\n−",
+    "last_text": "ounder of Rossen and Vet”。所选文本区间可进一步回查到上述原文片段，从而明确模型\n中主要文本支持对应的具体内容。贡献的正向指对中性类别的支持，与积极情感标签含义\n不同。\n40\n"
+  },
+  {
+    "physical_page": 42,
+    "printed_page": 41,
+    "bottom": 661.9,
+    "bottom_blank_fraction": 0.155,
+    "first_text": "表20\n附件4 全部20 条无标签样本的预测结果\n样本ID\n预测类别\n情感强度\n分类置信度\n01\n中性\n+0.177915\n0.5359\n02\n消极\n-0.027301\n0.3898\n03\n中性\n-0",
+    "last_text": "觉关键特征区间[1, 7) 包含对齐槽位1–6，可逐行对应到未对齐视觉特征行36–41。因此，视\n觉主导样本的关键位置可以进一步对应到已有的未对齐视觉特征记录。图中的场景画面提\n供观看上下文。\n41\n"
+  },
+  {
+    "physical_page": 43,
+    "printed_page": 42,
+    "bottom": 677.5,
+    "bottom_blank_fraction": 0.133,
+    "first_text": "表21\n附件4 全部20 条样本的分类贡献与输入来源；区间为从零开始的对齐特征槽位\n[a, b)\nID\nϕT\nϕA\nϕV 主导模态关键区间输入来源\n01 +0.4448 +0.0283 +0.0097",
+    "last_text": "强度、模态贡献和关键区间，并按已有来源记录\n连接到原文或未对齐特征行。逐样本的同向与反向贡献、不同主导模态及不同位置，共同\n呈现固定模型使用三路输入的差异，也为检查具体预测提供了可复查的记录。\n42\n"
+  },
+  {
+    "physical_page": 44,
+    "printed_page": 43,
+    "bottom": 626.4,
+    "bottom_blank_fraction": 0.207,
+    "first_text": "八、模型评价\n8.1 模型的主要特点\n本文方法在统一时间位置之外保留了输入来源。问题一的每个有效公共窗记录模态掩\n码、原生索引、时间支持以及文本、WAV 或源帧信息。公共位置在形成定长表示的同时仍\n保",
+    "last_text": "先建立各模态的时间支持并形成可比较的序列，才能使用相同的聚合与遮挡规则；\n这一接口要求不意味着附件1 的特征直接进入附件2 的模型训练。不同数据来源仍需分别\n检查特征维度、有效长度和标签定义。\n43\n"
+  },
+  {
+    "physical_page": 45,
+    "printed_page": 44,
+    "bottom": 509.7,
+    "bottom_blank_fraction": 0.378,
+    "first_text": "三模态解释只需枚举8 种联盟，模态贡献和两两交互可以共享这些输出。若模态数扩\n展为M，精确联盟枚举的数量将增至2M，计算成本也随之增加。连续窗口遮挡则在固定\n窗口比例下遍历有效前缀中的起点，扫描规模随",
+    "last_text": "信息，未取得原始媒体时间映射时不输出推断秒数或帧号。\n总体上，本文完成了原始三模态特征构建、连续缺失条件下的情感预测，以及模态与\n关键位置的模型解释，并给出附件3 和附件4 的无标签样本输出。\n44\n"
+  },
+  {
+    "physical_page": 46,
+    "printed_page": 45,
+    "bottom": 757.4,
+    "bottom_blank_fraction": 0.015,
+    "first_text": "参考文献\n[1] Baltrušaitis T, Ahuja C, Morency L P. Multimodal Machine Learning: A Survey and Tax-\nonomy[",
+    "last_text": "-Specific Factors[C]//Proceedings of ACL, Volume 1. 2018: 2247–2256. DOI: 10.\n18653/v1/P18-1209.\n45\n"
+  },
+  {
+    "physical_page": 47,
+    "printed_page": 46,
+    "bottom": 741.6,
+    "bottom_blank_fraction": 0.039,
+    "first_text": "[14] Zadeh A, Liang P P, Mazumder N, et al. Memory Fusion Network for Multi-view Sequential\nLearning",
+    "last_text": "cess.thecvf.com/content_iccv_2017/html/Fong_\nInterpretable_Explanations_of_ICCV_2017_paper.html.\n46\n"
+  },
+  {
+    "physical_page": 48,
+    "printed_page": 47,
+    "bottom": 353.0,
+    "bottom_blank_fraction": 0.608,
+    "first_text": "[26] Petsiuk V, Das A, Saenko K. RISE: Randomized Input Sampling for Explanation of Black-\nbox Model",
+    "last_text": " https://proceedings.neurips.cc/paper/\n2018/hash/294a8ed24b1ad22ec2e7efea049b8737-Abstract.html.\n47\n"
+  },
+  {
+    "physical_page": 49,
+    "printed_page": 48,
+    "bottom": 767.7,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "附录\n人工智能工具使用声明\n本文在论文整理与实现过程中使用OpenAI 公司提供的ChatGPT 与Codex 工具，其中涉及\nGPT-5.6 Sol（2026 年7 月9 日发布）、GPT-6 As",
+    "last_text": "768/768/768\n50 窗\n40/50/50\n赛题转写\n0\n‐THoVjtIkeU__2\n4.292 T/A/V 768/768/768\n50 窗\n43/50/50\n赛题转写\n0\n续下页\n48\n"
+  },
+  {
+    "physical_page": 50,
+    "printed_page": 49,
+    "bottom": 765.4,
+    "bottom_blank_fraction": 0.004,
+    "first_text": "续表A1（接上页）\n样本ID\n时长/s\n模态\n维度\n(T/A/V)\n对齐\n粒度\n有效窗\n(T/A/V)\n文本\n来源\n回退\n‐THoVjtIkeU__6\n8.097 T/A/V 768/768/768\n",
+    "last_text": "68/768/768\n50 窗\n37/50/50\n赛题转写\n0\n‐ri04Z7vwnc__0\n2.807 T/A/V 768/768/768\n50 窗\n19/49/50\n媒体ASR\n0\n续下页\n49\n"
+  },
+  {
+    "physical_page": 51,
+    "printed_page": 50,
+    "bottom": 683.9,
+    "bottom_blank_fraction": 0.123,
+    "first_text": "续表A1（接上页）\n样本ID\n时长/s\n模态\n维度\n(T/A/V)\n对齐\n粒度\n有效窗\n(T/A/V)\n文本\n来源\n回退\n‐ri04Z7vwnc__2\n6.027 T/A/V 768/768/768\n",
+    "last_text": "赛题转写”为附件1 label‐100.xlsx 的text 字段；“媒体ASR”为当前视频语音\n识别得到的文本。\n(3)“回退”为词级时间戳不可用时，实际采用所属识别片段时间区间的映射次数。\n50\n"
+  },
+  {
+    "physical_page": 52,
+    "printed_page": 51,
+    "bottom": 717.2,
+    "bottom_blank_fraction": 0.074,
+    "first_text": "附录B\n实验设置与主要文件\n表B1\n问题一主要运行环境\n项目\n配置\nGPU 特征计算\nPyTorch 2.14.0+cu130；Transformers 4.57.3\nCPU 媒体准备\nPython ",
+    "last_text": "长窗口\n32 个\n窗口比例、步长\n0.30；1\n删除比例\n10%、20%、30%、40%\n自助采样分组单位\n视频ID\nShapley 排序稳定性\nSpearman 秩相关\n附件4 样本数\n20\n51\n"
+  },
+  {
+    "physical_page": 53,
+    "printed_page": 52,
+    "bottom": 691.7,
+    "bottom_blank_fraction": 0.112,
+    "first_text": "表B5\n主要程序文件及用途\n文件\n问题\n用途\nq1_full_feature_run.py\n一\n三模态特征构建与对齐\ntemporal.py\n一\n最大时间重叠来源选择\nbaseline.py\n二\nMM",
+    "last_text": "消融结果\nattachment3_predictions.csv\n附件3 类别与强度预测\nattachment4_predictions_explanations.\ncsv\n附件4 预测与解释\n52\n"
+  },
+  {
+    "physical_page": 54,
+    "printed_page": 53,
+    "bottom": 767.9,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "附录C\n关键算法代码\n代码C1\n媒体时间支持与公共时间窗构造\nNUM_BINS = 50\ndef prepare_one(path: Path, row: dict) ‐> dict:\nsample_",
+    "last_text": "oat\": meta[\"\nfps_float\"],\n\"frame_count\": meta[\"frame_count\"], \"resolution\": meta[\"\nresolution\"],\n53\n"
+  },
+  {
+    "physical_page": 55,
+    "printed_page": 54,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "\"video_codec\": meta[\"video_codec\"], \"video_start_time\": meta[\n\"video_start_time\"],\n\"audio_streams\": ",
+    "last_text": "or j, f in enumerate(features)]\noverlaps = [(j, weight) for j, weight in overlaps if weight >\n0]\n54\n"
+  },
+  {
+    "physical_page": 56,
+    "printed_page": 55,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "if not overlaps:\ntraces.append([])\ncontinue\nchosen, weight = min(overlaps, key=lambda pair: (‐pair[1",
+    "last_text": "ODALITIES)\nself.fusion = nn.Sequential(\nnn.Linear(joined, fusion_dim),\nnn.LayerNorm(fusion_dim),\n55\n"
+  },
+  {
+    "physical_page": 57,
+    "printed_page": 56,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "nn.GELU(),\nnn.Dropout(dropout),\n)\nself.classification_head = nn.Linear(fusion_dim, 3)\nself.regressio",
+    "last_text": "ape != features.shape\n[:2]:\nraise ValueError(\"expected features [B,T,D] and padding_mask\n[B,T]\")\n56\n"
+  },
+  {
+    "physical_page": 58,
+    "printed_page": 57,
+    "bottom": 754.5,
+    "bottom_blank_fraction": 0.02,
+    "first_text": "if padding_mask.dtype != torch.bool or not padding_mask.any(dim\n=1).all():\nraise ValueError(\"every s",
+    "last_text": " torch.Tensor]) ‐> dict[str,\ntorch.Tensor]:\npad = batch[\"padding_mask\"]\nmean_representations = {\n57\n"
+  },
+  {
+    "physical_page": 59,
+    "printed_page": 58,
+    "bottom": 756.9,
+    "bottom_blank_fraction": 0.016,
+    "first_text": "m: self.modality_projection[m](masked_mean_pool(batch[m],\npad))\nfor m in MODALITIES\n}\npooled = []\nfo",
+    "last_text": "g // 2\nif location == \"late\":\nreturn remaining\nraise ValueError(f\"unknown location: {location}\")\n58\n"
+  },
+  {
+    "physical_page": 60,
+    "printed_page": 59,
+    "bottom": 754.5,
+    "bottom_blank_fraction": 0.02,
+    "first_text": "def apply_blocks(batch: dict, requests: list[dict[str, Any]]) ‐>\ntuple[dict, list[dict]]:\npad = batc",
+    "last_text": "ngth:\nraise ValueError(\"missing block would overlap padding\")\nout[modality][i, start:end, :] = 0\n59\n"
+  },
+  {
+    "physical_page": 61,
+    "printed_page": 60,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "out[\"availability_mask\"][i, MODALITIES.index(modality), start\n:end] = False\nmetadata.append({\n\"sampl",
+    "last_text": "alid_loader, device: torch.device,\n*, scenario_chunk_size: int = 6) ‐> list[dict\n]:\nmodel.eval()\n60\n"
+  },
+  {
+    "physical_page": 62,
+    "printed_page": 61,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "benchmark = scenarios()\nkeys = (\"clean\",) + tuple(s.scenario_id for s in benchmark)\ncollected = {key",
+    "last_text": "etrics = compute_metrics(data[\"cls_true\"], data[\"cls_pred\"],\ndata[\"reg_true\"], data[\"reg_pred\"])\n61\n"
+  },
+  {
+    "physical_page": 63,
+    "printed_page": 62,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "indices = np.flatnonzero(data[\"vision_zero\"])\nsubset = compute_metrics(\nnp.asarray(data[\"cls_true\"])",
+    "last_text": "te\"]),\nweight_decay=float(cfg[\"training\"][\"weight_decay\"]),\n)\ntrain_loader = fresh_train_loader(\n62\n"
+  },
+  {
+    "physical_page": 64,
+    "printed_page": 63,
+    "bottom": 723.4,
+    "bottom_blank_fraction": 0.065,
+    "first_text": "datasets[\"train\"], int(cfg[\"data\"][\"batch_size\"]), seed\n)\nbest_score, best_epoch, stale = ‐float(\"in",
+    "last_text": ", \"train_loss\": loss_total / seen,\n\"valid\": valid, \"selection_score\": score}\nhistory.append(row)\n63\n"
+  },
+  {
+    "physical_page": 65,
+    "printed_page": 64,
+    "bottom": 764.8,
+    "bottom_blank_fraction": 0.005,
+    "first_text": "代码C8\n评价指标与综合得分\ndef safe_pearson(y_true: np.ndarray, y_pred: np.ndarray) ‐> float:\nif y_true.size < 2",
+    "last_text": "ted}\"\n)\nvalue = value.to(device=device, dtype=torch.float32)\nif not torch.isfinite(value).all():\n64\n"
+  },
+  {
+    "physical_page": 66,
+    "printed_page": 65,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "raise ValueError(f\"{modality} contains nonfinite features\n\")\nresult[modality] = value\nreturn result\n",
+    "last_text": "ct[str, torch.Tensor]) ‐> dict[str,\ntorch.Tensor]:\nvalues = predictor_inputs(batch, self.device)\n65\n"
+  },
+  {
+    "physical_page": 67,
+    "printed_page": 66,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "self.model.eval()\nwith torch.no_grad():\noutput = self.model(values)\nif output[\"classification_logits",
+    "last_text": "_along_axis(values, np.broadcast_to(cls[:, None,\nNone], (*values.shape[:2], 1)), axis=2)[..., 0]\n66\n"
+  },
+  {
+    "physical_page": 68,
+    "printed_page": 67,
+    "bottom": 754.5,
+    "bottom_blank_fraction": 0.02,
+    "first_text": "others = values.copy()\nrows = np.arange(len(cls))[:, None]\ncolumns = np.arange(values.shape[1])[None",
+    "last_text": "lues[:, INDEX[jk]] + values[:, INDEX[(k,)]]\nresult[name] = {\"value\": (without + with_third) / 2,\n67\n"
+  },
+  {
+    "physical_page": 69,
+    "printed_page": 68,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "\"delta_without_third\": without, \"\ndelta_with_third\": with_third}\nreturn result\ndef primary_modality(",
+    "last_text": "n\": r, \"fixed_class\": cls,\n\"class_margin\": margins, \"phi_class\": phi_class, \"phi_reg\n\": phi_reg,\n68\n"
+  },
+  {
+    "physical_page": 70,
+    "printed_page": 69,
+    "bottom": 756.9,
+    "bottom_blank_fraction": 0.016,
+    "first_text": "\"interaction_class\": pair_interactions(margins),\n\"interaction_reg\": pair_interactions(r),\n\"primary_c",
+    "last_text": "LITIES, \"padding_mask\")}\ndef evaluate_position_sets(predictor: FrozenP2Predictor, sample: dict\n,\n69\n"
+  },
+  {
+    "physical_page": 71,
+    "printed_page": 70,
+    "bottom": 754.5,
+    "bottom_blank_fraction": 0.02,
+    "first_text": "modality: str, position_sets: list[np.\nndarray],\nfixed_class: int, full_logits: np.ndarray,\nfull_reg",
+    "last_text": " dtype=np.int64)\nwindows = [np.arange(start, start + width, dtype=np.int64) for\nstart in starts]\n70\n"
+  },
+  {
+    "physical_page": 72,
+    "printed_page": 71,
+    "bottom": 756.9,
+    "bottom_blank_fraction": 0.016,
+    "first_text": "drops = evaluate_position_sets(predictor, sample, modality,\nwindows,\nfixed_class, full_logits,\nfull_",
+    "last_text": "t, sample_id: str,\nrandom_draws: int = 32) ‐> list[dict]:\nlength = window_result[\"valid_length\"]\n71\n"
+  },
+  {
+    "physical_page": 73,
+    "printed_page": 72,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "rank = np.argsort(‐window_result[\"curve\"][:length], kind=\"stable\"\n)\nposition_sets: list[np.ndarray] ",
+    "last_text": "p\nin unique])\ngroup_counts = np.asarray([np.count_nonzero(labels == group) for\ngroup in unique])\n72\n"
+  },
+  {
+    "physical_page": 74,
+    "printed_page": 73,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "rng = np.random.default_rng(seed)\npicks = rng.integers(0, len(unique), size=(reps, len(unique)))\nmea",
+    "last_text": "], bootstrap_reps: int = 1000) ‐>\ndict:\nresult = {}\nfor index, fraction in enumerate(FRACTIONS):\n73\n"
+  },
+  {
+    "physical_page": 75,
+    "printed_page": 74,
+    "bottom": 770.8,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "flattened = [{\"video_id\": row[\"video_id\"], \"point\": row[\"\ndeletion_curve\"][index]}\nfor row in rows]\n",
+    "last_text": "g.ids), ids):\nmismatch = next(\ni for i, (actual, expected) in enumerate(zip(encoding.ids\n, ids))\n74\n"
+  },
+  {
+    "physical_page": 76,
+    "printed_page": 75,
+    "bottom": 768.4,
+    "bottom_blank_fraction": 0.0,
+    "first_text": "if int(actual) != int(expected)\n)\nraise ValueError(f\"token ID mismatch at slot {mismatch}\")\nif not n",
+    "last_text": "re_row_mapping_status\": FEATURE_ROW_MAPPING_STATUS,\n\"provenance\": {\n\"tokenizer\": TOKENIZER_REPO,\n75\n"
+  },
+  {
+    "physical_page": 77,
+    "printed_page": 76,
+    "bottom": 381.5,
+    "bottom_blank_fraction": 0.566,
+    "first_text": "\"tokenizer_revision\": TOKENIZER_REVISION,\n\"tokenizer_json_sha256\": TOKENIZER_JSON_SHA256,\n\"settings\"",
+    "last_text": "okenizer IDs, masks, and type IDs are rechecked for each sample\nbefore returning offsets.\",\n},\n}\n76\n"
+  }
+]
