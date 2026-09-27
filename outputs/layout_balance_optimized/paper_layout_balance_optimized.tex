@@ -58,9 +58,24 @@
 \renewcommand{\@dotsep}{0.8}
 \renewcommand{\@pnumwidth}{2em}
 \renewcommand{\@tocrmarg}{3em}
-\renewcommand{\l@section}{\@dottedtocline{1}{0pt}{22pt}}
-\renewcommand{\l@subsection}{\@dottedtocline{2}{21pt}{33pt}}
-\renewcommand{\l@subsubsection}{\@dottedtocline{3}{42pt}{43pt}}
+% Number box uses actual number width plus 0.75 Chinese character width.
+% The 21pt / 42pt values remain level indentation only.
+\newlength{\paper@tocnumwidth}
+\def\paper@measuretocnumber#1{%
+  \setbox\@tempboxa=\hbox{#1}%
+  \global\paper@tocnumwidth=\dimexpr\wd\@tempboxa+0.75em\relax}
+\def\paper@gettocwidth#1{%
+  \begingroup\let\numberline\paper@measuretocnumber
+  \setbox\z@=\hbox{#1}\endgroup}
+\renewcommand{\l@section}[2]{%
+  \begingroup\def\numberline##1{\hb@xt@\@tempdima{##1\hfil}}
+  \@dottedtocline{1}{0pt}{21pt}{#1}{#2}\endgroup}
+\renewcommand{\l@subsection}[2]{%
+  \begingroup\paper@gettocwidth{#1}
+  \@dottedtocline{2}{21pt}{\paper@tocnumwidth}{#1}{#2}\endgroup}
+\renewcommand{\l@subsubsection}[2]{%
+  \begingroup\paper@gettocwidth{#1}
+  \@dottedtocline{3}{42pt}{\paper@tocnumwidth}{#1}{#2}\endgroup}
 \makeatother
 \renewcommand{\refname}{参考文献}
 \graphicspath{{figures/q1/}{figures/q2/}{figures/q3/}}
