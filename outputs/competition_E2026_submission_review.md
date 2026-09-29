@@ -10,7 +10,7 @@
 | 模型参数文件 | Q2/Q3共用P2，三种初始化的B0/P2参数六件，`q2_checkpoint_manifest.json` | SHA逐件通过；Q3无需另训练模型 |
 | 附件3预测CSV | `results/attachment3_predictions.csv` | 30/30，历史文件字节不变 |
 | 附件4预测解释CSV | `results/attachment4_predictions_explanations.csv` | 20/20，历史文件字节不变；未验证A/V媒体时间仍为NA |
-| 总大小≤50MB | ZIP为32,021,007字节 | 通过 |
+| 总大小≤50MB | ZIP为32,019,170字节 | 通过 |
 | 身份信息禁止出现 | 检索已知学校、队号、三成员姓名、本机用户名；文本和文件名 | 0次命中；仍应人工最终检查 |
 
 ## 代码中的AI标记

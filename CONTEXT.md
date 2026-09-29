@@ -78,4 +78,4 @@ A 题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STA
 
 2026-09-29：按官方E题“四、结果与提交说明”组装本地匿名竞赛附件 `outputs/competition_E2026_submission.zip`（28,924,429字节，小于50,000,000）。包内Q1有100条FP32三模态特征、mask、ID、100条逐样本来源及15,000行来源映射；Q2/Q3共享锁定P2参数、核心代码与方法配置；附件3预测CSV 30条、附件4预测解释CSV 20条均是已有输出的字节副本。逐文件SHA256、ZIP CRC、已知参赛身份词扫描通过。官方原始数据与大型公开预训练权重因大小不重复打包，历史训练环境部分细节未独立存档，限度见包内README/PACKAGE_AUDIT。构建脚本 `scripts/build_competition_E_submission.py`。该附件包仅保存在本地，不推送公开仓库。
 
-2026-09-29：复核E题匿名竞赛附件后，补入Q2训练/缺失评价源码、54场景定义、六个B0/P2三种初始化参数、历史Q1环境已知版本与RUNBOOK；最新本地ZIP为32,021,007字节（≤50MB），179份逐项清单文件，30/20条结果CSV不变。代码AI生成式标记与TODO/占位注释扫描为零；Q1源代码中的openai/whisper是实际模型标识，保留。已知身份词零命中。专项清单及非自包含复现限制见 outputs/competition_E2026_submission_review.md；附件包本身不推送公开仓库。
+2026-09-29：复核E题匿名竞赛附件后，补入Q2训练/缺失评价源码、54场景定义、六个B0/P2三种初始化参数、历史Q1环境已知版本与RUNBOOK；最新本地ZIP为32,019,170字节（≤50MB），179份逐项清单文件，30/20条结果CSV不变。代码AI生成式标记与TODO/占位注释扫描为零；Q1源代码中的openai/whisper是实际模型标识，保留。已知身份词零命中。专项清单及非自包含复现限制见 outputs/competition_E2026_submission_review.md；附件包本身不推送公开仓库。

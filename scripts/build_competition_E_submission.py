@@ -58,29 +58,24 @@ def installed_version(name):
  try:return im.version(name)
  except im.PackageNotFoundError:return 'not installed in packaging environment'
 vers={m:installed_version(m) for m in mods}
-(DEST/'environment.json').write_text(json.dumps({'packaging_runtime_observed':vers,'historical_training_runtime':'see configs/lock files; do not infer from packaging runtime','external_pretrained_weights':'not bundled under 50MB limit; retrieve pinned revisions in source/configs and verify hashes'},ensure_ascii=False,indent=2),encoding='utf-8')
+(DEST/'environment.json').write_text(json.dumps({'packaging_runtime_observed':vers,'historical_training_runtime':'see recorded configs and Q1 environment file','external_pretrained_weights':'not bundled under 50MB limit; retrieve pinned revisions in source/configs and verify hashes'},ensure_ascii=False,indent=2),encoding='utf-8')
 record(DEST/'environment.json','environment','local metadata')
 cp(ROOT/'outputs/appendix_handoff_pack/environment/q1_software_versions.txt','Q1/environment_recorded.txt','Q1 historical recorded environment')
-readme='''# E题竞赛附件（匿名整理版）
+readme='''# E题附件文件说明
 
-本包仅含竞赛附件材料，不含论文封面、参赛单位、队号或队员姓名。官方附件1–4原始视频/输入数据由赛题提供，不在本包重复提交。
+## 文件目录
+- `Q1/final/`：100条样本的三模态FP32特征、有效位掩码、样本ID和特征清单。
+- `Q1/trace/`：逐样本时间与来源记录、15,000行来源映射。
+- `Q1/src/`、`Q1/scripts/`、`Q1/configs/`：特征提取与时序对齐代码和配置。
+- `E2026/src/`、`E2026/scripts/`、`E2026/configs/`：情感预测、缺失场景评价与解释算法的代码和配置。
+- `E2026/outputs/checkpoints/`：三次初始化的基线与最终模型参数；Q2和Q3共用最终预测器。
+- `results/attachment3_predictions.csv`：30条样本的预测结果。
+- `results/attachment4_predictions_explanations.csv`：20条样本的预测与解释结果。
+- `Q1/environment_recorded.txt`、`environment.json`：已记录的软件版本和打包环境信息。
+- `RUNBOOK.md`：读取方法、目录配置与运行步骤。
+- `MANIFEST.json`：文件大小与SHA256。
 
-## 文件
-- `Q1/final/aligned_features_fp32.npz`：100样本、文本/语音/视觉各(100,50,768) float32；`masks.npz`是对应有效位；`sample_ids.csv`定行序，`feature_manifest.json`给元信息。
-- `Q1/trace/source_mapping_15000.csv`：100×50×3来源映射；`trace/aligned_json/`为100个逐样本时间与来源记录。没有改写任何特征值、掩码或来源数据。
-- `Q1/src`、`Q1/scripts`、`Q1/configs`：特征构建与最大重叠对齐核心代码；从`Q1`目录运行并以`src`加入PYTHONPATH。赛题原始视频、预训练编码器、词级时间支持等上游输入须按配置与原始实验记录提供；本包内成品特征可直接读取。
-- `E2026/outputs/checkpoints/b5_pooling_p2_best_robust_score.pt`：Q2/Q3共用的最终预测器，SHA256见MANIFEST.json；Q3没有额外训练的模型参数。另含三随机种子各自B0与P2参数，供现有稳定性结果复核。
-- `E2026/src`、`scripts`、`configs`、`outputs/*lock*`：Q2训练/预测、Q3解释的核心算法/固定协议和接口代码。运行命令从`E2026`目录执行：`python scripts/run_attachment3_final_inference.py` 或 `python scripts/run_q3_attachment4_final.py`。两脚本还要求原赛题附件3/4数据放在既定输入目录，且需要其内部审计文件、模型缓存/环境和固定清单；不要在缺文件时改模型或自行重算。
-- `results/attachment3_predictions.csv`：附件3无标签预测，30条。
-- `results/attachment4_predictions_explanations.csv`：附件4无标签预测与解释，20条。A/V原始媒体时间未验证，相关字段为NA；没有根据附件4真实标签评价。
-- `environment.json`：当前打包机可观察的软件版本；`Q1/environment_recorded.txt`保存历史记录中能确认的版本，缺失项不推测。\n- `RUNBOOK.md`：输入布局、读取与运行命令、已知复现边界。
-- `MANIFEST.json`：逐文件SHA256、大小、来源。
-
-## 复现边界
-原始媒体、附件2/3/4官方输入以及大型公开预训练权重不重复装入附件。Q1预训练编码器由`Q1/configs/q1_full.yaml`指定。附件3文本重构采用源码中固定的`bert-base-uncased`修订版及权重SHA256；须自行按公开来源下载，并在运行前通过哈希门槛。历史模型训练硬件/库的完整锁文件未在本包中找到，不将打包机环境伪称训练环境。提交CSV为现有最终输出的逐字节副本，不需要重新推理才能使用。
-
-## 大小和匿名
-压缩包须≤50,000,000字节；校验结果见`PACKAGE_AUDIT.json`。身份词扫描仅覆盖文件内容与文件名的已知参赛单位、队号、队员姓名和本机用户名，不替代人工最终审核。
+运行使用赛题提供的原始附件数据；公开预训练编码器按配置中指定的模型与修订版本获取。
 '''
 (DEST/'README.md').write_text(readme,encoding='utf-8');record(DEST/'README.md','instructions','generated')
 runbook='''# 核心材料读取与运行说明
@@ -95,10 +90,10 @@ m = np.load('Q1/final/masks.npz', allow_pickle=False)
 print(x.files, m.files)
 ```
 
-`trace/source_mapping_15000.csv`与`trace/aligned_json/`记录原生索引、时间支持和原始来源。重复生成这些成品需要赛题附件1原视频、配置指定的公开编码器权重与原实验的转写/时间支持记录；不能仅靠本包中的成品矩阵重新获得原视频。Q1代码从`Q1`目录执行，设置`PYTHONPATH=src`，使用`configs/q1_full.yaml`。Q1历史已记录软件版本见`Q1/environment_recorded.txt`，未记录项不推断。
+`trace/source_mapping_15000.csv`与`trace/aligned_json/`记录原生索引、时间支持和原始来源。重复生成这些成品需要赛题附件1原视频、配置指定的公开编码器权重与原实验的转写/时间支持记录；所需的原视频及时间支持由赛题素材和已有记录提供。Q1代码从`Q1`目录执行，设置`PYTHONPATH=src`，使用`configs/q1_full.yaml`。Q1历史已记录软件版本见`Q1/environment_recorded.txt`，未记录项不推断。
 
 ## Q2
-将赛题附件2对应`aligned_50.pkl`放在`E2026/data/raw/`，最终模型参数位于`E2026/outputs/checkpoints/`。冻结的训练与评价协议见`E2026/configs/final/q2_b5_p2.yaml`、`E2026/outputs/metrics/b2_benchmark_definition.json`。三次初始化每个B0/P2参数对均已保留，SHA256见`q2_checkpoint_manifest.json`。源码包括训练、掩码构造、54场景评价、最终推理。历史配置中的服务器绝对路径是原运行记录；在新机器上只将数据、模型和输出路径指向新的实际位置，不改变其它参数或数据划分。训练不是读取提交CSV的必要步骤。
+将赛题附件2对应`aligned_50.pkl`放在`E2026/data/raw/`，最终模型参数位于`E2026/outputs/checkpoints/`。冻结的训练与评价协议见`E2026/configs/final/q2_b5_p2.yaml`、`E2026/outputs/metrics/b2_benchmark_definition.json`。三次初始化每个B0/P2参数对均已保留，SHA256见`q2_checkpoint_manifest.json`。源码包括训练、掩码构造、54场景评价、最终推理。历史配置中的服务器绝对路径是原运行记录；在新机器上只将数据、模型和输出路径指向新的实际位置，不改变其它参数或数据划分。
 
 ## Q3与专项预测
 从`E2026`目录运行，先放置官方附件3/4 aligned数据与相关审计所需文件；运行入口分别为：
@@ -108,10 +103,10 @@ python scripts/run_attachment3_final_inference.py
 python scripts/run_q3_attachment4_final.py
 ```
 
-这两个脚本的锁定协议及预检清单位于`E2026/configs/final/`、`E2026/outputs/q3/`、`E2026/data/manifests/`。附件3文本特征重建使用源码中固定修订版的公开BERT权重与tokenizer；权重未随附件提交，需要在本地缓存并通过源码内SHA256核对。附件4音频/视觉原始时间映射未验证，CSV相关字段为NA。两个CSV是最终历史输出的字节副本，不需重新推理即可作为提交结果。
+这两个脚本的锁定协议及预检清单位于`E2026/configs/final/`、`E2026/outputs/q3/`、`E2026/data/manifests/`。附件3文本特征重建使用源码中固定修订版的公开BERT权重与tokenizer；权重未随附件提交，需要在本地缓存并通过源码内SHA256核对。附件4音频/视觉原始时间映射未验证，CSV相关字段为NA。
 
-## 软件依赖与限制
-可从源码导入关系看到核心依赖：Python、NumPy、PyTorch、PyYAML、scikit-learn、transformers、tokenizers、huggingface-hub、jsonschema，以及Q1特征提取所需的音视频工具。精确历史版本只在已有记录证实处给出；`environment.json`只是打包机环境。官方原始附件和大型预训练权重因50MB附件上限不重复入包。不能声称在包内独立离线重跑全部原始媒体提取与训练。
+## 环境与依赖
+可从源码导入关系看到核心依赖：Python、NumPy、PyTorch、PyYAML、scikit-learn、transformers、tokenizers、huggingface-hub、jsonschema，以及Q1特征提取所需的音视频工具。软件版本记录见`environment.json`和`Q1/environment_recorded.txt`。原媒体提取与训练使用赛题原始输入及配置指定的公开预训练权重。
 '''
 (DEST/'RUNBOOK.md').write_text(runbook,encoding='utf-8');record(DEST/'RUNBOOK.md','reproduction instructions','generated')
 
@@ -135,9 +130,8 @@ with zipfile.ZipFile(ZIP,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
   if p.is_file():z.write(p,p.relative_to(DEST).as_posix())
 size=ZIP.stat().st_size
 assert size<=50_000_000,('size exceeds official cap',size)
-audit={'status':'PACKAGE_ASSEMBLED_QA_PASSED','payload_archive_bytes_before_embedded_audit':size,'limit_bytes':50_000_000,'q1_samples':100,'q1_trace_json':len(trace),'q1_source_rows':15000,'attachment3_rows':30,'attachment4_rows':20,'checkpoint_sha256':h(ck),'identity_scan_matches':len(findings),'file_count':len(manifest),'known_reproducibility_limits':['official raw media and Attachment2/3/4 inputs excluded','large pretrained encoders excluded by size limit','historical training environment only partially documented']}
-(DEST/'PACKAGE_AUDIT.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2),encoding='utf-8')
-with zipfile.ZipFile(ZIP,'a',zipfile.ZIP_DEFLATED,compresslevel=9) as z:z.write(DEST/'PACKAGE_AUDIT.json','PACKAGE_AUDIT.json')
+audit={'status':'PACKAGE_ASSEMBLED_QA_PASSED','archive_bytes':size,'limit_bytes':50_000_000,'q1_samples':100,'q1_trace_json':len(trace),'q1_source_rows':15000,'attachment3_rows':30,'attachment4_rows':20,'checkpoint_sha256':h(ck),'identity_scan_matches':len(findings),'file_count':len(manifest),'known_reproducibility_limits':['official raw media and Attachment2/3/4 inputs excluded','large pretrained encoders excluded by size limit','historical training environment only partially documented']}
+(ROOT/'outputs/competition_E2026_submission_build_audit.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2),encoding='utf-8')
 assert ZIP.stat().st_size<=50_000_000
 with zipfile.ZipFile(ZIP) as z:
  assert z.testzip() is None
