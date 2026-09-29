@@ -32,11 +32,18 @@ with (DEST/'Q1/trace/source_mapping_15000.csv').open(encoding='utf-8-sig',newlin
 assert len(ids)-1==100 and len(source)-1==15000
 for rel in ['src/q1/temporal.py','src/q1/timestamp_fallback.py',*('src/q1/extractors/'+n for n in ['__init__.py','base.py','registry.py','text.py','audio.py','vision.py']),'src/q1/__init__.py','scripts/q1_full_feature_run.py','scripts/prepare_q1_cpu.py','scripts/build_q1_text_final.py','scripts/build_q1_final_local.py','scripts/verify_q1_final_local.py','configs/q1_full.yaml','configs/q1_feature_interface.schema.json']:
  cp(Q/rel,'Q1/'+rel,'Q1 reproducibility')
-code=['scripts/run_attachment3_final_inference.py','scripts/run_q3_attachment4_final.py','src/data/__init__.py','src/data/dataset.py','src/data/attachment3_inference.py','src/models/__init__.py','src/models/baseline.py','src/models/pooling_residual.py','src/evaluation/missing_benchmark.py','src/q3/__init__.py',*('src/q3/'+n for n in ['data_adapter.py','coalitions.py','evidence_grounding.py','faithfulness.py','frozen_predictor.py','text_grounding.py','text_feature_reconstruction.py','temporal_occlusion.py']),'configs/final/q2_b5_p2.yaml','configs/final/q3_heaf.yaml','outputs/final/q2/q2_model_lock.json','outputs/q3/q3_method_lock.json','outputs/q3/q3_explanation_schema.json','outputs/q3/q3_text_row_identity.json','outputs/q3/q3_av_grounding_audit.json','data/manifests/attachment3_sealed_inventory.json','data/manifests/q3/attachment4_inventory.json','outputs/final/q2/attachment3/attachment3_text_interface_audit.json']
+code=['scripts/run_attachment3_final_inference.py','scripts/run_q3_attachment4_final.py','src/data/__init__.py','src/data/dataset.py','src/data/attachment3_inference.py','src/models/__init__.py','src/models/baseline.py','src/models/pooling_residual.py','src/evaluation/missing_benchmark.py','src/q3/__init__.py',*('src/q3/'+n for n in ['data_adapter.py','coalitions.py','evidence_grounding.py','faithfulness.py','frozen_predictor.py','text_grounding.py','text_feature_reconstruction.py','temporal_occlusion.py']),'configs/final/q2_b5_p2.yaml','configs/final/q2_b0_wce.yaml','configs/final/q3_heaf.yaml','configs/b5_pooling.yaml','configs/b5_p2_multiseed.yaml','outputs/metrics/b2_benchmark_definition.json','data/manifests/q2_missing_benchmark_manifest.json','outputs/final/q2/q2_checkpoint_manifest.json','src/data/preprocess.py','src/data/block_mask.py','src/utils/__init__.py','src/utils/metrics.py','src/models/temporal.py','src/training/__init__.py','src/training/evaluate.py','src/training/train.py','src/training/train_b1.py','src/training/run_b5_pooling.py','src/training/run_b5_p2_multiseed.py','outputs/final/q2/q2_model_lock.json','outputs/q3/q3_method_lock.json','outputs/q3/q3_explanation_schema.json','outputs/q3/q3_text_row_identity.json','outputs/q3/q3_av_grounding_audit.json','data/manifests/attachment3_sealed_inventory.json','data/manifests/q3/attachment4_inventory.json','outputs/final/q2/attachment3/attachment3_text_interface_audit.json']
 for rel in code:cp(E/rel,'E2026/'+rel,'Q2/Q3 reproducibility')
 # Both tasks share the same predictor parameters; check against the lock before packing.
 ck=E/'outputs/checkpoints/b5_pooling_p2_best_robust_score.pt';assert h(ck)=='cc4cf890a857042c9c3af1313abb16c73f109a18cb7706a939f401930e9efaff'
 cp(ck,'E2026/outputs/checkpoints/'+ck.name,'Q2/Q3 shared checkpoint')
+# All three paired initialization checkpoints are part of the final Q2 evidence.
+checkpoint_manifest=json.loads((E/'outputs/final/q2/q2_checkpoint_manifest.json').read_text(encoding='utf-8'))
+for entry in checkpoint_manifest['checkpoints']:
+ info=entry['checkpoint'];src=E/info['relative_path']
+ assert h(src)==info['sha256'],src
+ if src!=ck and not (DEST/'E2026'/info['relative_path']).exists():
+  cp(src,'E2026/'+info['relative_path'],'Q2 paired-seed parameter file')
 q2=cp(E/'outputs/final/q2/attachment3/attachment3_predictions.csv','results/attachment3_predictions.csv','official prediction CSV')
 q3=cp(E/'outputs/q3/final/attachment4_predictions_explanations.csv','results/attachment4_predictions_explanations.csv','official prediction/explanation CSV')
 for p,n in [(q2,30),(q3,20)]:
@@ -53,6 +60,7 @@ def installed_version(name):
 vers={m:installed_version(m) for m in mods}
 (DEST/'environment.json').write_text(json.dumps({'packaging_runtime_observed':vers,'historical_training_runtime':'see configs/lock files; do not infer from packaging runtime','external_pretrained_weights':'not bundled under 50MB limit; retrieve pinned revisions in source/configs and verify hashes'},ensure_ascii=False,indent=2),encoding='utf-8')
 record(DEST/'environment.json','environment','local metadata')
+cp(ROOT/'outputs/appendix_handoff_pack/environment/q1_software_versions.txt','Q1/environment_recorded.txt','Q1 historical recorded environment')
 readme='''# E题竞赛附件（匿名整理版）
 
 本包仅含竞赛附件材料，不含论文封面、参赛单位、队号或队员姓名。官方附件1–4原始视频/输入数据由赛题提供，不在本包重复提交。
@@ -61,11 +69,11 @@ readme='''# E题竞赛附件（匿名整理版）
 - `Q1/final/aligned_features_fp32.npz`：100样本、文本/语音/视觉各(100,50,768) float32；`masks.npz`是对应有效位；`sample_ids.csv`定行序，`feature_manifest.json`给元信息。
 - `Q1/trace/source_mapping_15000.csv`：100×50×3来源映射；`trace/aligned_json/`为100个逐样本时间与来源记录。没有改写任何特征值、掩码或来源数据。
 - `Q1/src`、`Q1/scripts`、`Q1/configs`：特征构建与最大重叠对齐核心代码；从`Q1`目录运行并以`src`加入PYTHONPATH。赛题原始视频、预训练编码器、词级时间支持等上游输入须按配置与原始实验记录提供；本包内成品特征可直接读取。
-- `E2026/outputs/checkpoints/b5_pooling_p2_best_robust_score.pt`：Q2/Q3共用的最终预测器，SHA256见MANIFEST.json；Q3没有额外训练的模型参数。
-- `E2026/src`、`scripts`、`configs`、`outputs/*lock*`：Q2预测、Q3解释的核心算法/固定协议和接口代码。运行命令从`E2026`目录执行：`python scripts/run_attachment3_final_inference.py` 或 `python scripts/run_q3_attachment4_final.py`。两脚本还要求原赛题附件3/4数据放在既定输入目录，且需要其内部审计文件、模型缓存/环境和固定清单；不要在缺文件时改模型或自行重算。
+- `E2026/outputs/checkpoints/b5_pooling_p2_best_robust_score.pt`：Q2/Q3共用的最终预测器，SHA256见MANIFEST.json；Q3没有额外训练的模型参数。另含三随机种子各自B0与P2参数，供现有稳定性结果复核。
+- `E2026/src`、`scripts`、`configs`、`outputs/*lock*`：Q2训练/预测、Q3解释的核心算法/固定协议和接口代码。运行命令从`E2026`目录执行：`python scripts/run_attachment3_final_inference.py` 或 `python scripts/run_q3_attachment4_final.py`。两脚本还要求原赛题附件3/4数据放在既定输入目录，且需要其内部审计文件、模型缓存/环境和固定清单；不要在缺文件时改模型或自行重算。
 - `results/attachment3_predictions.csv`：附件3无标签预测，30条。
 - `results/attachment4_predictions_explanations.csv`：附件4无标签预测与解释，20条。A/V原始媒体时间未验证，相关字段为NA；没有根据附件4真实标签评价。
-- `environment.json`：当前打包机可观察的软件版本；不冒充历史训练环境。
+- `environment.json`：当前打包机可观察的软件版本；`Q1/environment_recorded.txt`保存历史记录中能确认的版本，缺失项不推测。\n- `RUNBOOK.md`：输入布局、读取与运行命令、已知复现边界。
 - `MANIFEST.json`：逐文件SHA256、大小、来源。
 
 ## 复现边界
@@ -75,6 +83,38 @@ readme='''# E题竞赛附件（匿名整理版）
 压缩包须≤50,000,000字节；校验结果见`PACKAGE_AUDIT.json`。身份词扫描仅覆盖文件内容与文件名的已知参赛单位、队号、队员姓名和本机用户名，不替代人工最终审核。
 '''
 (DEST/'README.md').write_text(readme,encoding='utf-8');record(DEST/'README.md','instructions','generated')
+runbook='''# 核心材料读取与运行说明
+
+## Q1
+`Q1/final/sample_ids.csv`按行列出100个ID；`aligned_features_fp32.npz`包含三个形状各为(100,50,768)的float32矩阵，`masks.npz`包含对应有效位。下面的代码只读成品，不重新抽取：
+
+```python
+import numpy as np
+x = np.load('Q1/final/aligned_features_fp32.npz', allow_pickle=False)
+m = np.load('Q1/final/masks.npz', allow_pickle=False)
+print(x.files, m.files)
+```
+
+`trace/source_mapping_15000.csv`与`trace/aligned_json/`记录原生索引、时间支持和原始来源。重复生成这些成品需要赛题附件1原视频、配置指定的公开编码器权重与原实验的转写/时间支持记录；不能仅靠本包中的成品矩阵重新获得原视频。Q1代码从`Q1`目录执行，设置`PYTHONPATH=src`，使用`configs/q1_full.yaml`。Q1历史已记录软件版本见`Q1/environment_recorded.txt`，未记录项不推断。
+
+## Q2
+将赛题附件2对应`aligned_50.pkl`放在`E2026/data/raw/`，最终模型参数位于`E2026/outputs/checkpoints/`。冻结的训练与评价协议见`E2026/configs/final/q2_b5_p2.yaml`、`E2026/outputs/metrics/b2_benchmark_definition.json`。三次初始化每个B0/P2参数对均已保留，SHA256见`q2_checkpoint_manifest.json`。源码包括训练、掩码构造、54场景评价、最终推理。历史配置中的服务器绝对路径是原运行记录；在新机器上只将数据、模型和输出路径指向新的实际位置，不改变其它参数或数据划分。训练不是读取提交CSV的必要步骤。
+
+## Q3与专项预测
+从`E2026`目录运行，先放置官方附件3/4 aligned数据与相关审计所需文件；运行入口分别为：
+
+```
+python scripts/run_attachment3_final_inference.py
+python scripts/run_q3_attachment4_final.py
+```
+
+这两个脚本的锁定协议及预检清单位于`E2026/configs/final/`、`E2026/outputs/q3/`、`E2026/data/manifests/`。附件3文本特征重建使用源码中固定修订版的公开BERT权重与tokenizer；权重未随附件提交，需要在本地缓存并通过源码内SHA256核对。附件4音频/视觉原始时间映射未验证，CSV相关字段为NA。两个CSV是最终历史输出的字节副本，不需重新推理即可作为提交结果。
+
+## 软件依赖与限制
+可从源码导入关系看到核心依赖：Python、NumPy、PyTorch、PyYAML、scikit-learn、transformers、tokenizers、huggingface-hub、jsonschema，以及Q1特征提取所需的音视频工具。精确历史版本只在已有记录证实处给出；`environment.json`只是打包机环境。官方原始附件和大型预训练权重因50MB附件上限不重复入包。不能声称在包内独立离线重跑全部原始媒体提取与训练。
+'''
+(DEST/'RUNBOOK.md').write_text(runbook,encoding='utf-8');record(DEST/'RUNBOOK.md','reproduction instructions','generated')
+
 # Anonymity scan, including file names and binary contents of document-like files.
 terms=['武汉轻工大学','26104960057','路晨','宋文杰','徐丽','17299','C:/Users/17299','C:\\Users\\17299']
 findings=[]
@@ -95,7 +135,7 @@ with zipfile.ZipFile(ZIP,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
   if p.is_file():z.write(p,p.relative_to(DEST).as_posix())
 size=ZIP.stat().st_size
 assert size<=50_000_000,('size exceeds official cap',size)
-audit={'status':'PACKAGE_ASSEMBLED_QA_PASSED','archive_bytes':size,'archive_MB_decimal':round(size/1e6,3),'limit_bytes':50_000_000,'q1_samples':100,'q1_trace_json':len(trace),'q1_source_rows':15000,'attachment3_rows':30,'attachment4_rows':20,'checkpoint_sha256':h(ck),'identity_scan_matches':len(findings),'file_count':len(manifest),'known_reproducibility_limits':['official raw media and Attachment2/3/4 inputs excluded','large pretrained encoders excluded by size limit','historical training environment only partially documented']}
+audit={'status':'PACKAGE_ASSEMBLED_QA_PASSED','payload_archive_bytes_before_embedded_audit':size,'limit_bytes':50_000_000,'q1_samples':100,'q1_trace_json':len(trace),'q1_source_rows':15000,'attachment3_rows':30,'attachment4_rows':20,'checkpoint_sha256':h(ck),'identity_scan_matches':len(findings),'file_count':len(manifest),'known_reproducibility_limits':['official raw media and Attachment2/3/4 inputs excluded','large pretrained encoders excluded by size limit','historical training environment only partially documented']}
 (DEST/'PACKAGE_AUDIT.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2),encoding='utf-8')
 with zipfile.ZipFile(ZIP,'a',zipfile.ZIP_DEFLATED,compresslevel=9) as z:z.write(DEST/'PACKAGE_AUDIT.json','PACKAGE_AUDIT.json')
 assert ZIP.stat().st_size<=50_000_000

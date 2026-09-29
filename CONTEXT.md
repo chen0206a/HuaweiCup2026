@@ -77,3 +77,5 @@ A 题快照保存于 `archive/A_CONTEXT_before_E_20260923.md` 和 `archive/A_STA
 2026-09-27：最新页面视觉均衡版独立位于 outputs/layout_balance_optimized/，主文件 paper_layout_balance_optimized.tex/pdf，77页、附录29页。图1裁白边；Q1案例、Q2图14/15与附件3表、Q3图18与汇总表均与既有分析组合，附件3以左右15条展示且30条数据不变。136段Q1/Q2/Q3正文、公式、18图、表格数据、摘要及30条参考文献均未变。按用户追加要求将AI声明改为居中12pt宋体加粗标题与12pt/15.6pt缩进正文，无目录项，无GPT/OpenAI文献或占位符。页面审查见 layout_balance_audit.md；可移交包 outputs/layout_balance_optimized_delivery.zip。旧版保留。
 
 2026-09-29：按官方E题“四、结果与提交说明”组装本地匿名竞赛附件 `outputs/competition_E2026_submission.zip`（28,924,429字节，小于50,000,000）。包内Q1有100条FP32三模态特征、mask、ID、100条逐样本来源及15,000行来源映射；Q2/Q3共享锁定P2参数、核心代码与方法配置；附件3预测CSV 30条、附件4预测解释CSV 20条均是已有输出的字节副本。逐文件SHA256、ZIP CRC、已知参赛身份词扫描通过。官方原始数据与大型公开预训练权重因大小不重复打包，历史训练环境部分细节未独立存档，限度见包内README/PACKAGE_AUDIT。构建脚本 `scripts/build_competition_E_submission.py`。该附件包仅保存在本地，不推送公开仓库。
+
+2026-09-29：复核E题匿名竞赛附件后，补入Q2训练/缺失评价源码、54场景定义、六个B0/P2三种初始化参数、历史Q1环境已知版本与RUNBOOK；最新本地ZIP为32,021,007字节（≤50MB），179份逐项清单文件，30/20条结果CSV不变。代码AI生成式标记与TODO/占位注释扫描为零；Q1源代码中的openai/whisper是实际模型标识，保留。已知身份词零命中。专项清单及非自包含复现限制见 outputs/competition_E2026_submission_review.md；附件包本身不推送公开仓库。
